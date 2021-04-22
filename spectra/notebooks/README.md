@@ -32,6 +32,10 @@ Using the first version of the logbook constructed by  **makeLogbook.ipynb**  or
 in the notbook and reported in the info structure in **makeLogbook.ipynb**  or **makeLogbook_ronchi.ipynb**.
 
 
+## Quality of the PSF
+
+- **anaQualityTargetPSF.ipynb** : skewness and kurtosis for Hologram images
+
 ## Analyse spectra
 
 Use the second version of the loggbook containing position and quality flag to compute equivalent width.
