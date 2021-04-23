@@ -35,6 +35,8 @@ in the notbook and reported in the info structure in **makeLogbook.ipynb**  or *
 ## Quality of the PSF
 
 - **anaQualityTargetPSF.ipynb** : skewness and kurtosis for Hologram images
+- **anaQualityTargetPSF_ronchi.ipynb** : skewness and kurtosis for Ronchi images
+
 
 ## Analyse spectra
 
