@@ -13,7 +13,7 @@ eups list -s | grep LOCAL
 
 path_output_dir=/project/shared/auxTel/rerun/dagoret/outputspectr_scan2021_July/spectractorOutput/
 
-date ="2021-07-07"
+date="2021-07-07"
 
 full_path_output_dir="$path_output_dir $date"
 
@@ -21,8 +21,8 @@ full_path_output_dir="$path_output_dir $date"
 #EXPNUMS=`seq 234 1 309`
 
 # narrow scan
-#EXPNUMS=`seq 317 1 365`
-EXPNUMS=`seq 318 1 365`
+EXPNUMS=`seq 317 1 365`
+#EXPNUMS=`seq 318 1 365`
 
 LISTNUM=''
 
@@ -32,10 +32,11 @@ do
 LISTNUM="${LISTNUM} $num"
 echo " num = $num"
 #output=$(python Run_Spectractor_example_2021-07-07.py -n $num 2>&1) 
+
 cmd="python Run_Spectractor_example.py -n $num -d $date 2>&1"
 echo $cmd
-output=$(cmd) 
-echo $output
+output=`$cmd` 
+cho $output
 done
 
 echo "List of Exposures : " $LISTNUM

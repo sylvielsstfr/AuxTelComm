@@ -21,7 +21,9 @@ echo $full_path_output_dir
 
 # list of sequences
 #EXPNUMS=`seq 234 1 309`
-EXPNUMS=`seq 234 1 309`
+#EXPNUMS=`seq 234 1 309`
+
+EXPNUMS=`seq 317 1 365`
 
 # total number of exposures
 NBEXP=0
