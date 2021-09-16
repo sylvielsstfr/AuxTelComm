@@ -36,7 +36,7 @@ echo " num = $num"
 cmd="python Run_Spectractor_example.py -n $num -d $date 2>&1"
 echo $cmd
 output=`$cmd` 
-cho $output
+echo $output
 done
 
 echo "List of Exposures : " $LISTNUM
