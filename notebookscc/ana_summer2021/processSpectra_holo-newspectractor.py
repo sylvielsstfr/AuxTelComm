@@ -190,7 +190,8 @@ if __name__ == "__main__":
     # select the file index
     idx=num
 
-    print(df.iloc[num])
+    print(df.iloc
+          [num])
 
     # check if order 0 location is given in logbook
 
@@ -278,10 +279,14 @@ if __name__ == "__main__":
 
     # # Configuration of the running mode
 
-    parameters.debug=True
-    parameters.verbose=True
-    parameters.display=True
+    parameters.debug=False
+    parameters.verbose=False
+    parameters.display=False
     parameters.LIVE_FIT=False
+
+
+    print("Spectractor configuration")
+    print(parameters)
 
 
 
@@ -358,8 +363,8 @@ if __name__ == "__main__":
     parameters.DEBUG = False
 
 
-
-    image.plot_image(figsize=(10, 8),scale="log")
+    title="{}) {}".format(idx,filename_image)
+    image.plot_image(figsize=(10, 8),scale="log",title=title)
 
 
 
@@ -519,7 +524,7 @@ if __name__ == "__main__":
 
 
     #-------------------------------------
-    fig=plt.figure(figsize=(10,10))
+    fig=plt.figure(figsize=(10,8))
     fig.subplots_adjust(left=0.12, right=0.95, wspace=0.3,bottom=0.15, top=0.9)
 
     ax=fig.add_subplot(222)
@@ -550,6 +555,7 @@ if __name__ == "__main__":
     ax.text(0.05, 0.55, kurt_str, transform=ax.transAxes, fontsize=12,verticalalignment='top', bbox=props)
     ax.text(0.05, 0.2, norm_str, transform=ax.transAxes, fontsize=12,verticalalignment='top', bbox=props)
 
+    plt.suptitle(title, Y=1.01)
     plt.show()
     # ------------------------------------------------------------------
 
