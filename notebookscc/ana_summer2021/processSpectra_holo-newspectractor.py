@@ -269,11 +269,11 @@ if __name__ == "__main__":
     
     if not os.path.isdir(finalpath_output_spectractor):
         os.mkdir(finalpath_output_spectractor)
-        os.mkdir(os.path.join(finalpath_output_spectractor,"spectrum"))
+        os.mkdir(os.path.join(finalpath_output_spectractor,"basespec"))
         os.mkdir(os.path.join(finalpath_output_spectractor,"plots"))
     else:
         #cleandir(finalpath_output_spectractor)
-        cleandir(os.path.join(finalpath_output_spectractor,"spectrum"))
+        cleandir(os.path.join(finalpath_output_spectractor,"basespec"))
         cleandir(os.path.join(finalpath_output_spectractor,"plots"))
 
 
@@ -578,7 +578,7 @@ if __name__ == "__main__":
 
 
     # # Backup output
-    copy_tree(output_directory,os.path.join(finalpath_output_spectractor,"spectrum"))
+    copy_tree(output_directory,os.path.join(finalpath_output_spectractor,"basespec"))
     copy_tree(output_figures,os.path.join(finalpath_output_spectractor,"plots"))
 
 
