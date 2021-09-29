@@ -22,10 +22,10 @@
 # 
 
 # # Run Spectractor from python script
+
+
+# call >> python processSpectra_holo-newspectractor.py -n 93
 #
-# - author : Sylvie Dagoret-campagne
-# - affiliation : IJCLab/IN2P3/CNRS
-# - update : September 2021 27 th
 
 
 import sys
@@ -77,8 +77,17 @@ plt.rcParams['xtick.labelsize']= 'xx-large'
 plt.rcParams['ytick.labelsize']= 'xx-large'
 
 
-# utility functions
+# Configuration
+#--------------
 
+# create output directories if not exist and clean existing files
+FLAG_MANAGE_OUTPUT_SPECTRACTOR=True
+# allow to run reconstruction with Spectractor
+FLAG_GO_FOR_RECONSTRUCTION_WTH_SPECTRACTOR=True
+
+
+# utility functions
+#-------------------
 def file_tag_forsorting(filename):
     # m=re.findall('^Cor_holo4_003_.*([0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]_.*)[.]fits$',filename)
     m = re.findall('^holo4_003_*_(.*)_.*_quickLookExp[.]fits$', filename)
@@ -153,10 +162,13 @@ if __name__ == "__main__":
 
     print("num=",num)
 
-
+    #path index for each month
     DATE="2021-07-07"
     DATE2="2021_07_07"
 
+
+    #paths
+    #-------
 
     # select where to run
     HOSTCC=False
@@ -168,6 +180,7 @@ if __name__ == "__main__":
         path_spectractor=os.path.join(path_auxtel,"softs/github/desc/Spectractor")
         path_spectractor_config=os.path.join(path_spectractor,"config")
         path_images=os.path.join(path_auxtel,"data/2021/holo/quickLookExp/"+DATE)
+        path_output_spectractor = os.path.join(path_auxtel, "data/2021/holo/OutputSpectractor/" + DATE)
     else:
         path_auxtel="/Users/dagoret/DATA/AuxTelData2021"
         path_spectractor=os.path.join(path_auxtel,"/users/dagoret/MacOSX/github/LSST/Spectractor")
@@ -178,22 +191,31 @@ if __name__ == "__main__":
 
 
 
-    # Logbook for file selection
+    # Logbook for input file selection
+    # -------------------------------
     filename_logbook='logbooks/auxtelholologbook_'+DATE2+'_v3.0.csv'
 
     df=pd.read_csv(filename_logbook,index_col=0)
     pd.set_option('display.max_rows', None)
 
-
+    # show the list of input files from the logbook to select the file index in the logbook
     print(df)
 
-    # select the file index
+    # select the index for input file
+    #--------------------------------
+
+    # wide scan : HD 160617
+    # all_myseq_holo=range(234,310)
+
+    # narrow scan :  HD 160617
+    # all_myseq_holo=range(317,365)
+
     idx=num
 
-    print(df.iloc
-          [num])
+    print(df.iloc[num])
 
     # check if order 0 location is given in logbook
+    #-------------------------------------------------
 
     FLAG_ORDER0_LOCATION = False
     x0 = df['Obj-posXpix'][idx]
@@ -206,13 +228,11 @@ if __name__ == "__main__":
         print("NO Order 0 location from logbook ! ")
 
 
+    # For Spectractor configuration
+    #---------------------------
 
     myhome=os.getenv("HOME")
     dir_images=path_images
-
-
-
-
 
     filename_image=df['file'][idx]
     print(">>> Selected index = {} , input filename = {}".format(idx,filename_image))
@@ -253,35 +273,38 @@ if __name__ == "__main__":
 
 
 
-    # ### manage output dir
+    # manage output directories
+    #-------------------------
 
+    # this flag must be set if one want to clean results from previous runs
+    if FLAG_MANAGE_OUTPUT_SPECTRACTOR:
 
-    if not os.path.isdir(output_directory):
-        os.mkdir(output_directory)
-    else:
-        cleandir(output_directory)
+        if not os.path.isdir(output_directory):
+            os.mkdir(output_directory)
+        else:
+            cleandir(output_directory)
  
     
-    if not os.path.isdir(output_figures):
-        os.mkdir(output_figures)
-    else:
-        cleandir(output_figures)
+        if not os.path.isdir(output_figures):
+            os.mkdir(output_figures)
+        else:
+            cleandir(output_figures)
     
-    if not os.path.isdir(finalpath_output_spectractor):
-        os.mkdir(finalpath_output_spectractor)
-        os.mkdir(os.path.join(finalpath_output_spectractor,"basespec"))
-        os.mkdir(os.path.join(finalpath_output_spectractor,"plots"))
-    else:
-        #cleandir(finalpath_output_spectractor)
-        cleandir(os.path.join(finalpath_output_spectractor,"basespec"))
-        cleandir(os.path.join(finalpath_output_spectractor,"plots"))
+        if not os.path.isdir(finalpath_output_spectractor):
+            os.mkdir(finalpath_output_spectractor)
+            os.mkdir(os.path.join(finalpath_output_spectractor,"basespec"))
+            os.mkdir(os.path.join(finalpath_output_spectractor,"plots"))
+        else:
+            #cleandir(finalpath_output_spectractor)
+            cleandir(os.path.join(finalpath_output_spectractor,"basespec"))
+            cleandir(os.path.join(finalpath_output_spectractor,"plots"))
 
 
-    # # Configuration of the running mode
-
-    parameters.debug=False
-    parameters.verbose=False
-    parameters.display=False
+    # Configuration of the Spectractor running mode
+    #---------------------------------------------
+    parameters.debug=True
+    parameters.verbose=True
+    parameters.display=True
     parameters.LIVE_FIT=False
 
 
@@ -295,7 +318,8 @@ if __name__ == "__main__":
     #parameters.THROUGHPUT_DIR = os.path.join(spectractor_dir, "simulation/CTIOThroughput/")
 
 
-    # # Transform the input file quickExpLook
+    # Transform the input fits file quickExpLook at NCSA under the format expected by Spectractor
+    #----------------------------------------------------------------------------------
     copyfile(filename,filename_image)
 
 
@@ -312,12 +336,11 @@ if __name__ == "__main__":
     hdu.close()
 
 
-    # ## Rotate image
+    # Rotate image according what is expected
     rot_image=np.flip(np.flip(image, 1), 0)
 
 
-    # ### Remove WCS
-
+    # Remove WCS (not necessary)
     del header['WCSAXES']
     del header['CTYPE1']
     del header['CTYPE2']
@@ -329,23 +352,19 @@ if __name__ == "__main__":
     del header['CRPIX2']
 
 
-    ## Reshape the file for load_image_AUXTEL() in Spectractor/spectractor/extractor/images.py
+    # Reshape the file for load_image_AUXTEL() in Spectractor/spectractor/extractor/images.py
     primary_hdu = fits.PrimaryHDU(header=header)
     image_hdu = fits.ImageHDU(rot_image)
 
     hdu_list = fits.HDUList([primary_hdu, image_hdu])
-
     hdu_list.info()
-
-
     hdu_list.writeto(filename_image,overwrite=True)
 
-
-
+    # Now work on the new image with Spectractor
     image=Image(file_name=filename_image, target_label=target, disperser_label=disperser_label, config=config)
 
 
-    # ## Show relevant parameters
+    # Show relevant parameters
 
     print(parameters.OBS_NAME)
     print(parameters.DISPERSER_DIR)
@@ -369,11 +388,10 @@ if __name__ == "__main__":
 
 
 
-    # guess
-
+    # Order 0 location guess
+    #-------------------------
 
     # with filter
-
     guess = [600., 2100.] # filename_image=df['file'][0] , holo4_003_RG610_HD160617_20210707_000234_quickLookExp.fits
     guess = [600., 2100.] # filename_image=df['file'][1] , holo4_003_RG610_HD160617_20210707_000235_quickLookExp.fits
     guess = [600., 2100.] # filename_image=df['file'][2] , holo4_003_RG610_HD160617_20210707_000236_quickLookExp.fits
@@ -406,18 +424,24 @@ if __name__ == "__main__":
 
     guess = [500.,2100.] # filename_image=df['file'][76] , 'holo4_003_empty_HD160617_20210707_000317_quickLookExp.fits'
 
+
+    # overwrite with the position found in logbook
     if FLAG_ORDER0_LOCATION:
         print("Set Order 0 location from logbook : ({},{})".format(x0, y0))
         guess = [x0, y0]
 
 
 
-    # Find target
+    # Let spectractor find the target
     #x1, y1 = find_target(image, guess,rotated=False, use_wcs=False)
     x1, y1 = find_target(image, guess,rotated=False)
 
     print(x1,y1)
 
+
+
+    # Check the location of the 0th order and analysis of the quality of its focus
+    #----------------------------------------------------------------------------
     if x1>100:
         WID=100
     else:
@@ -559,25 +583,33 @@ if __name__ == "__main__":
     plt.show()
     # ------------------------------------------------------------------
 
-
-
+    # Usually stop here if one just want to get the 0th order location
+    if not FLAG_GO_FOR_RECONSTRUCTION_WTH_SPECTRACTOR:
+        assert False
+    else:
+        assert True
 
 
 
     # Go for spectrum reconstruction
-
-
+    #----------------------------------
 
 
     #spectrum = Spectractor(filename, output_directory, guess=[x1,y1], target_label=target, disperser_label=disperser_label, config=config)
     spectrum = Spectractor(filename_image, output_directory, guess=[x1,y1], target_label=target, disperser_label=disperser_label, config=config)
 
 
-    # # Remove temporary file
+
+
+    # End of spectractor, manage files
+    #-------------------------------
+
+
+    # Remove temporary input fits file
     os.remove(filename_image)
 
 
-    # # Backup output
+    # Backup Spectractor output
     copy_tree(output_directory,os.path.join(finalpath_output_spectractor,"basespec"))
     copy_tree(output_figures,os.path.join(finalpath_output_spectractor,"plots"))
 
