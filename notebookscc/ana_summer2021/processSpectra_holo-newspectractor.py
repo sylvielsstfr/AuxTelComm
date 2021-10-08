@@ -80,10 +80,14 @@ plt.rcParams['ytick.labelsize']= 'xx-large'
 # Configuration
 #--------------
 
+version="v4.0"  # version of flipping
 # create output directories if not exist and clean existing files
 FLAG_MANAGE_OUTPUT_SPECTRACTOR=True
 # allow to run reconstruction with Spectractor
 FLAG_GO_FOR_RECONSTRUCTION_WTH_SPECTRACTOR=True
+# keep WCS
+FLAG_REMOVE_WCS=False
+
 
 
 # utility functions
