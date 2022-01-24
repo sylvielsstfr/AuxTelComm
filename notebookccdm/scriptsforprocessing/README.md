@@ -1,3 +1,36 @@
+# README.md
+
+DM-Stack scripts usefull to process Holograms, Bias and Flats with DM
+
+
+
+# production of bias with **biasConfig.py** :
+
+         constructBias.py . --rerun dagoret_jan22_bias  @all_visitsbias/visitbias_2021-02-16_empty~empty.list  --batch-type none --configfile biasConfig.py --clobber-config  
+
+
+# production of flats with **flatConfig.py**:
+
+        constructFlat.py . --rerun dagoret_jan22_flats  @all_visitsflats/visitflat_2021-02-16_RG610~empty.list  --batch-type none --configfile flatConfig.py --clobber-config
+  
+
+
+# production of dispersed image with **processStar.py** :
+
+- Spectractor has been decoupled from this version provided by Dominique (processConfig.py  , processStar.py)
+
+
+        processStar.py . --rerun dagoret --configfile processConfig.py @visit.list
+
+
+
+# remarks
+
+- need to ingest Bias and Flats in DM-Stack
+
+
+# OLD
+
 Nouveau
 
 Dominique Boutigny (he/him):montagne_enneigée:  15 h 41
