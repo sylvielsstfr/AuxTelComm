@@ -7,13 +7,16 @@
 
 #PATH=dirname "$@"
 #echo "PATH=$PATH"
+
+
+RERUNDIR=dagoret_fordispersers2022_01 
  
 for file in "$@"
 do
   echo "Processing $file file..."
   # take action on each file. $file store current file name
   cat "$file"
-  cmd="constructFlat.py . --rerun dagoret_jan22_flats  @${file}  --batch-type none --configfile flatConfig.py --clobber-config"
+  cmd="constructFlat.py . --rerun ${RERUNDIR}  @${file}  --batch-type none --configfile flatConfig.py --clobber-config"
   echo -e "${cmd}"
   `$cmd`
  
