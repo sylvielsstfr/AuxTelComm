@@ -10,11 +10,13 @@ import sys,os
 
 
 INSTALLATIONDIR="/sps/lsst/groups/auxtel/softs/shared/auxteldm/rerun"
-RERUNDIR      = "dagoret_fordispersers2022_01"  
+#RERUNDIR      = "dagoret_fordispersers2022_01"
+RERUNDIR      = "dagoret_withbiasfordispersers2022_03"
 RERUNFULLDIR  = os.path.join(INSTALLATIONDIR,RERUNDIR)
 RERUNBIASFULLDIR  = os.path.join(RERUNFULLDIR,"bias")
 list_of_dates = os.listdir(RERUNBIASFULLDIR) 
 
+print(list_of_dates)
 
 for thedate in list_of_dates:
     datedir      = os.path.join(RERUNBIASFULLDIR,thedate)
@@ -23,11 +25,9 @@ for thedate in list_of_dates:
         fullfilename = os.path.join(datedir,thebiasfile)
         # cmd = "ingestCalibs.py . --validity 360 ./rerun/dagoret_fordisersers2022_01/bias/2021-02-16/bias-det000_2021-02-16.fits --mode copy --rerun 
         #                                                                                                                             dagoret_fordispersers2022_01"
-        print("=============================================================================================================================")
-        cmd = "ingestCalibs.py . --validity 360 " + fullfilename + " --mode copy --rerun " + RERUNFULLDIR
+        cmd = "ingestCalibs.py . --validity 360 " + fullfilename + " --mode copy --rerun " + RERUNFULLDIR + " --config clobber=True"
+        print("=========================================================================================================================")
         print(cmd) 
-        print(".............................................................................................................................")
         os.system(cmd)
-
 
 

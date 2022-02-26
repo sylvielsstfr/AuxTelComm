@@ -9,8 +9,11 @@
 # processStar.py . --rerun dagoret_testfordispersers2022_03 --configfile processConfig.py --id dayObs='2022-02-16' seqNum=748
 
 
-RERUNDIR=dagoret_testfordispersers2022_03
-FILEPATH="all_visitsdispersers/visitdispersers_2022-02-15.list"
+#RERUNDIR=dagoret_testfordispersers2022_03
+RERUNDIR=dagoret_withbiasfordispersers2022_03/
+
+
+FILEPATH="all_visitsdispersers/visitdispersers_2022-02-16.list"
 
 cat ${FILEPATH} | while read line || [[ -n $line ]];
 do
