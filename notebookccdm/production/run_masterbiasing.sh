@@ -6,8 +6,9 @@
 #setup lsst_distrib
 
 
-RERUNDIR=dagoret_fordispersers2022_01  
- 
+#RERUNDIR=dagoret_fordispersers2022_01  
+RERUNDIR=dagoret_withbiasfordispersers2022_03
+
 for file in "$@"
 do
   echo "Processing $file file..."
