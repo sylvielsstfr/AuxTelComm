@@ -175,7 +175,7 @@ if __name__ == "__main__":
     #-------
 
     # select where to run
-    HOSTCC=False
+    HOSTCC=True
     # select paths
 
 
@@ -257,8 +257,8 @@ if __name__ == "__main__":
     finalpath_output_spectractor=os.path.join(path_output_spectractor,subdir)
 
     # local directories
-    output_directory="./outputs_process_holo_scan"
-    output_figures="figures_process_holo_scan"
+    output_directory="./outputs_process_holo_scan_py"
+    output_figures="figures_process_holo_scan_py"
 
     # Final output directory
 
@@ -306,9 +306,9 @@ if __name__ == "__main__":
 
     # Configuration of the Spectractor running mode
     #---------------------------------------------
-    parameters.debug=True
-    parameters.verbose=True
-    parameters.display=True
+    parameters.debug=False
+    parameters.verbose=False
+    parameters.display=False
     parameters.LIVE_FIT=False
 
 
