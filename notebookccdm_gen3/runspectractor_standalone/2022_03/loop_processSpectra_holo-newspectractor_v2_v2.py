@@ -110,7 +110,7 @@ def cleandir(path):
 
 ############################################################
 #   Configuration
-# ##########################################################
+###########################################################
 
 
 
@@ -122,15 +122,9 @@ FLAG_GO_FOR_RECONSTRUCTION_WTH_SPECTRACTOR=True
 
 FLAG_REMOVE_WCS=False
 
-# Choose the config filename
-list_of_spectractorconfigfiles= ["auxtel_configA.ini","auxtel_configB.ini","auxtel_configC.ini","auxtel_configD.ini"]
-config_idx =1
-configfilename= os.path.join("./config",list_of_spectractorconfigfiles[config_idx])
-configdir = "configB"
-
 
 # path index for each month
-DATE="20220316"
+DATE="20220317"
 
 
 # select if we run at CC or not (locally) 
@@ -144,7 +138,7 @@ if HOSTCC:
     path_spectractor=os.path.join(path_auxtel,"softs/github/desc/Spectractor")
     path_spectractor_config=os.path.join(path_spectractor,"config")
     path_images=os.path.join(path_auxtel,"data/2022/holo/"+DATE)
-    path_output_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/holo/"+configdir+"/"+DATE)
+    path_output_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/holo/"+DATE)
     
 else:
     #path_auxtel="/Users/dagoret/DATA/AuxTelData2021"
@@ -154,7 +148,7 @@ else:
     path_spectractor_config=os.path.join(path_spectractor,"config")
     #path_images=os.path.join(path_auxtel,"holo/quickLookExp_v2/"+DATE)
     path_images=os.path.join(path_auxtel,"holo/"+DATE)
-    path_output_spectractor=os.path.join(path_auxtel,"OutputSpectractor/holo/"+configdir+"/"+DATE)
+    path_output_spectractor=os.path.join(path_auxtel,"OutputSpectractor/holo/"+DATE)
     #path_output_spectractor=os.path.join(path_auxtel,"holo/OutputSpectractor/"+DATE)
 
 
@@ -254,9 +248,8 @@ for idx in range(N):
 
 
     # local directories to put spectra and plots
-    output_directory="./outputs_process_holo_confB"
-    output_figures="./figures_process_holo_confB"
-    
+    output_directory="./outputs_process_holo_scan"
+    output_figures="figures_process_holo_scan"
     
     if not os.path.isdir(output_directory):
         os.mkdir(output_directory)
@@ -277,13 +270,14 @@ for idx in range(N):
     # standard spectractor init configuration
     #config = os.path.join(path_spectractor_config,"auxtel.ini")
     # special for scan in XY
-    #config="./config/auxtel_scanXY.ini"
-    config=configfilename
-    print(f">>>>> Spectractor configuration filename : {configfilename}")
+    config="./config/auxtel_scanXY.ini"
     target=df.iloc[idx]["object"]
 
 
     # ### manage output dir
+
+
+
 
 
 
@@ -524,20 +518,7 @@ for idx in range(N):
     print("*************************************  START RUNNING SPECTRACTOR - STANDALONE VERSION ******************************************")
 
     start_time = datetime.now()
-    
-    try:
-        spectrum = Spectractor(filename, output_directory, guess=[x1,y1], target_label=target, disperser_label=disperser_label, config=config)
-        
-    except:
-        ertype = sys.exc_info()[0]  # E.g. <class 'PermissionError'>
-        description = sys.exc_info()[1]   # E.g. [Errno 13] Permission denied: ...
-        
-        print("\t +++++++++++++++++++++ Exception occured +++++++++++++++++++++++++++++++++++++++++")
-        print(f"\t >>>>>  errtype = {errtype}")
-        print(f"\t >>>>>> description = {description}")
-         
-        
-        
+    spectrum = Spectractor(filename, output_directory, guess=[x1,y1], target_label=target, disperser_label=disperser_label, config=config)
     time_elapsed = datetime.now() - start_time
     print('\t >>>>>>>>>>>>  Time elapsed running Spectractor (hh:mm:ss.ms) {}'.format(time_elapsed))
 
@@ -546,9 +527,6 @@ for idx in range(N):
     copy_tree(output_directory,os.path.join(finalpath_output_spectractor,"basespec"))
     copy_tree(output_figures,os.path.join(finalpath_output_spectractor,"plots"))
     print("finalpath_output_spectractor :",finalpath_output_spectractor )
-    
-    print("*************************************  END SPECTRACTOR - STANDALONE VERSION ******************************************")
-
 
 
 

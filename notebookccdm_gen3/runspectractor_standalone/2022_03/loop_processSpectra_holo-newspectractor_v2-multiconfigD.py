@@ -524,7 +524,19 @@ for idx in range(N):
     print("*************************************  START RUNNING SPECTRACTOR - STANDALONE VERSION ******************************************")
 
     start_time = datetime.now()
-    spectrum = Spectractor(filename, output_directory, guess=[x1,y1], target_label=target, disperser_label=disperser_label, config=config)
+    
+    try:
+        spectrum = Spectractor(filename, output_directory, guess=[x1,y1], target_label=target, disperser_label=disperser_label, config=config)
+    except:
+        ertype = sys.exc_info()[0]  # E.g. <class 'PermissionError'>
+        description = sys.exc_info()[1]   # E.g. [Errno 13] Permission denied: ...
+        
+        print("\t +++++++++++++++++++++ Exception occured +++++++++++++++++++++++++++++++++++++++++")
+        print(f"\t >>>>>  errtype = {errtype}")
+        print(f"\t >>>>>> description = {description}")
+         
+           
+
     time_elapsed = datetime.now() - start_time
     print('\t >>>>>>>>>>>>  Time elapsed running Spectractor (hh:mm:ss.ms) {}'.format(time_elapsed))
 
@@ -534,6 +546,7 @@ for idx in range(N):
     copy_tree(output_figures,os.path.join(finalpath_output_spectractor,"plots"))
     print("finalpath_output_spectractor :",finalpath_output_spectractor )
 
+    print("*************************************  END SPECTRACTOR - STANDALONE VERSION ******************************************")
 
 
 
