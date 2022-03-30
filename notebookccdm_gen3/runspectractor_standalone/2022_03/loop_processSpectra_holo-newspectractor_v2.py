@@ -250,6 +250,12 @@ for idx in range(N):
     # local directories to put spectra and plots
     output_directory="./outputs_process_holo_scan"
     output_figures="figures_process_holo_scan"
+    
+    if not os.path.isdir(output_directory):
+        os.mkdir(output_directory)
+    if not os.path.isdir(output_figures):
+        os.mkdir(output_figures)
+        
 
     # Final output directory
 

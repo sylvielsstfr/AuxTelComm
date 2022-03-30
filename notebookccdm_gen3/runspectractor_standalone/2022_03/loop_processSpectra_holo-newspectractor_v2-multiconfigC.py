@@ -124,9 +124,9 @@ FLAG_REMOVE_WCS=False
 
 # Choose the config filename
 list_of_spectractorconfigfiles= ["auxtel_configA.ini","auxtel_configB.ini","auxtel_configC.ini","auxtel_configD.ini"]
-config_idx =3
-configfilename= list_of_spectractorconfigfiles[config_idx]
-configdir = "configD"
+config_idx =2
+configfilename= os.path.join("./config",list_of_spectractorconfigfiles[config_idx])
+configdir = "configC"
 
 
 # path index for each month
@@ -254,8 +254,14 @@ for idx in range(N):
 
 
     # local directories to put spectra and plots
-    output_directory="./outputs_process_holo_scan"
-    output_figures="figures_process_holo_scan"
+    output_directory="./outputs_process_holo_confC"
+    output_figures="./figures_process_holo_confC"
+    
+    
+    if not os.path.isdir(output_directory):
+        os.mkdir(output_directory)
+    if not os.path.isdir(output_figures):
+        os.mkdir(output_figures)
 
     # Final output directory
 
@@ -272,7 +278,7 @@ for idx in range(N):
     #config = os.path.join(path_spectractor_config,"auxtel.ini")
     # special for scan in XY
     #config="./config/auxtel_scanXY.ini"
-    config=os.path.join("./config",configfilename)
+    config=configfilename
     print(f">>>>> Spectractor configuration filename : {configfilename}")
     target=df.iloc[idx]["object"]
 
@@ -518,17 +524,31 @@ for idx in range(N):
     print("*************************************  START RUNNING SPECTRACTOR - STANDALONE VERSION ******************************************")
 
     start_time = datetime.now()
-    spectrum = Spectractor(filename, output_directory, guess=[x1,y1], target_label=target, disperser_label=disperser_label, config=config)
+    try:
+        spectrum = Spectractor(filename, output_directory, guess=[x1,y1], target_label=target, disperser_label=disperser_label, config=config)
+      
+    except:
+        ertype = sys.exc_info()[0]  # E.g. <class 'PermissionError'>
+        description = sys.exc_info()[1]   # E.g. [Errno 13] Permission denied: ...
+        
+        print("\t +++++++++++++++++++++ Exception occured +++++++++++++++++++++++++++++++++++++++++")
+        print(f"\t >>>>>  errtype = {errtype}")
+        print(f"\t >>>>>> description = {description}")
+    
+        
+ 
     time_elapsed = datetime.now() - start_time
     print('\t >>>>>>>>>>>>  Time elapsed running Spectractor (hh:mm:ss.ms) {}'.format(time_elapsed))
 
 
+    
+    
     # # Backup output
     copy_tree(output_directory,os.path.join(finalpath_output_spectractor,"basespec"))
     copy_tree(output_figures,os.path.join(finalpath_output_spectractor,"plots"))
     print("finalpath_output_spectractor :",finalpath_output_spectractor )
 
-
+    print("*************************************  END SPECTRACTOR - STANDALONE VERSION ******************************************")
 
 
 

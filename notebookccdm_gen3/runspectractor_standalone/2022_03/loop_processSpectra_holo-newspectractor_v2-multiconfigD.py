@@ -124,9 +124,9 @@ FLAG_REMOVE_WCS=False
 
 # Choose the config filename
 list_of_spectractorconfigfiles= ["auxtel_configA.ini","auxtel_configB.ini","auxtel_configC.ini","auxtel_configD.ini"]
-config_idx =2
-configfilename= list_of_spectractorconfigfiles[config_idx]
-configdir = "configC"
+config_idx =3
+configfilename= os.path.join("./config",list_of_spectractorconfigfiles[config_idx])
+configdir = "configD"
 
 
 # path index for each month
@@ -254,8 +254,14 @@ for idx in range(N):
 
 
     # local directories to put spectra and plots
-    output_directory="./outputs_process_holo_scan"
-    output_figures="figures_process_holo_scan"
+    output_directory="./outputs_process_holo_confD"
+    output_figures="./figures_process_holo_confD"
+    
+    
+    if not os.path.isdir(output_directory):
+        os.mkdir(output_directory)
+    if not os.path.isdir(output_figures):
+        os.mkdir(output_figures)
 
     # Final output directory
 
@@ -272,7 +278,7 @@ for idx in range(N):
     #config = os.path.join(path_spectractor_config,"auxtel.ini")
     # special for scan in XY
     #config="./config/auxtel_scanXY.ini"
-    config=os.path.join("./config",configfilename)
+    config=configfilename
     print(f">>>>> Spectractor configuration filename : {configfilename}")
     target=df.iloc[idx]["object"]
 
