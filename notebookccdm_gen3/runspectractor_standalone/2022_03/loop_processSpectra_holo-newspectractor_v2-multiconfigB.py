@@ -529,7 +529,7 @@ for idx in range(N):
         spectrum = Spectractor(filename, output_directory, guess=[x1,y1], target_label=target, disperser_label=disperser_label, config=config)
         
     except:
-        ertype = sys.exc_info()[0]  # E.g. <class 'PermissionError'>
+        errtype = sys.exc_info()[0]  # E.g. <class 'PermissionError'>
         description = sys.exc_info()[1]   # E.g. [Errno 13] Permission denied: ...
         
         print("\t +++++++++++++++++++++ Exception occured +++++++++++++++++++++++++++++++++++++++++")
