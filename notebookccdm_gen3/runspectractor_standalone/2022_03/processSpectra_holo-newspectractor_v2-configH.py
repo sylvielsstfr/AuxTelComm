@@ -25,7 +25,7 @@ if nargs == 2:
         if position == 1 :
             DAYNUM = sys.argv[position]
         elif position == 2 :
-            image_index = int(sys.argv[position])
+            image_index = int(sys.argv[position])-1
         position = position + 1
         
 else:

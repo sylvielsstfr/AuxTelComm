@@ -24,3 +24,10 @@
 
 
        sacct -j <jobid>
+
+
+
+
+# scripts:
+
+- jobarray : slurm\_processSpectra\_jobarray.sh 

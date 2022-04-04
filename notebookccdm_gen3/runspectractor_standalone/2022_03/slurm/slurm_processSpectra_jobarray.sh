@@ -5,7 +5,7 @@
 #SBATCH --job-name=array_procSpec_confH_Day1
 #SBATCH --output=array_%A_%a.out
 #SBATCH --error=array_%A_%a.err
-#SBATCH --array=1-5
+#SBATCH --array=1-28
 #SBATCH --time=1-00:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem=20G
