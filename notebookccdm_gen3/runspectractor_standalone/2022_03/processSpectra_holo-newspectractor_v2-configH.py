@@ -121,8 +121,8 @@ DATE=DAYNUM
 
 
 # Choose the config filename, here the configF
-list_of_spectractorconfigfiles= ["auxtel_configA.ini","auxtel_configB.ini","auxtel_configC.ini","auxtel_configD.ini","auxtel_configE.ini","auxtel_configF.ini","auxtel_configG.ini"]
-config_idx = 6
+list_of_spectractorconfigfiles= ["auxtel_configA.ini","auxtel_configB.ini","auxtel_configC.ini","auxtel_configD.ini","auxtel_configE.ini","auxtel_configF.ini","auxtel_configG.ini","auxtel_configH.ini"]
+config_idx = 7
 configfilename= os.path.join("./config",list_of_spectractorconfigfiles[config_idx])
 configdir = (list_of_spectractorconfigfiles[config_idx].split("_")[-1]).split(".") [0]
 configdirshort = configdir
