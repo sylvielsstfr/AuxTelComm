@@ -3,3 +3,5 @@
 *.pdf
 *.fits
 *.ipynb_checkpoints*
+*.out
+*.err
