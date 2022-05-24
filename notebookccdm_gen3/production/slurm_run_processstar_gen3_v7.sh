@@ -6,7 +6,7 @@
 #SBATCH --ntasks 1 # Run single task or CPU
 #SBATCH --time 7-00:00:00 # time (D-HH:MM)
 #SBATCH --partition htc
-#SBATCH --job-name=procstar1
+#SBATCH --job-name=procstar0
 ####################################≈
 ####################################
 
@@ -30,4 +30,4 @@ source ../repos/w_2022_09/user_setup.sh
 
 which python
 
-python run_processstar_gen3_v7.py
+python run_processstar_gen3_v7.py 0
