@@ -58,6 +58,14 @@ visit_dispersers_files = ["visitdispersers_20211102_filt_BG40-holo4_003.list",\
                             "visitdispersers_20211102_filt_empty-holo4_003.list",\
                             "visitdispersers_20211102_filt_empty-ronchi170lpmm.list"]
 
+
+#2021/11/03
+
+visit_dispersers_files =  ["visitdispersers_20211103_filt_BG40-holo4_003.list",\
+                           "visitdispersers_20211103_filt_SDSSg-holo4_003.list",\
+                           "visitdispersers_20211103_filt_FELH0600-holo4_003.list",\
+                           "visitdispersers_20211103_filt_empty-holo4_003.list"]
+
 fileindex_max=len(visit_dispersers_files)
 
 if fileindex < fileindex_max and fileindex >=0  :
