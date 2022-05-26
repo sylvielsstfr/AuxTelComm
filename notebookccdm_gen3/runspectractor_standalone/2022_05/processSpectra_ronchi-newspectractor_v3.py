@@ -118,7 +118,7 @@ print(f"configdir      = {configdir}")
 # path index for each month
 DATE = arg_DAYNUM
 filterdispersername = arg_filterdispersername
-dispersername = "holo"
+dispersername = "ronchi"
 imagemode = "postISRCCD"
 #imagemode = "unflattened"
 
