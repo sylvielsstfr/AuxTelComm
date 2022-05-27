@@ -16,7 +16,7 @@ print("python version    : ",sys.version)
 # Handle input arguments
 #-----------------------------------------------------------------------------------------------
 #
-#  1  : DAYNUM
+#  1  : DAYNUM  ex 20220316
 #  2  : filterdispersername  ex "empty~holo4_003"
 #  3  : image_index in logbook 
 
@@ -39,6 +39,7 @@ if nargs == 3:
         
 else:
     print(f"{sys.argv[0]} requires 3 positional arguments : 1: the datestring 2: filterdispersername 3: the image rank") 
+    print(f"example :  \t python {sys.argv[0]} 20220316 empty~holo4_003 1")
     exit(-1)
     
 
@@ -58,7 +59,6 @@ mpl.use('Agg')
 
 import numpy as np
 import matplotlib.pyplot as plt
-get_ipython().run_line_magic('matplotlib', 'inline')
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.colors import LogNorm
 from matplotlib import  transforms

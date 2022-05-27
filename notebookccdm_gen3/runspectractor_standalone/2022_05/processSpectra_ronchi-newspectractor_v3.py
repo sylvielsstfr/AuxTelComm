@@ -16,7 +16,7 @@ print("python version    : ",sys.version)
 # Handle input arguments
 #-----------------------------------------------------------------------------------------------
 #
-#  1  : DAYNUM
+#  1  : DAYNUM  ex 20220316
 #  2  : filterdispersername  ex "empty~holo4_003"
 #  3  : image_index in logbook 
 
@@ -39,6 +39,7 @@ if nargs == 3:
         
 else:
     print(f"{sys.argv[0]} requires 3 positional arguments : 1: the datestring 2: filterdispersername 3: the image rank") 
+    print(f"example :  \t python {sys.argv[0]} 20220316 empty~ronchi170lpmm 1")
     exit(-1)
     
 
@@ -58,7 +59,6 @@ mpl.use('Agg')
 
 import numpy as np
 import matplotlib.pyplot as plt
-get_ipython().run_line_magic('matplotlib', 'inline')
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.colors import LogNorm
 from matplotlib import  transforms
@@ -235,7 +235,7 @@ subdir=filenumberdir
 
 # final output directory (where results will be copied to be backed up at the end)
 finalpath_output_spectractor=os.path.join(path_output_spectractor,subdir)
-print(f"finalpath_output_spectractor = {finalpath_output_spectractor}")
+
 
 
 # local directories to put spectra and plots
@@ -245,12 +245,37 @@ if configdir =="":
 else:
     output_directory = "./outputs_process_" + dispersername + "_" + configdir + "_" + str(idx)
     output_figures   = "./figures_process_" + dispersername + "_" + configdir + "_" + str(idx)
+
+print(f"finalpath_output_spectractor = {finalpath_output_spectractor}")
+print(f"output_directory = {output_directory}")
+print(f"output_figures = {output_figures}")
+print(f"config filename = ",{config}"")        
     
+def cleandir(path):
+    if os.path.isdir(path):
+        files=os.listdir(path)
+        if len(files) > 0:
+            for f in files:
+                if os.path.isdir(os.path.join(path,f)):
+                    if f==".ipynb_checkpoints":
+                        shutil.rmtree(os.path.join(path,f))
+                    else:
+                        print(" Cannot remove this directory {}".format(os.path.join(path,f)))
+                else:
+                    os.remove(os.path.join(path,f))
+
 if not os.path.isdir(output_directory):
     os.mkdir(output_directory)
+else:
+    cleandir(output_directory)
+ 
+# manage subdirs spectrum/ and plots/
 if not os.path.isdir(output_figures):
     os.mkdir(output_figures)
-    
+else:
+    cleandir(output_figures)
+
+
 # prepare argument of Spectractor
 config=configfilename    
 target=df.iloc[idx]["object"]
@@ -291,18 +316,6 @@ else:
 # - If no crash occurs, arrive here
 
 
-def cleandir(path):
-    if os.path.isdir(path):
-        files=os.listdir(path)
-        if len(files) > 0:
-            for f in files:
-                if os.path.isdir(os.path.join(path,f)):
-                    if f==".ipynb_checkpoints":
-                        shutil.rmtree(os.path.join(path,f))
-                    else:
-                        print(" Cannot remove this directory {}".format(os.path.join(path,f)))
-                else:
-                    os.remove(os.path.join(path,f))
 
 
 
@@ -328,16 +341,6 @@ if FLAG_MANAGE_OUTPUT_SPECTRACTOR:
             os.mkdir(path_output_spectractor)
 
     
-    if not os.path.isdir(output_directory):
-        os.mkdir(output_directory)
-    else:
-        cleandir(output_directory)
- 
-    # manage subdirs spectrum/ and plots/
-    if not os.path.isdir(output_figures):
-        os.mkdir(output_figures)
-    else:
-        cleandir(output_figures)
     
     if not os.path.isdir(finalpath_output_spectractor):
         os.mkdir(finalpath_output_spectractor)
