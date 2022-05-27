@@ -201,24 +201,24 @@ print(f"from logbook : target         = {target}")
 
 # ## If order 0 position exists in logbook it is selected, otherwise put it by hand
 
-if 'Obj-posXpix' in df.columns:
-    x0=df['Obj-posXpix'][idx]
-else:
-    x0=300
+x0=300
+y0=1700
+
+if 'Obj-posXpix' in df.columns and 'Obj-posYpix' in df.columns:
+    thex0 = df['Obj-posXpix'][idx]
+    if not is_nan(thex0):
+        x0=thex0
+    they0 = df['Obj-posYpix'][idx]
+    if not is_nan(they0):
+        y0=they0
     
-if 'Obj-posYpix' in df.columns:    
-    y0=df['Obj-posYpix'][idx]
-else:
-    y0=1700
-
-
-FLAG_ORDER0_LOCATION=False
-
 if not is_nan(x0) and not is_nan(y0):
-    FLAG_ORDER0_LOCATION=True
+
     print("Order 0 location from logbook : ({},{})".format(x0,y0))
 else:
     print("NO Order 0 location from logbook ! ")      
+
+print(f"guess (x0,y0) = ({x0},{y0})")
 
 
 rootfilename = filename_image.split(".")[0]
@@ -249,7 +249,7 @@ else:
 print(f"finalpath_output_spectractor = {finalpath_output_spectractor}")
 print(f"output_directory = {output_directory}")
 print(f"output_figures = {output_figures}")
-print(f"config filename = ",{config}"")        
+print(f"config filename = "{config}")        
     
 def cleandir(path):
     if os.path.isdir(path):
@@ -280,16 +280,29 @@ else:
 config=configfilename    
 target=df.iloc[idx]["object"]
 
+
 # # Configuration of the Spectractor running mode
 
-parameters.debug=True
-parameters.verbose=True
-parameters.display=False
+parameters.DEBUG=False
+parameters.VERBOSE=True
+parameters.DISPLAY=False
 parameters.LIVE_FIT=False
 
 parameters.LSST_SAVEFIGPATH=True
 parameters.LSST_SAVEFIGPATH=output_figures
 
+
+image=Image(file_name=filename, disperser_label=disperser_label, config=config)
+title="{}) {}".format(idx,filename_image)
+image.plot_image(figsize=(12, 10),scale="log",title=title)
+parameters.VERBOSE = True
+parameters.DEBUG = True
+guess = [x0,y0]
+x1, y1 = find_target(image, guess,rotated=False)
+print(x1,y1)
+      
+      
+      
 
 # Usually stop here if one just want to get the 0th order location
 if not FLAG_GO_FOR_RECONSTRUCTION_WTH_SPECTRACTOR:
