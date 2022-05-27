@@ -249,7 +249,7 @@ else:
 print(f"finalpath_output_spectractor = {finalpath_output_spectractor}")
 print(f"output_directory = {output_directory}")
 print(f"output_figures = {output_figures}")
-print(f"config filename = "{config}")        
+print(f"config filename = {configfilename}")        
     
 def cleandir(path):
     if os.path.isdir(path):
