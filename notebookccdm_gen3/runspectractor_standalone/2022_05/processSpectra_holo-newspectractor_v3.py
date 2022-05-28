@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# process spectra for AuxTel with new spectractor (May 2022)
+# process spectra for AuxTel Holograms  with new spectractor (May 2022)
 
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab/IN2P3/CNES, DESC-LSST fullmember, behalf AuxTel Teal VERA C. Rubin observatory
 # - creation date : Thursday 26th May 2022
+# - Last update : May 28th 2022
 
 import sys
 print("python path       : ",sys.path)
@@ -241,8 +242,8 @@ if configdir =="":
     output_directory="./outputs_process_" + dispersername
     output_figures="figures_process_" + dispersername
 else:
-    output_directory = "./outputs_process_" + dispersername + "_" + configdir + "_" + str(idx)
-    output_figures   = "./figures_process_" + dispersername + "_" + configdir + "_" + str(idx)
+    output_directory = "./outputs_process_" + filterdispersername + "_" + configdir + "_" + str(idx+1)
+    output_figures   = "./figures_process_" + filterdispersername + "_" + configdir + "_" + str(idx+1)
     
 if not os.path.isdir(output_directory):
     os.mkdir(output_directory)

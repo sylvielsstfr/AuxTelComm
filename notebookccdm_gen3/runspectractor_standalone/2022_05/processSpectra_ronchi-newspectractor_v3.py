@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# process spectra for AuxTel with new spectractor (May 2022)
+# process spectra for AuxTel Ronchi with new spectractor (May 2022)
 
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab/IN2P3/CNES, DESC-LSST fullmember, behalf AuxTel Teal VERA C. Rubin observatory
 # - creation date : Thursday 26th May 2022
+# - last update : May 28th 2022
 
 import sys
 print("python path       : ",sys.path)
@@ -17,7 +18,7 @@ print("python version    : ",sys.version)
 #-----------------------------------------------------------------------------------------------
 #
 #  1  : DAYNUM  ex 20220316
-#  2  : filterdispersername  ex "empty~holo4_003"
+#  2  : filterdispersername  ex "empty~ronchi170lpmm"
 #  3  : image_index in logbook 
 
 nargs = len(sys.argv) - 1
@@ -240,11 +241,11 @@ finalpath_output_spectractor=os.path.join(path_output_spectractor,subdir)
 
 # local directories to put spectra and plots
 if configdir =="":
-    output_directory="./outputs_process_" + dispersername
-    output_figures="figures_process_" + dispersername
+    output_directory="./outputs_process_" + filterdispersername
+    output_figures="figures_process_" + filterdispersername
 else:
-    output_directory = "./outputs_process_" + dispersername + "_" + configdir + "_" + str(idx)
-    output_figures   = "./figures_process_" + dispersername + "_" + configdir + "_" + str(idx)
+    output_directory = "./outputs_process_" + filterdispersername + "_" + configdir + "_" + str(idx+1)
+    output_figures   = "./figures_process_" + filterdispersername + "_" + configdir + "_" + str(idx+1)
 
 print(f"finalpath_output_spectractor = {finalpath_output_spectractor}")
 print(f"output_directory = {output_directory}")
