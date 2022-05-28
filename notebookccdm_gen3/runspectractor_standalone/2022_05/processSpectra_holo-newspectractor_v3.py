@@ -367,8 +367,8 @@ print("finalpath_output_spectractor = ",finalpath_output_spectractor)
 os.listdir(os.path.join(finalpath_output_spectractor,"basespec"))
 os.listdir(os.path.join(finalpath_output_spectractor,"plots"))
 
-shutil.rmtree(output_directory)
-shutil.rmtree(output_figures)
+#shutil.rmtree(output_directory)
+#shutil.rmtree(output_figures)
 
 
 
