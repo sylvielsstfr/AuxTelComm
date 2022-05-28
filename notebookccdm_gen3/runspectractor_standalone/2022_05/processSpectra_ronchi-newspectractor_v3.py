@@ -127,7 +127,7 @@ disperser_label = filterdispersername.split("~")[-1]
 
 # select if we run at CC or not (locally) 
 # /sps/lsst/groups/auxtel/data/2022/holo/20220317
-HOSTCC=False
+HOSTCC=True
 
 # Set path depending on which computer running (according HOSTCC)
 if HOSTCC:
