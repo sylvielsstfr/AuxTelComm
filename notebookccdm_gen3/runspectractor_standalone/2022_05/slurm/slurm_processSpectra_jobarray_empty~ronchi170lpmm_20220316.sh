@@ -3,8 +3,8 @@
 # SLURM options
 ###################################
 #SBATCH --job-name=emptyronchi
-#SBATCH --output=arrayconfH_%A_%a.out
-#SBATCH --error=arrayconfH_%A_%a.err
+#SBATCH --output=emptyronchi_%A_%a.out
+#SBATCH --error=emptyronchi_%A_%a.err
 #SBATCH --array=1-36
 #SBATCH --time=1-00:00:00
 #SBATCH --ntasks=1

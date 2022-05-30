@@ -2,10 +2,10 @@
 ####################################
 # SLURM options
 ###################################
-#SBATCH --job-name=BG40holo
-#SBATCH --output=bg40holo_%A_%a.out
-#SBATCH --error=bg40holo_%A_%a.err
-#SBATCH --array=1-8
+#SBATCH --job-name=emptyholo2
+#SBATCH --output=emptyholo2_%A_%a.out
+#SBATCH --error=emptyholo2_%A_%a.err
+#SBATCH --array=1-60
 #SBATCH --time=1-00:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem=20G
@@ -35,8 +35,9 @@ which python
 cd ${NEWHOME}/desc/AuxTelComm/notebookccdm_gen3/runspectractor_standalone/2022_05
 
 
-DAYNUM="20211104"
-FILTERDISPERSERNAME="BG40~holo4_003"
+DAYNUM="20220317"
+FILTERDISPERSERNAME="empty~holo4_003"
+
 python processSpectra_holo-newspectractor_v3.py ${DAYNUM} ${FILTERDISPERSERNAME} ${SLURM_ARRAY_TASK_ID}
 
 

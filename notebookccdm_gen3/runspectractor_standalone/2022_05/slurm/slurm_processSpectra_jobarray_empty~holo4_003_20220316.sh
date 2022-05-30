@@ -3,8 +3,8 @@
 # SLURM options
 ###################################
 #SBATCH --job-name=emptyholo
-#SBATCH --output=arrayconfH_%A_%a.out
-#SBATCH --error=arrayconfH_%A_%a.err
+#SBATCH --output=emptyholo_%A_%a.out
+#SBATCH --error=emptyholo_%A_%a.err
 #SBATCH --array=1-28
 #SBATCH --time=1-00:00:00
 #SBATCH --ntasks=1
