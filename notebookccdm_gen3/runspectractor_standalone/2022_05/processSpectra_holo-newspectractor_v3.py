@@ -337,16 +337,16 @@ if FLAG_MANAGE_OUTPUT_SPECTRACTOR:
             os.mkdir(path_output_spectractor)
 
     
-    if not os.path.isdir(output_directory):
-        os.mkdir(output_directory)
-    else:
-        cleandir(output_directory)
+    # if not os.path.isdir(output_directory):
+    #    os.mkdir(output_directory)
+    # else:
+    #    cleandir(output_directory)
  
     # manage subdirs spectrum/ and plots/
-    if not os.path.isdir(output_figures):
-        os.mkdir(output_figures)
-    else:
-        cleandir(output_figures)
+    # if not os.path.isdir(output_figures):
+    #    os.mkdir(output_figures)
+    # else:
+    #    cleandir(output_figures)
     
     if not os.path.isdir(finalpath_output_spectractor):
         os.mkdir(finalpath_output_spectractor)
