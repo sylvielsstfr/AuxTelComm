@@ -1,7 +1,8 @@
 # README.md
 
 - author : Sylvie Dagoret-Campagne
-- creation date : June 8th 20
+- creation date : June 8th 2022
+
 
 # example to work on full spectrum without BG40
 
