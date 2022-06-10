@@ -109,7 +109,7 @@ print("List of configuration files available : ",os.listdir("./config"))
 
 # Choose the config filename
 list_of_spectractorconfigfiles=['auxtel_config_holo_DECONVOLUTION_PSF1D.ini','auxtel_config_holo_DECONVOLUTION_PSF2D.ini','auxtel_config_holo_DECONVOLUTION_FFM.ini','auxtel_config_holo_DECONVOLUTION_PSF2DFFM.ini']
-config_idx = 0
+config_idx = 3
 configfilename= os.path.join("./config",list_of_spectractorconfigfiles[config_idx])
 configdir = "config_" + (list_of_spectractorconfigfiles[config_idx].split("auxtel_config_holo_")[-1]).split(".") [0]
 
