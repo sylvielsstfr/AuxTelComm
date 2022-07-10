@@ -84,9 +84,9 @@ from astropy.io import fits
 from astropy.coordinates import Angle
 from astropy import units as u
 from spectractor import parameters
-from spectractor.extractor.extractor import Spectractor,dumpParameters
+from spectractor.extractor.extractor import Spectractor,dumpParameters,dumpfitparameters
 from spectractor.extractor.images import *
-from spectractor.config import load_config
+from spectractor.config import load_config,set_logger
 from scipy import ndimage, misc
 
 
@@ -111,15 +111,22 @@ FLAG_RUNWITHEXCEPTIONS = False
 print("List of configuration files available : ",os.listdir("./config"))
 
 # Choose the config filename
-list_of_spectractorconfigfiles=['auxtel_config_holo_DECONVOLUTION_PSF1D.ini',
-                                'auxtel_config_holo_DECONVOLUTION_PSF2D.ini',
-                                'auxtel_config_holo_DECONVOLUTION_FFM.ini',
-                                'auxtel_config_holo_DECONVOLUTION_PSF2DFFM.ini',
-                                'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1D.ini',
-                                'auxtel_config_holo_DECONVOLUTION_REBIN2PSF2D.ini']
-                               
-                               
-config_idx = 4
+# Choose the config filename
+list_of_spectractorconfigfiles= ['auxtel_config_holo_DECONVOLUTION_PSF1D.ini' ,
+                                 'auxtel_config_holo_DECONVOLUTION_PSF2D.ini',
+                                 'auxtel_config_holo_DECONVOLUTION_FFM.ini',
+                                 'auxtel_config_holo_DECONVOLUTION_PSF2DFFM.ini',
+                                 'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1D.ini',
+                                 'auxtel_config_holo_DECONVOLUTION_REBIN2FFM.ini',
+                                 'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1DFFM300650.ini',
+                                 'auxtel_config_holo_DECONVOLUTION_REBIN2PSF2D.ini',
+                                 'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1DrotA.ini',
+                                 'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1DrotB.ini',
+                                 'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1DrotC.ini',
+                                 'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1DrotD.ini']
+config_idx = 2
+
+
 configfilename= os.path.join("./config",list_of_spectractorconfigfiles[config_idx])
 configdir = "config_" + (list_of_spectractorconfigfiles[config_idx].split("auxtel_config_holo_")[-1]).split(".") [0]
 
@@ -144,7 +151,10 @@ disperser_label = filterdispersername.split("~")[-1]
 
 # select if we run at CC or not (locally) 
 # /sps/lsst/groups/auxtel/data/2022/holo/20220317
-HOSTCC=True
+HOSTCC=False
+LAPTOP=True
+
+
 
 # Set path depending on which computer running (according HOSTCC)
 if HOSTCC:
@@ -161,17 +171,32 @@ if HOSTCC:
         path_toptoptopoutput_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/"+imagemode)
 
 else:
-    path_auxtel="/Users/sylvie/DATA/AuxTelData2022"
-    path_spectractor=os.path.join(path_auxtel,"/Users/sylvie/MacOSX/GitHub/LSST/Spectractor")
-    path_spectractor_config=os.path.join(path_spectractor,"config")
-    path_images=os.path.join(path_auxtel,"data/2022/"+filterdispersername+"/"+DATE)
-    if configdir == "":
-        path_output_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+DATE)
+    if not LAPTOP:
+        path_auxtel="/Users/sylvie/DATA/AuxTelData2022"
+        path_spectractor=os.path.join(path_auxtel,"/Users/sylvie/MacOSX/GitHub/LSST/Spectractor")
+        path_spectractor_config=os.path.join(path_spectractor,"config")
+        path_images=os.path.join(path_auxtel,"data/2022/"+filterdispersername+"/"+DATE)
+        if configdir == "":
+            path_output_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+DATE)
+        else:
+            path_output_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir+"/"+DATE)
+            path_topoutput_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir)
+            path_toptopoutput_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/"+imagemode+"/"+filterdispersername)
+            path_toptoptopoutput_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/"+imagemode)
     else:
-        path_output_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir+"/"+DATE)
-        path_topoutput_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir)
-        path_toptopoutput_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/"+imagemode+"/"+filterdispersername)
-        path_toptoptopoutput_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/"+imagemode)
+        path_auxtel="/Users/dagoret/DATA/AuxTelData2022"
+        path_spectractor=os.path.join(path_auxtel,"/Users/dagoret/MacOSX/GitHub/LSST/Spectractor")
+        path_spectractor_config=os.path.join(path_spectractor,"config")
+        path_images=os.path.join(path_auxtel,"data/2022/"+filterdispersername+"/"+DATE)
+        if configdir == "":
+            path_output_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+DATE)
+        else:
+            path_output_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir+"/"+DATE)
+            path_topoutput_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir)
+            path_toptopoutput_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/"+imagemode+"/"+filterdispersername)
+            path_toptoptopoutput_spectractor=os.path.join(path_auxtel,"data/2022/OutputSpectractor/"+imagemode)
+        
+
 
 
 print(f"path_images                   = {path_images}")
