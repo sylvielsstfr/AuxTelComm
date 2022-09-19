@@ -2,10 +2,10 @@
 ####################################
 # SLURM options
 ###################################
-#SBATCH --job-name=emptyholo2
+#SBATCH --job-name=emptholo2
 #SBATCH --output=emptyholo2_%A_%a.out
 #SBATCH --error=emptyholo2_%A_%a.err
-#SBATCH --array=1-60
+#SBATCH --array=1-81
 #SBATCH --time=1-00:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem=20G

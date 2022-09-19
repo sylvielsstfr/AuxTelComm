@@ -2,16 +2,17 @@
 ####################################
 # SLURM options
 ###################################
-#SBATCH --job-name=emptyholo
-#SBATCH --output=emptyholo_%A_%a.out
-#SBATCH --error=emptyholo_%A_%a.err
-#SBATCH --array=1-28
+#SBATCH --job-name=emptholo1
+#SBATCH --output=emptholo1_%A_%a.out
+#SBATCH --error=emptyholo1_%A_%a.err
+#SBATCH --array=1-2
 #SBATCH --time=1-00:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem=20G
 #SBATCH --partition htc
 # #######################################
 
+# 113 exposures
 # Print the task id.
 echo "My SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 

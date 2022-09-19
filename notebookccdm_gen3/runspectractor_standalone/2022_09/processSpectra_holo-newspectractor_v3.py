@@ -6,7 +6,9 @@
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab/IN2P3/CNES, DESC-LSST fullmember, behalf AuxTel Teal VERA C. Rubin observatory
 # - creation date : Monday 19th September 2022
-# - Last update : May 28th 2022
+# - Last update : September 19th 2022
+
+# source /sps/lsst/groups/auxtel/softs/MySetup_py3_SDC.sh 
 
 import sys
 print("python path       : ",sys.path)
@@ -17,13 +19,14 @@ print("python version    : ",sys.version)
 # Handle input arguments
 #-----------------------------------------------------------------------------------------------
 #
-#  1  : DAYNUM  ex 20220607
+#  1  : DAYNUM  ex 20220608
 #  2  : filterdispersername  ex "empty~holo4_003"
 #  3  : image_index in logbook 
 
 nargs = len(sys.argv) - 1
 
 print(f"number of arguments = {nargs}")
+print("sys.argv = ",sys.argv)
 
 if nargs == 3:
     # Output argument-wise
@@ -39,8 +42,8 @@ if nargs == 3:
         position = position + 1
         
 else:
-    print(f"{sys.argv[0]} requires 3 positional arguments : 1: the datestring 2: filterdispersername 3: the image rank") 
-    print(f"example :  \t python {sys.argv[0]} 20220316 empty~holo4_003 1")
+    print(f" \t !!!! error {sys.argv[0]} requires 3 positional arguments : 1: the datestring 2: filterdispersername 3: the image rank") 
+    print(f" \t - example :  \t python {sys.argv[0]} 20220608 empty~holo4_003 1")
     exit(-1)
     
 
@@ -123,7 +126,9 @@ list_of_spectractorconfigfiles= ['auxtel_config_holo_DECONVOLUTION_PSF1D.ini' ,
                                  'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1DrotA.ini',
                                  'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1DrotB.ini',
                                  'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1DrotC.ini',
-                                 'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1DrotD.ini']
+                                 'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1DrotD.ini',
+                                 'auxtel_config_holo_DECONVOLUTION_PSF1D_BG40.ini'
+                                ]
 config_idx = 0
 
 
@@ -151,8 +156,8 @@ disperser_label = filterdispersername.split("~")[-1]
 
 # select if we run at CC or not (locally) 
 # /sps/lsst/groups/auxtel/data/2022/holo/20220317
-HOSTCC=False
-LAPTOP=True
+HOSTCC=True
+LAPTOP=False
 
 
 
