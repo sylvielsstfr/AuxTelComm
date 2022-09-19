@@ -14,6 +14,7 @@
 # - creation date : 2022/09/19
 # - last update : 2022/09/19
 # 
+# srun -p htc_interactive -n 8 --pty bash -i
 # source /cvmfs/sw.lsst.eu/linux-x86_64/lsst_distrib/w_2022_09/loadLSST.bash 
 # setup lsst_distrib
 
