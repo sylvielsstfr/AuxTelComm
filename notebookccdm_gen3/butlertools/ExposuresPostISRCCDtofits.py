@@ -11,12 +11,11 @@
 # 
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab
-# - creation date : 2022/03/22
-# 
-# - creation : 2022/09/19
+# - creation date : 2022/09/19
 # - last update : 2022/09/19
 # 
-# 
+# source /cvmfs/sw.lsst.eu/linux-x86_64/lsst_distrib/w_2022_09/loadLSST.bash 
+# setup lsst_distrib
 
 
 
@@ -26,7 +25,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from pathlib import Path
-
+from astropy.io import fits
 
 import lsst.daf.butler as dafButler
 
@@ -107,7 +106,7 @@ print("all_filters \t : ", all_filters)
 
 # Selection of date only
 
-DATESEL =  20220607
+DATESEL =  20220608
 
 print("Selected date \t : ", DATESEL)
 
@@ -115,10 +114,11 @@ print("Selected date \t : ", DATESEL)
 all_filters_thiday = df[df["exposure_date"]== DATESEL]["filter"].unique()
 print("all filters this day : ",all_filters_thiday) 
 
+# temporary
+#all_filters_thiday = np.delete(all_filters_thiday,0)
+
+
 NBFILTERSTHIDAY = len(all_filters_thiday) 
-
-
-
 
 
 #FILTERSEL = "empty~ronchi170lpmm"
