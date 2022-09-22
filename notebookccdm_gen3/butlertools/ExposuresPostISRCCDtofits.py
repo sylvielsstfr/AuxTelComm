@@ -107,7 +107,7 @@ print("all_filters \t : ", all_filters)
 
 # Selection of date only
 
-DATESEL =  20220609
+DATESEL =  20220630
 
 print("Selected date \t : ", DATESEL)
 
