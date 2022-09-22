@@ -1,6 +1,6 @@
 #command line
 #
-# python run_processstarOneImage.py --reposdir /sdf/home/d/dagoret/repos/repos_w_2022_34 --listofimages /sdf/home/d/dagoret/notebooks/AuxTelComm/notebooks_usdf/butlertools/all_visitdispersers/20220607/visitdispersers_20220607_filt_empty-holo4_003.list --num=1
+# python run_processstarOneImage.py --reposdir /sdf/home/d/dagoret/repos/repos_w_2022_39 --listofimages /sdf/home/d/dagoret/notebooks/AuxTelComm/notebooks_usdf/butlertools/all_visitdispersers/20220607/visitdispersers_20220607_filt_empty-holo4_003.list --num=1
 #
 
 import os
@@ -9,7 +9,7 @@ import numpy as np
 import argparse
 
 
-reposdir="/sdf/home/d/dagoret/repos/repos_w_2022_34"
+reposdir="/sdf/home/d/dagoret/repos/repos_w_2022_39"
 listofimages="/sdf/home/d/dagoret/notebooks/AuxTelComm/notebooks_usdf/butlertools/all_visitdispersers/20220607/visitdispersers_20220607_filt_empty-holo4_003.list"
 
 
@@ -47,6 +47,6 @@ seq=seqnum[num-1]
 command_line="pipetask run -b /sdf/group/rubin/repo/main -p {}/atmospec/pipelines/processStar.yaml -i LATISS/raw/all,refcats,LATISS/calib -o u/dagoret/test_auxtel_v0 -d \"exposure.day_obs={} and exposure.seq_num={} and instrument='LATISS'\" --register-dataset-types --clobber-outputs".format(REPOSDIR,dateobs,seq)
 
 print(command_line)
-#os.system(command_line)
+os.system(command_line)
 
 
