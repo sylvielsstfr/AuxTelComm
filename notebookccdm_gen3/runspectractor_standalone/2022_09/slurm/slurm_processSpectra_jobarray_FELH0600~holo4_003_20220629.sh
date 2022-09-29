@@ -2,10 +2,10 @@
 ####################################
 # SLURM options
 ###################################
-#SBATCH --job-name=holofelh
+#SBATCH --job-name=felholo
 #SBATCH --output=felholo_%A_%a.out
 #SBATCH --error=felholo_%A_%a.err
-#SBATCH --array=1-38
+#SBATCH --array=1-39
 #SBATCH --time=1-00:00:00
 #SBATCH --ntasks=1
 #SBATCH --mem=20G
