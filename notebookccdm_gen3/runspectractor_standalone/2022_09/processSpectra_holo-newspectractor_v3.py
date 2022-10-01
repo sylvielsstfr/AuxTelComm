@@ -290,11 +290,11 @@ print(f"finalpath_output_spectractor = {finalpath_output_spectractor}")
 
 # local directories to put spectra and plots
 if configdir =="":
-    output_directory="./outputs_process_" + dispersername
-    output_figures="figures_process_" + dispersername
+    output_directory="./outputs_process_" + DATE  + '_' + dispersername
+    output_figures="figures_process_" + DATE + '_' + dispersername
 else:
-    output_directory = "./outputs_process_" + filterdispersername + "_" + configdir + "_" + str(idx+1)
-    output_figures   = "./figures_process_" + filterdispersername + "_" + configdir + "_" + str(idx+1)
+    output_directory = "./outputs_process_"+ DATE +"_"+ filterdispersername + "_" + configdir + "_" + str(idx+1)
+    output_figures   = "./figures_process_"+ DATE +"_"+ filterdispersername + "_" + configdir + "_" + str(idx+1)
     
 if not os.path.isdir(output_directory):
     os.mkdir(output_directory)
@@ -418,8 +418,8 @@ print("finalpath_output_spectractor = ",finalpath_output_spectractor)
 os.listdir(os.path.join(finalpath_output_spectractor,"basespec"))
 os.listdir(os.path.join(finalpath_output_spectractor,"plots"))
 
-#shutil.rmtree(output_directory)
-#shutil.rmtree(output_figures)
+shutil.rmtree(output_directory)
+shutil.rmtree(output_figures)
 
 
 
