@@ -127,9 +127,10 @@ list_of_spectractorconfigfiles= ['auxtel_config_holo_DECONVOLUTION_PSF1D.ini' ,
                                  'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1DrotB.ini',
                                  'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1DrotC.ini',
                                  'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1DrotD.ini',
-                                 'auxtel_config_holo_DECONVOLUTION_PSF1D_BG40.ini'
+                                 'auxtel_config_holo_DECONVOLUTION_PSF1D_BG40.ini',
+				 'auxtel_config_holo_DECONVOLUTION_PSF1DTRUNC.ini'
                                 ]
-config_idx = 0
+config_idx = 13
 
 
 configfilename= os.path.join("./config",list_of_spectractorconfigfiles[config_idx])
@@ -290,8 +291,8 @@ print(f"finalpath_output_spectractor = {finalpath_output_spectractor}")
 
 # local directories to put spectra and plots
 if configdir =="":
-    output_directory="./outputs_process_" + DATE  + '_' + dispersername
-    output_figures="figures_process_" + DATE + '_' + dispersername
+    output_directory="./outputs_process_" + DATE  + '_' + dispersername + "_" + str(idx+1)
+    output_figures="figures_process_" + DATE + '_' + dispersername + "_" + str(idx+1)
 else:
     output_directory = "./outputs_process_"+ DATE +"_"+ filterdispersername + "_" + configdir + "_" + str(idx+1)
     output_figures   = "./figures_process_"+ DATE +"_"+ filterdispersername + "_" + configdir + "_" + str(idx+1)
