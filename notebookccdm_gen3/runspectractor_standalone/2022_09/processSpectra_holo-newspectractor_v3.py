@@ -128,9 +128,10 @@ list_of_spectractorconfigfiles= ['auxtel_config_holo_DECONVOLUTION_PSF1D.ini' ,
                                  'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1DrotC.ini',
                                  'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1DrotD.ini',
                                  'auxtel_config_holo_DECONVOLUTION_PSF1D_BG40.ini',
-				 'auxtel_config_holo_DECONVOLUTION_PSF1DTRUNC.ini'
+				                 'auxtel_config_holo_DECONVOLUTION_PSF1DTRUNC.ini',
+                                 'auxtel_config_holo_DECONVOLUTION_PSF2DTRUNC.ini'
                                 ]
-config_idx = 13
+config_idx = 14
 
 
 configfilename= os.path.join("./config",list_of_spectractorconfigfiles[config_idx])
