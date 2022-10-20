@@ -3,7 +3,7 @@
 # python run_processstarOneImage.py --reposdir /sdf/home/d/dagoret/repos/repos_w_2022_39 
 #                                   --listofimages /sdf/home/d/dagoret/notebooks/AuxTelComm/notebooks_usdf/butlertools/all_visitdispersers/20220607/visitdispersers_20220607_filt_empty-holo4_003.list 
 #                                   --num=1
-#                                   -- outcoll u/dagoret/mycoll
+#                                   --outcoll u/dagoret/mycoll
 #
 
 import os
@@ -24,7 +24,8 @@ parser.add_argument('--num', type=int, required=True)
 parser.add_argument('--outcoll', type=str, required=True)
 args = parser.parse_args()
 
-print("args = ",args)
+print("***************************************************************************************")
+print("args \t = ",args)
 
 # decode the arguments
 
@@ -32,11 +33,12 @@ print("args = ",args)
 REPOSDIR=args.reposdir
 listofimages=args.listofimages
 num=args.num
+outcoll=args.outcoll
 
-print(REPOSDIR)
-print(listofimages)
-print(num)
-print(outcoll)
+print("REPOSDIR \t = ",REPOSDIR)
+print("listofimages \t = ",listofimages)
+print("num \t = " ,num)
+print("outcoll \t = ",outcoll)
 
 arr=np.loadtxt(listofimages,delimiter=' ', dtype =float).astype(int)
 
@@ -51,7 +53,9 @@ seq=seqnum[num-1]
 
 command_line="pipetask run -b /sdf/group/rubin/repo/main -p {}/atmospec/pipelines/processStar.yaml -i LATISS/raw/all,refcats,LATISS/calib -o {} -d \"exposure.day_obs={} and exposure.seq_num={} and instrument='LATISS'\" --register-dataset-types --clobber-outputs".format(REPOSDIR,outcoll,dateobs,seq)
 
+print("#########################################################################################")
 print(command_line)
+print("#########################################################################################")
 os.system(command_line)
 
 
