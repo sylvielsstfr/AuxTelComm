@@ -2,8 +2,8 @@
 #SBATCH --partition=roma
 #
 #SBATCH --job-name=procstar
-#SBATCH --output=procstar_%A_%a.log
-#SBATCH --error=procstar_%A_%a.log
+#SBATCH --output=procstar_%A_%a.out
+#SBATCH --error=procstar_%A_%a.err
 #SBATCH --array=1-63
 #
 #SBATCH --ntasks=1
@@ -22,11 +22,11 @@ env | grep SLURM
 
 export DISPLAY=
 export LOGBOOKSPATH=/sdf/home/d/dagoret/notebooks/AuxTelComm/notebooks_usdf/butlertools/all_visitdispersers
-export LOGBOOKFILENAME=visitdispersers_20220629_filt_empty-holo4_003.list
+export LOGBOOKFILENAME=visitdispersers_20220630_filt_empty-holo4_003.list
 export FILTERDISPERSER=empty~holo4
-export DATE=20220629
+export DATE=20220630
 export REPOSDIR=/sdf/home/d/dagoret/repos/repos_w_2022_39
-export OUTPUTCOLL=u/dagoret/tests/test_25oct2022_${FILTERDISPERSER}_${DATE} 
+export OUTPUTCOLL=u/dagoret/tests/test_23oct2022_${FILTERDISPERSER}_${DATE} 
 
 # Define the logbook fullfilename
 fullfilenamelogbook=${LOGBOOKSPATH}/${DATE}/${LOGBOOKFILENAME}
