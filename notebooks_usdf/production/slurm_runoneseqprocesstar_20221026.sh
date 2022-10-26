@@ -16,9 +16,19 @@
 export DISPLAY=
 export DATE=20220912
 export FILTERDISPERSER="empty~holo4"
-export LOGBOOKSPATH=/sdf/home/d/dagoret/notebooks/AuxTelComm/notebooks_usdf/butlertools/all_visitdispersers
-export LOGBOOKFILENAME=visitdispersers_${DATE}_filt_empty-holo4_003.list
-export OUTPUTCOLL=u/dagoret/spectro/noflat/${FILTERDISPERSER}/${DATE} 
+export LOGBOOKSPATH="/sdf/home/d/dagoret/notebooks/AuxTelComm/notebooks_usdf/butlertools/all_visitdispersers"
+export LOGBOOKFILENAME="visitdispersers_${DATE}_filt_empty-holo4_003.list"
+export OUTPUTCOLL="u/dagoret/spectro/noflat/${FILTERDISPERSER}/${DATE}" 
+# Define the logbook fullfilename
+fullfilenamelogbook="${LOGBOOKSPATH}/${DATE}/${LOGBOOKFILENAME}"
+
+echo "SLURM batch job" 
+echo "date of observation     : ${DATE}"
+echo "filter - disperser name : ${FILTERDISPERSER}"
+echo "logbbok path            : ${fullfilenamelogbook}"
+echo "output collection       : ${OUTPUTCOLL}"
+
+
 
 # Initialisation of DM
 #----------------------
@@ -27,12 +37,20 @@ source /sdf/group/rubin/sw/tag/w_2022_39/loadLSST.bash
 setup lsst_distrib -t w_2022_39
 source ~/notebooks/.user_setups
 
-# Define the logbook fullfilename
-fullfilenamelogbook=${LOGBOOKSPATH}/${DATE}/${LOGBOOKFILENAME}
+echo "STACK repodir           : ${REPOSDIR}"
+
+#
+# September 12/09/22: 
+# - 157 exposures with empty~holo4_003 in batches of 10 exposures
 
 # range of processing
-VALUEMIN=1
-VALUEMAX=10
+INDEXBATCH=1
+INDEXMIN=1
+INDEXMAX=10
+
+echo "Batch number            : ${INDEXBATCH} ==> index min : ${INDEXMIN} - index max : ${INDEXMAX}"
+
+# init counter over the indexes
 COUNTER=0
 
 # loop on entries in the logbookfilename
@@ -46,12 +64,12 @@ while IFS=: read -r line; do
   seqstr=`echo $line | cut -d " " -f2`
   logfile="logs/log_${COUNTER}_${datestr}_${seqstr}.log"
   echo "----${COUNTER}--- : ${datestr} , ${seqstr}---${logfile}-------"
-  if [ "$COUNTER" -lt $VALUEMIN ]   
+  if [ "$COUNTER" -lt $INDEXMIN ]   
   then
    echo "SKIP ${COUNTER}" 
    continue      # Skip rest of this particular loop iteration.
   fi
-  if [ "$COUNTER" -gt $VALUEMAX ]   
+  if [ "$COUNTER" -gt $INDEXMAX ]   
   then
    echo "SKIP ${COUNTER}"
    continue      # Skip rest of this particular loop iteration.
