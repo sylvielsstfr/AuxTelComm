@@ -14,7 +14,8 @@
 # configuration to be edited each time
 #------------------------------------
 export DISPLAY=
-export DATE=20220912
+export DATE=20220630
+export DATEEXEC=2022_10_26
 export FILTERDISPERSER="empty~holo4"
 export LOGBOOKSPATH="/sdf/home/d/dagoret/notebooks/AuxTelComm/notebooks_usdf/butlertools/all_visitdispersers"
 export LOGBOOKFILENAME="visitdispersers_${DATE}_filt_empty-holo4_003.list"
@@ -22,12 +23,12 @@ export OUTPUTCOLL="u/dagoret/spectro/noflat/${FILTERDISPERSER}/${DATE}"
 # Define the logbook fullfilename
 fullfilenamelogbook="${LOGBOOKSPATH}/${DATE}/${LOGBOOKFILENAME}"
 
-echo "SLURM batch job" 
+echo "SLURM batch job  NO OGA : " 
 echo "date of observation     : ${DATE}"
 echo "filter - disperser name : ${FILTERDISPERSER}"
-echo "logbbok path            : ${fullfilenamelogbook}"
+echo "logbook path            : ${fullfilenamelogbook}"
 echo "output collection       : ${OUTPUTCOLL}"
-
+echo "date of execution       : ${DATEEXEC}
 
 
 # Initialisation of DM
@@ -40,13 +41,13 @@ source ~/notebooks/.user_setups
 echo "STACK repodir           : ${REPOSDIR}"
 
 #
-# September 12/09/22: 
-# - 157 exposures with empty~holo4_003 in batches of 10 exposures
+# June 30/06/22: 
+# - 64 exposures with empty~holo4_003 in batches of 10 exposures
 
 # range of processing
 INDEXBATCH=1
 INDEXMIN=1
-INDEXMAX=10
+INDEXMAX=64
 
 echo "Batch number            : ${INDEXBATCH} ==> index min : ${INDEXMIN} - index max : ${INDEXMAX}"
 
@@ -62,7 +63,7 @@ while IFS=: read -r line; do
  
   datestr=`echo $line | cut -d " " -f1`
   seqstr=`echo $line | cut -d " " -f2`
-  logfile="logs/log_${COUNTER}_${datestr}_${seqstr}.log"
+  logfile="logs/logs_${DATEEXEC}/log_${COUNTER}_${datestr}_${seqstr}.log"
   echo "----${COUNTER}--- : ${datestr} , ${seqstr}---${logfile}-------"
   if [ "$COUNTER" -lt $INDEXMIN ]   
   then
@@ -76,5 +77,5 @@ while IFS=: read -r line; do
   fi
 
   # launch the python script that run DM pipeline
-  python run_processstarOneImage_oga.py --reposdir ${REPOSDIR} --listofimages ${fullfilenamelogbook} --num=${COUNTER} --outcoll=${OUTPUTCOLL} &> ${logfile}
+  python run_processstarOneImage.py --reposdir ${REPOSDIR} --listofimages ${fullfilenamelogbook} --num=${COUNTER} --outcoll=${OUTPUTCOLL} &> ${logfile}
 done < ${fullfilenamelogbook} 

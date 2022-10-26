@@ -15,6 +15,7 @@
 #------------------------------------
 export DISPLAY=
 export DATE=20220912
+export DATEEXEC=2022_10_26
 export FILTERDISPERSER="empty~holo4"
 export LOGBOOKSPATH="/sdf/home/d/dagoret/notebooks/AuxTelComm/notebooks_usdf/butlertools/all_visitdispersers"
 export LOGBOOKFILENAME="visitdispersers_${DATE}_filt_empty-holo4_003.list"
@@ -22,12 +23,12 @@ export OUTPUTCOLL="u/dagoret/spectro/noflat/${FILTERDISPERSER}/${DATE}"
 # Define the logbook fullfilename
 fullfilenamelogbook="${LOGBOOKSPATH}/${DATE}/${LOGBOOKFILENAME}"
 
-echo "SLURM batch job" 
+echo "SLURM batch job for OGA : " 
 echo "date of observation     : ${DATE}"
 echo "filter - disperser name : ${FILTERDISPERSER}"
-echo "logbbok path            : ${fullfilenamelogbook}"
+echo "logbook path            : ${fullfilenamelogbook}"
 echo "output collection       : ${OUTPUTCOLL}"
-
+echo "date of execution       : ${DATEEXEC}
 
 
 # Initialisation of DM
@@ -44,9 +45,9 @@ echo "STACK repodir           : ${REPOSDIR}"
 # - 157 exposures with empty~holo4_003 in batches of 10 exposures
 
 # range of processing
-INDEXBATCH=1
-INDEXMIN=1
-INDEXMAX=10
+INDEXBATCH=2
+INDEXMIN=11
+INDEXMAX=100
 
 echo "Batch number            : ${INDEXBATCH} ==> index min : ${INDEXMIN} - index max : ${INDEXMAX}"
 
@@ -62,7 +63,7 @@ while IFS=: read -r line; do
  
   datestr=`echo $line | cut -d " " -f1`
   seqstr=`echo $line | cut -d " " -f2`
-  logfile="logs/log_${COUNTER}_${datestr}_${seqstr}.log"
+  logfile="logs/logs_${DATEEXEC}/log_${COUNTER}_${datestr}_${seqstr}.log"
   echo "----${COUNTER}--- : ${datestr} , ${seqstr}---${logfile}-------"
   if [ "$COUNTER" -lt $INDEXMIN ]   
   then
