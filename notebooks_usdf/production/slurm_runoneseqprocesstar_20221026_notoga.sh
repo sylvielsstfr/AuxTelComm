@@ -28,7 +28,7 @@ echo "date of observation     : ${DATE}"
 echo "filter - disperser name : ${FILTERDISPERSER}"
 echo "logbook path            : ${fullfilenamelogbook}"
 echo "output collection       : ${OUTPUTCOLL}"
-echo "date of execution       : ${DATEEXEC}
+echo "date of execution       : ${DATEEXEC}"
 
 
 # Initialisation of DM
