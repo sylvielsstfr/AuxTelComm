@@ -51,7 +51,7 @@ dateobs=dates[num-1]
 seq=seqnum[num-1]
         
 
-command_line="pipetask run -b /sdf/group/rubin/repo/main -p {}/atmospec/pipelines/processStar.yaml -i LATISS/raw/all,refcats,LATISS/calib -o {} -d \"exposure.day_obs={} and exposure.seq_num={} and instrument='LATISS'\" --register-dataset-types --clobber-outputs".format(REPOSDIR,outcoll,dateobs,seq)
+command_line="pipetask run -b /sdf/group/rubin/repo/main -p {}/atmospec/pipelines/processStar.yaml -i LATISS/raw/all,refcats,LATISS/calib -o {} -d \"exposure.day_obs={} and exposure.seq_num={} and instrument='LATISS'\" --register-dataset-types --clobber-outputs -j 8".format(REPOSDIR,outcoll,dateobs,seq)
 
 print("#########################################################################################")
 print(command_line)
