@@ -1,6 +1,3 @@
-i#!/usr/bin/env python
-# coding: utf-8
-
 # # Query for Spectraction Results in NON OGA
 
 #  work with Weakly_2022_39
@@ -21,7 +18,7 @@ import lsst.summit.utils.butlerUtils as butlerUtils
 
 import numpy as np
 import matplotlib.pyplot as plt
-get_ipython().run_line_magic('matplotlib', 'inline')
+
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from matplotlib.colors import LogNorm
 import pandas as pd
@@ -56,7 +53,6 @@ registry = butler.registry
 
 
 #### Date & Filter & Disperser
-
 # path index for each month
 #DATE="20211103"
 DATE="20220630"
@@ -66,25 +62,24 @@ filterdispersername = "empty~holo4_003"
 
 
 # ### Spectractor
-
-
 configmode = "PSF2DFFM"
 
 
 # ### The collection
 
-
-#my_collection = "u/dagoret/spectro/noflat/empty~holo4/20211103"
 my_collection = "u/dagoret/spectro/noflat/empty~holo4/"+str(DATE)
 datasetRefs = registry.queryDatasets(datasetType='spectraction', collections=my_collection, where= "instrument='LATISS'")
 
 #butler = butlerUtils.makeDefaultLatissButler(extraCollections=[my_collection])
 
+number_of_references  = len(list(datasetRefs))
+print(f"number_of_references = {number_of_references}")
 
-# ## Loop on exposures
+#### Options
+FLAG_PLOT = False
 
 
-
+#### Loop on exposures
 all_dataId = []     # full data id
 all_spec = []       # spectra
 all_exposures = []  # exposure number
@@ -94,7 +89,7 @@ all_num = []        # sequence numbers
 
 for i, ref in enumerate(datasetRefs):
 
-    print("========================datasetType = spectraction ============================================")
+    print(f"==============({i})========== datasetType = spectraction ============================================")
     print("fullId..................:",ref.dataId.full)
     print("visit...................:",ref.dataId["visit"])
     print("band....................:",ref.dataId["band"])
@@ -115,10 +110,12 @@ for i, ref in enumerate(datasetRefs):
     all_exposures.append(the_exposure)
     all_spec.append(spec)
     all_num.append(the_seq_num)
+    #if i > 15:
+    #    break
 
 
 
-# ## Plot
+#### Plot
 
 
 FLAG_ORDER2 = True
@@ -137,19 +134,19 @@ if FLAG_ORDER2:
 idx=0
 for spec in all_spec:
     
-    fig=plt.figure(figsize=(16,4))
-    
+    # get spectrum 
     s=spec.spectrum
     label = str(idx) +"):" + str(all_exposures[idx])
     
-    ax1 = fig.add_subplot(1, 2, 1)
-    s.plot_spectrum(ax=ax1,force_lines=True,label=label)
+    if FLAG_PLOT:
+        fig=plt.figure(figsize=(16,4))
+        ax1 = fig.add_subplot(1, 2, 1)
+        s.plot_spectrum(ax=ax1,force_lines=True,label=label)
+        ax2 = fig.add_subplot(1, 2, 2)
+        s.plot_spectrogram(ax=ax2,scale="log")
+        plt.show()
     
-    ax2 = fig.add_subplot(1, 2, 2)
-    s.plot_spectrogram(ax=ax2,scale="log")
-    
-    plt.show()
-    
+    # fill collections
     all_lambdas.append(s.lambdas)
     all_data.append(s.data)
     all_data_err.append(s.err)
@@ -158,14 +155,15 @@ for spec in all_spec:
         all_lambdas_order2.append(s.lambdas_order2)
         all_data_order2.append(s.data_order2)
         all_data_err_order2.append(s.err_order2)
-        
+     
+    # save info
     infos.append([idx,s.target.label,s.date_obs,s.airmass,s.temperature,s.pressure,s.humidity])
     idx+=1
 
 
 
-
-plt.imshow(spec.image.data-spec.image.data.min(),origin="lower",norm=LogNorm(vmin=1,vmax=1000))
+if FLAG_PLOT:
+    plt.imshow(spec.image.data-spec.image.data.min(),origin="lower",norm=LogNorm(vmin=1,vmax=1000))
 
 
 # # Generate info
@@ -208,11 +206,12 @@ all_chi2_fit=np.zeros(NN)
 all_a2_fit=np.zeros(NN)
 all_lbda_ref=np.zeros(NN)
 all_tagnumber=np.zeros(NN)
+all_errors=np.zeros(NN)
 
 
 for idx in range(NN):
     
-   
+    header = all_spec[idx].spectrum.header
     tagnum=str(all_num[idx])
     
     #ROTANGLE=  -0.1367006901184345 / [deg] angle of the dispersion axis             
@@ -225,7 +224,15 @@ for idx in range(NN):
     #A2_FIT  =                  1.0                                                  
     #REBIN   =                    2 / original image rebinning factor to get spectrum
     
-    rebin=header["REBIN"]
+    try :
+        rebin=header["REBIN"]
+    except KeyError as e:
+        rebin=2
+        print(f"KeyError exception for spec {idx} : " + str(e) + f" ! ==> force rebin = {rebin}")
+        all_errors[idx]=1
+       
+        
+        
     targetx=header["TARGETX"]*rebin
     targety=header["TARGETY"]*rebin
     rotangle=header["ROTANGLE"]
@@ -279,6 +286,7 @@ for idx in range(NN):
                'targety_pix':all_targety[idx],
                'rotangle':all_rotangle[idx],
                'd2ccd':all_d2ccd[idx],
+               'error':all_errors[idx],   
                'all_lambdas':all_lambdas[idx],
                'all_fluxes':all_data[idx],
                'all_fluxes_err':all_data_err[idx],
@@ -299,6 +307,7 @@ for idx in range(NN):
                'targety_pix':all_targety[idx],
                'rotangle':all_rotangle[idx],
                'd2ccd':all_d2ccd[idx],
+               'error':all_errors[idx],   
                'all_lambdas':all_lambdas[idx],
                'all_fluxes':all_data[idx],
                'all_fluxes_err':all_data_err[idx],
@@ -321,7 +330,7 @@ with open(pkl_infilename, 'rb') as pickle_file:
 
 
 # Get first value of dictionary
-next(iter(content.items()))
+print(next(iter(content.items())))
 
 
 
