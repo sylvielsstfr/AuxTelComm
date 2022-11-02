@@ -1,7 +1,7 @@
 #command line
 #
-# python run_processstarOneImage.py --reposdir /sdf/home/d/dagoret/repos/repos_w_2022_39 
-#                                   --listofimages /sdf/home/d/dagoret/notebooks/AuxTelComm/notebooks_usdf/butlertools/all_visitdispersers/20220607/visitdispersers_20220607_filt_empty-holo4_003.list 
+# python run_processstarOneImage_oga.py --reposdir /sdf/home/d/dagoret/repos/repos_w_2022_39 
+#                                   --listofimages /sdf/home/d/dagoret/notebooks/AuxTelComm/notebooks_usdf/butlertools/all_visitdispersers/20220912/visitdispersers_20220912_filt_empty-holo4_003.list 
 #                                   --num=1
 #                                   --outcoll u/dagoret/mycoll
 #
@@ -17,11 +17,11 @@ listofimages="/sdf/home/d/dagoret/notebooks/AuxTelComm/notebooks_usdf/butlertool
 
 
 # Create the parser
-parser = argparse.ArgumentParser()# Add an argument
-parser.add_argument('--reposdir', type=str, required=True)
-parser.add_argument('--listofimages', type=str, required=True)
-parser.add_argument('--num', type=int, required=True)
-parser.add_argument('--outcoll', type=str, required=True)
+parser = argparse.ArgumentParser(prog="run_processstarOneImage_oga.py",usage="example : python run_processstarOneImage_oga.py --reposdir /sdf/home/d/dagoret/repos/repos_w_2022_39  --listofimages /sdf/home/d/dagoret/notebooks/AuxTelComm/notebooks_usdf/butlertools/all_visitdispersers/20220912/visitdispersers_20220912_filt_empty-holo4_003.list  --num=1 --outcoll u/dagoret/test1_oga")# Add an argument
+parser.add_argument('--reposdir', type=str, required=True,help="where reposdir is location of personal DM software")
+parser.add_argument('--listofimages', type=str, required=True,help="where listofimages is the path of ascii file list of exposures to process by date and seq number")
+parser.add_argument('--num', type=int, required=True,help="where num is the index in the listifimages file")
+parser.add_argument('--outcoll', type=str, required=True,help="where outputcoll is the path of user output collection")
 args = parser.parse_args()
 
 print("***************************************************************************************")
