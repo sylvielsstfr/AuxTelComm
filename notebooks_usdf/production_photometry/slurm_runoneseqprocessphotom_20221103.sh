@@ -23,12 +23,6 @@ export OUTPUTCOLL="u/dagoret/photo/${FILTERDISPERSER}/${DATE}"
 # Define the logbook fullfilename
 fullfilenamelogbook="${LOGBOOKSPATH}/${DATE}/${LOGBOOKFILENAME}"
 
-echo "SLURM batch job for OGA : " 
-echo "date of observation     : ${DATE}"
-echo "filter - disperser name : ${FILTERDISPERSER}"
-echo "logbook path            : ${fullfilenamelogbook}"
-echo "output collection       : ${OUTPUTCOLL}"
-echo "date of execution       : ${DATEEXEC}"
 
 
 # Initialisation of DM
@@ -38,7 +32,17 @@ source /sdf/group/rubin/sw/tag/w_2022_39/loadLSST.bash
 setup lsst_distrib -t w_2022_39
 source ~/notebooks/.user_setups
 
+echo "SLURM batch job for OGA : "
+echo "DRP_PIPE_DIR            : ${DRP_PIPE_DIR}"
 echo "STACK repodir           : ${REPOSDIR}"
+echo "date of observation     : ${DATE}"
+echo "filter - disperser name : ${FILTERDISPERSER}"
+echo "logbook path            : ${fullfilenamelogbook}"
+echo "output collection       : ${OUTPUTCOLL}"
+echo "date of execution       : ${DATEEXEC}"
+
+
+
 
 #
 # September 12/09/22: 
@@ -78,5 +82,5 @@ while IFS=: read -r line; do
   fi
 
   # launch the python script that run DM pipeline
-  python run_processphotomOneImage.py --reposdir ${REPOSDIR} --listofimages ${fullfilenamelogbook} --num=${COUNTER} --outcoll=${OUTPUTCOLL} &> ${logfile}
+  python run_processphotomOneImage.py --reposdir ${REPOSDIR} --drppipedir ${DRP_PIPE_DIR} --listofimages ${fullfilenamelogbook} --num=${COUNTER} --outcoll=${OUTPUTCOLL} &> ${logfile}
 done < ${fullfilenamelogbook} 
