@@ -54,7 +54,7 @@ registry = butler.registry
 
 #### Date & Filter & Disperser
 # path index for each month
-DATE="20220912"
+DATE="20220913"
 filterdispersername = "empty~holo4_003"
 #filterdispersername = "BG40~holo4_003"
 #filterdispersername = "FELH0600~holo4_003"
