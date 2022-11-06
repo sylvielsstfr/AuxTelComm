@@ -66,12 +66,12 @@ OBS_Altitude = str(LSST_Altitude)
 #OBS_Altitude = str(MPL_Altitude)
 
 
-TOPDIR='simulations/RT/2.0.3/LS'
+TOPDIR='simulationsHR/RT/2.0.3/LS'
 
 
 
 def CleanSimDir():   
-    os.system("rm -rf simulations")
+    os.system("rm -rf simulationsHR")
 
 
 ############################################################################
@@ -321,7 +321,7 @@ def ProcessSimulation(airmass_num,pwv_num,oz_num,press_num,prof_str='us',proc_st
         # loop on molecular model resolution
         #molecularresolution = np.array(['COARSE','MEDIUM','FINE']) 
         # select only COARSE Model
-        molecularresolution = np.array(['COARSE'])    
+        molecularresolution = np.array(['FINE'])    
         for molres in molecularresolution:
             if molres=='COARSE':
                 molresol ='coarse'
@@ -402,7 +402,7 @@ def ProcessSimulation(airmass_num,pwv_num,oz_num,press_num,prof_str='us',proc_st
 
         uvspec.inp["output_user"] = 'lambda edir'
         uvspec.inp["altitude"] = OBS_Altitude   # Altitude  observatory
-        uvspec.inp["source"] = 'solar '+libradtrandatapath+'/solar_flux/kurudz_1.0nm.dat'
+        uvspec.inp["source"] = 'solar '+libradtrandatapath+'/solar_flux/kurudz_0.1nm.dat'
         #uvspec.inp["source"] = 'solar '+libradtranpath+'data/solar_flux/kurudz_1.0nm.dat'
         #uvspec.inp["source"] = 'solar '+libradtranpath+'data/solar_flux/kurudz_0.1nm.dat'
         uvspec.inp["sza"]        = str(sza)
@@ -593,7 +593,7 @@ def ProcessSimulationaer(airmass_num,pwv_num,oz_num,aer_num,press_num,prof_str='
         # loop on molecular model resolution
         #molecularresolution = np.array(['COARSE','MEDIUM','FINE']) 
         # select only COARSE Model
-        molecularresolution = np.array(['COARSE'])    
+        molecularresolution = np.array(['FINE'])    
         for molres in molecularresolution:
             if molres=='COARSE':
                 molresol ='coarse'
@@ -682,7 +682,7 @@ def ProcessSimulationaer(airmass_num,pwv_num,oz_num,aer_num,press_num,prof_str='
 
         uvspec.inp["output_user"] = 'lambda edir'
         uvspec.inp["altitude"] = OBS_Altitude   # Altitude LSST observatory
-        uvspec.inp["source"] = 'solar '+libradtrandatapath+'/solar_flux/kurudz_1.0nm.dat'
+        uvspec.inp["source"] = 'solar '+libradtrandatapath+'/solar_flux/kurudz_0.1nm.dat'
         #uvspec.inp["source"] = 'solar '+libradtranpath+'data/solar_flux/kurudz_1.0nm.dat'
         #uvspec.inp["source"] = 'solar '+libradtranpath+'data/solar_flux/kurudz_0.1nm.dat'
         uvspec.inp["sza"]        = str(sza)
@@ -843,7 +843,7 @@ def ProcessSimulationaer1(airmass_num,pwv_num,oz_num,wl0_num,tau0_num,press_num,
         # loop on molecular model resolution
         #molecularresolution = np.array(['COARSE','MEDIUM','FINE']) 
         # select only COARSE Model
-        molecularresolution = np.array(['COARSE'])    
+        molecularresolution = np.array(['FINE'])    
         for molres in molecularresolution:
             if molres=='COARSE':
                 molresol ='coarse'
@@ -924,7 +924,7 @@ def ProcessSimulationaer1(airmass_num,pwv_num,oz_num,wl0_num,tau0_num,press_num,
                 
         uvspec.inp["output_user"] = 'lambda edir'
         uvspec.inp["altitude"] = OBS_Altitude   # Altitude LSST observatory
-        uvspec.inp["source"] = 'solar '+libradtrandatapath+'/solar_flux/kurudz_1.0nm.dat'
+        uvspec.inp["source"] = 'solar '+libradtrandatapath+'/solar_flux/kurudz_0.1nm.dat'
         #uvspec.inp["source"] = 'solar '+libradtranpath+'data/solar_flux/kurudz_1.0nm.dat'
         #uvspec.inp["source"] = 'solar '+libradtranpath+'data/solar_flux/kurudz_0.1nm.dat'
         uvspec.inp["sza"]        = str(sza)
@@ -1086,7 +1086,7 @@ def ProcessSimulationaer2(airmass_num,pwv_num,oz_num,alpha_num,beta_num,press_nu
         # loop on molecular model resolution
         #molecularresolution = np.array(['COARSE','MEDIUM','FINE']) 
         # select only COARSE Model
-        molecularresolution = np.array(['COARSE'])    
+        molecularresolution = np.array(['FINE'])    
         for molres in molecularresolution:
             if molres=='COARSE':
                 molresol ='coarse'
@@ -1172,7 +1172,7 @@ def ProcessSimulationaer2(airmass_num,pwv_num,oz_num,alpha_num,beta_num,press_nu
                 
         uvspec.inp["output_user"] = 'lambda edir'
         uvspec.inp["altitude"] = OBS_Altitude   # Altitude LSST observatory
-        uvspec.inp["source"] = 'solar '+libradtrandatapath+'/solar_flux/kurudz_1.0nm.dat'
+        uvspec.inp["source"] = 'solar '+libradtrandatapath+'/solar_flux/kurudz_0.1nm.dat'
         #uvspec.inp["source"] = 'solar '+libradtranpath+'data/solar_flux/kurudz_1.0nm.dat'
         #uvspec.inp["source"] = 'solar '+libradtranpath+'data/solar_flux/kurudz_0.1nm.dat'
         uvspec.inp["sza"]        = str(sza)
