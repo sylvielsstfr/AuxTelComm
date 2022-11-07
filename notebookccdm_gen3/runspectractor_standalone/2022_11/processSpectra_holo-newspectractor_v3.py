@@ -350,7 +350,7 @@ if FLAG_RUNWITHEXCEPTIONS:
         print(f"\t >>>>>  errtype = {errtype}")
         print(f"\t >>>>>> description = {description}")
 else:
-    spectrum = Spectractor(filename, output_directory, guess=[x0,y0], target_label=_name_stripped, disperser_label=disperser_label, config=config)
+    spectrum = Spectractor(filename, output_directory, guess=[x0,y0], target_label=target_name_stripped, disperser_label=disperser_label, config=config)
 
 
 # # Backup output
