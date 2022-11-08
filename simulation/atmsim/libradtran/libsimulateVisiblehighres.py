@@ -15,8 +15,7 @@ import numpy as np
 import pandas as pd
 from astropy.io import fits
 import sys,getopt
-
-from libradtranpy import UVspec3
+import UVspec3
 
 FLAG_DEBUG = False
 
