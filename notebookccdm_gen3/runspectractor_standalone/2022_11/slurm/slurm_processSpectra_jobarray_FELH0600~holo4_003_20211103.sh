@@ -30,7 +30,7 @@ export AUXTELDM2="${AUXTELHOME}/softs/shared/auxteldm_gen3"
 
 
 cd ${AUXTELHOME}/softs
-source MySetup_py3_SDC.sh 
+source MySetup_py39_SDC.sh 
 
 which python
 cd ${NEWHOME}/desc/AuxTelComm/notebookccdm_gen3/runspectractor_standalone/2022_11

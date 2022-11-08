@@ -6,9 +6,9 @@
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab/IN2P3/CNES, DESC-LSST fullmember, behalf AuxTel Teal VERA C. Rubin observatory
 # - creation date : Monday 7th November 2022
-# - Last update : November 7th 2022
+# - Last update : November 9th 2022
 
-# source /sps/lsst/groups/auxtel/softs/MySetup_py3_SDC.sh 
+# source /sps/lsst/groups/auxtel/softs/MySetup_py39_SDC.sh 
 
 import sys
 print("python path       : ",sys.path)
@@ -129,9 +129,12 @@ list_of_spectractorconfigfiles= ['auxtel_config_holo_DECONVOLUTION_PSF1D.ini' ,
                                  'auxtel_config_holo_DECONVOLUTION_REBIN2PSF1DrotD.ini',
                                  'auxtel_config_holo_DECONVOLUTION_PSF1D_BG40.ini',
 				                 'auxtel_config_holo_DECONVOLUTION_PSF1DTRUNC.ini',
-                                 'auxtel_config_holo_DECONVOLUTION_PSF2DTRUNC.ini',                                                                                            'auxtel_config_holo_DECONVOLUTION_REBIN2FFMvNov2022.ini',
+                                 'auxtel_config_holo_DECONVOLUTION_PSF2DTRUNC.ini',
+                                 'auxtel_config_holo_DECONVOLUTION_REBIN2FFMvNov2022.ini',
+                                 'auxtel_config_holo_DECONVOLUTION_PSF2DvNov2022.ini',
                                  'auxtel_config_holo_DECONVOLUTION_FFMvNov2022.ini']
-       
+
+                                
                                 
 config_idx = len(list_of_spectractorconfigfiles)-1
 
