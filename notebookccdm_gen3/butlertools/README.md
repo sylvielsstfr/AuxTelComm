@@ -31,3 +31,18 @@
     
 ## ViewSpectractionResults.ipynb
 
+## To generate fits file from Exposure
+
+### Old way
+
+    python ExposuresPostISRCCDtofits.py
+
+
+### New way
+
+      source /cvmfs/sw.lsst.eu/linux-x86_64/lsst_distrib/w_2022_39/loadLSST.bash
+       setup lsst_distrib
+
+
+    
+      python ExposuresPostISRCCDtofits.py
