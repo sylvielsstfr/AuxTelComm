@@ -7,10 +7,9 @@ RERUN=20220317a
 BUTLER_REPO='/sps/lsst/groups/auxtel/softs/shared/auxteldm_gen3/data/butler.yaml'
 
 
-
 pipetask --long-log run -b $BUTLER_REPO \
           -p $CP_PIPE_DIR/pipelines/Latiss/cpFlat.yaml \
-          -i LATISS/raw/all \
+          -i LATISS/calib,LATISS/raw/all \
           -o u/dagoret/myflats.20221108/flatGen.$RERUN \
-          -d "instrument='LATISS' AND detector=0 AND exposure IN ($EXPOSURES)"
+          -d "instrument='LATISS' AND detector=0 AND exposure IN ($EXPOSURES)" --register-dataset-types
 
