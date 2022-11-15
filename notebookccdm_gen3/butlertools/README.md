@@ -1,48 +1,79 @@
 # README.md
 
+-  author : Sylvie Dagoret-Campagne
+- affiliation : IJCLab
+
+- update : 2022-11-15
+- current DM version w_2022_39
 
 
-## ExposuresPostISRCCDtofits.ipynb  
+Butler tools to make queruis to Butler for later use.
 
-## ListOfExposures.ipynb         
 
-## ViewExposures-flats.ipynb : list of flats
+## Simple Butler queries or examples 
 
-## ListOfExposures-bias.ipynb : list of bias
+These are example to remember the butler commands.
 
-## ListOfExposures-hologram.ipynb : list of hologram per type of filter to be used as input to launch processstar scripts
-       
-## ListOfExposures-ronchi.ipynb
+Interesting commands are reviewed in ths tutorial https://pipelines.lsst.io/
 
-## MakeBookKeeping-hologram.ipynb : Make logbook in excel human readable format
+
+- Query on existing collections : **QueryForCollections.ipynb**
+- Example to query results of Spectractor (DM version ) : **QueryForSpectraction.ipynb**   
+
+
+## Generate list of bias, flats, science exposures into files
+
+- Generate list of bias : **ListOfExposures-bias.ipynb**
+
+- Generate list of flats : **ListOfExposures-flats.ipynb**
+
+- Generate list of hologram exposures :  **ListOfExposures-hologram.ipynb** 
+
+- Generate list of ronchi exposures : **ListOfExposures-ronchi.ipynb**
+
+- Probably deprecated list of exposures : **ListOfExposures.ipynb**   
+
+## Make bookkeeping
+
+Generate excel files, one page per night. Suspect there are missing entries (bug ?) 
+
+-  Book-keeping for bias exposures : **MakeBookKeeping-bias.ipynb**   
+
+-  Book-keeping for flats : **MakeBookKeeping-flat.ipynb** 
+
+-  Book-keeping for holograms : **MakeBookKeeping-hologram.ipynb**  
+
+
+## Conversion of postISRCCD Exposures inside the Butler into external fits file
+
+- unefficient old way through notebooks :  **ExposuresPostISRCCDtofits.ipynb**
+- more efficient conversion through a script : **python ExposuresPostISRCCDtofits.py**
+- simple batch job scripts to run above script in batch : **slurm_run_ExposuresPostISRCCDtofits.sh**
+
+
+## Example to view
+
+remember ds9 att CC is available as 
+    
+     alias ds9='/pbs/throng/lsst/software/desc/bin/ds9'
+     
+     
+- Example to view bias exposure : **ViewExposures-bias.ipynb**
+
+- Example to view flats exposure : **ListOfExposures-flats.ipynb**    
+
+- Example to view postISRCCD : **ViewExposures-postISRCCD.ipynb** 
+
+- Convert postISRCCD in butler into a fits file : **ViewExposuresPostISRCCDandSaveFits.ipynb** 
+
+- Deprecated, to view results of Spectraction : **ViewSpectractionResults.ipynb**
+
+
 
   
-## ViewExposures-MasterflatsDM.ipynb
 
-## ListOfExposures-flats.ipynb 
-     
-## QueryForCollections.ipynb
-     
-## ViewExposuresPostISRCCD.ipynb
 
-## ListOfExposures-hologram.ipynb
+
+
+          
    
-## QueryForSpectraction.ipynb
-    
-## ViewSpectractionResults.ipynb
-
-## To generate fits file from Exposure
-
-### Old way
-
-    python ExposuresPostISRCCDtofits.py
-
-
-### New way
-
-      source /cvmfs/sw.lsst.eu/linux-x86_64/lsst_distrib/w_2022_39/loadLSST.bash
-       setup lsst_distrib
-
-
-    
-      python ExposuresPostISRCCDtofits.py
