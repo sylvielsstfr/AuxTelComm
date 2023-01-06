@@ -40,3 +40,16 @@ total                             864063.45s            1497     83       0
 
 Executed 1497 quanta out of a total of 1610 quanta (~93%).
 
+
+
+## Try to run on holo images
+
+
+- imagingsurvey_singleframe_20221208_empty~holo4.yaml fails !
+        
+- imagingsurvey_singleframe_20221208_empty~holo4_simple.yaml fails ! 
+
+- survey_singleframe_spectronights.yaml is running :
+
+
+nohup bps submit survey_singleframe_spectronights.yaml > bps_survey_singleframe_spectronights.log &
