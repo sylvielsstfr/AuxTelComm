@@ -2,14 +2,14 @@ pipelineYaml: '$ATMOSPEC_DIR/pipelines/processStar.yaml'
 
 # Just names, but UPDATE THIS AND KEEP THEM SHORT
 project: AuxtelHolo
-campaign: SITCOM-2023
+campaign: SPECTRO-2023
 
 # UPDATE THESE arguments to mirror the ones you use with command-line pipetask run
 payload:
-  payloadName: 'BPS_testspectro'
+  payloadName: 'BPS_manyspectro_v0'
   butlerConfig: /repo/embargo
   inCollection: LATISS/raw/all,refcats,LATISS/calib
-  dataQuery: "instrument='LATISS' AND exposure.day_obs=20221208 AND exposure.seq_num=44"
+  dataQuery: "instrument='LATISS' AND exposure.day_obs=20221208 AND physical_filter.name='empty~holo4_003'"
   runPreCmdOpts: --long-log --log-level timer.lsst.resources=DEBUG 
 
 wmsServiceClass: lsst.ctrl.bps.parsl.ParslService
