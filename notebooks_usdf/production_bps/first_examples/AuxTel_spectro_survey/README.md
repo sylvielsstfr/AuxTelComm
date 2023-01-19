@@ -18,6 +18,9 @@ setup lsst_distrib -t w_2023_01
 source ~/notebooks/.user_setups
 
 eups list -s | grep LOCAL
+export BPS_WMS_SERVICE=lsst.ctrl.bps.parsl.ParslService
+
+
 
 ## launch the pipeline
 > nohup bps submit survey_singleframe_v2.yaml > bps_test.out &
