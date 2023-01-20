@@ -1,19 +1,19 @@
-# # Query for Spectraction Results in NON OGA
+# # Query for Spectraction Results in OGA
 
-#  work with Weakly_2022_39
+#  work with Weakly_2023_01
 # - use jupyter kernel LSST
 # 
 # 
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab
 # - creation date : 2022/10/31
-# - update : 2022/11/01
+# - update : 2022/01/20
 
 
 
 
 import lsst.daf.butler as dafButler
-import lsst.summit.utils.butlerUtils as butlerUtils
+#import lsst.summit.utils.butlerUtils as butlerUtils
 
 
 import numpy as np
@@ -54,19 +54,21 @@ registry = butler.registry
 
 #### Date & Filter & Disperser
 # path index for each month
-DATE="20220913"
+DATE="20230117"
 filterdispersername = "empty~holo4_003"
 #filterdispersername = "BG40~holo4_003"
 #filterdispersername = "FELH0600~holo4_003"
 
 
 # ### Spectractor
-configmode = "PSF2DFFM"
+configmode = "PSF2DFFM_REBIN2"
 
 
 # ### The collection
 
-my_collection = "u/dagoret/spectro/noflat/empty~holo4/"+str(DATE)
+#my_collection = "u/dagoret/spectro/noflat/empty~holo4/"+str(DATE)
+my_collection = "u/dagoret/BPS_manyspectro_v7" # january 20th 2023
+
 datasetRefs = registry.queryDatasets(datasetType='spectraction', collections=my_collection, where= "instrument='LATISS'")
 
 #butler = butlerUtils.makeDefaultLatissButler(extraCollections=[my_collection])
@@ -75,7 +77,7 @@ number_of_references  = len(list(datasetRefs))
 print(f"number_of_references = {number_of_references}")
 
 #### Options
-FLAG_PLOT = False
+FLAG_PLOT = True
 
 
 #### Loop on exposures
@@ -117,7 +119,7 @@ for i, ref in enumerate(datasetRefs):
 #### Plot
 
 
-FLAG_ORDER2 = True
+FLAG_ORDER2 = False
 
 infos = []
 all_lambdas=[]
@@ -130,42 +132,48 @@ if FLAG_ORDER2:
     all_data_err_order2=[]
 
 
-idx=0
-for spec in all_spec:
+
+for idx,spec in enumerate(all_spec):
     
     # get spectrum 
     s=spec.spectrum
     label = str(idx) +"):" + str(all_exposures[idx])
     
-    if FLAG_PLOT:
-        fig=plt.figure(figsize=(16,4))
-        ax1 = fig.add_subplot(1, 2, 1)
-        s.plot_spectrum(ax=ax1,force_lines=True,label=label)
-        ax2 = fig.add_subplot(1, 2, 2)
-        s.plot_spectrogram(ax=ax2,scale="log")
-        plt.show()
+    try:
     
-    # fill collections
-    all_lambdas.append(s.lambdas)
-    all_data.append(s.data)
-    all_data_err.append(s.err)
+        if FLAG_PLOT:
+            fig=plt.figure(figsize=(16,4))
+            ax1 = fig.add_subplot(1, 2, 1)
+            s.plot_spectrum(ax=ax1,force_lines=True,label=label)
+            ax2 = fig.add_subplot(1, 2, 2)
+            s.plot_spectrogram(ax=ax2,scale="log")
+            #plt.show()
     
-    if FLAG_ORDER2:
-        all_lambdas_order2.append(s.lambdas_order2)
-        all_data_order2.append(s.data_order2)
-        all_data_err_order2.append(s.err_order2)
+        # fill collections
+        all_lambdas.append(s.lambdas)
+        all_data.append(s.data)
+        all_data_err.append(s.err)
+    
+        if FLAG_ORDER2:
+            all_lambdas_order2.append(s.lambdas_order2)
+            all_data_order2.append(s.data_order2)
+            all_data_err_order2.append(s.err_order2)
      
-    # save info
-    infos.append([idx,s.target.label,s.date_obs,s.airmass,s.temperature,s.pressure,s.humidity])
-    idx+=1
+        # save info
+        infos.append([idx,s.target.label,s.date_obs,s.airmass,s.temperature,s.pressure,s.humidity])
+        
+    except Exception as inst:
+        print(" >>> Exception catched for "+ label )
+        print(type(inst))    # the exception instance
+        print(inst.args)     # arguments stored in .args
+        
+        
+ 
 
 
 
-if FLAG_PLOT:
-    plt.imshow(spec.image.data-spec.image.data.min(),origin="lower",norm=LogNorm(vmin=1,vmax=1000))
 
-
-# # Generate info
+#Generate info
 
 
 df_infos=pd.DataFrame(infos,columns=["idx","object","date_obs","airmass","temperature","pressure","humidity"])
