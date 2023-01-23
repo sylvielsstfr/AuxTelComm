@@ -77,7 +77,7 @@ number_of_references  = len(list(datasetRefs))
 print(f"number_of_references = {number_of_references}")
 
 #### Options
-FLAG_PLOT = True
+FLAG_PLOT = False
 
 
 #### Loop on exposures
@@ -160,6 +160,7 @@ for idx,spec in enumerate(all_spec):
             all_data_err_order2.append(s.err_order2)
      
         # save info
+
         infos.append([idx,s.target.label,s.date_obs,s.airmass,s.temperature,s.pressure,s.humidity])
         
     except Exception as inst:
@@ -169,9 +170,6 @@ for idx,spec in enumerate(all_spec):
         
         
  
-
-
-
 
 #Generate info
 
@@ -249,15 +247,22 @@ for idx in range(NN):
     if header.get("CHI2_FIT") != None:
         chi2_fit=header["CHI2_FIT"]
     else:
+        print("Missing CHI2_FIT")
         chi2_fit= -1
         
     if header.get("A2_FIT") != None:
         a2_fit=header["A2_FIT"]
+        
     else:
         a2_fit=-1
+        print("Missing A2_FIT")
     
     
-    lbda_ref=header["LBDA_REF"]
+    if header.get("LBDA_REF") != None:
+        lbda_ref=header["LBDA_REF"]
+    else:
+        lbda_ref=-1
+        print("LBDA_REF")
     
     
     all_rebin[idx]=rebin
