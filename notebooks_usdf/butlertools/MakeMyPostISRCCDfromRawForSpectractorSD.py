@@ -12,7 +12,7 @@
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab
 # - creation date : 2023/12/08
-# - last update : 2023/12/19
+# - last update : 2023/01/25
 # 
 # 
 
@@ -62,20 +62,28 @@ afwDisplay.setDefaultBackend('matplotlib')
 
 import lsst.daf.butler as dafButler
 
+import warnings
+warnings.filterwarnings("ignore")
+
 
 # Configuration
 #---------------
 
 
-DATE = 20230117
+#DATE = 20230117
 #FILTER="empty-holo4_003"
 #FILTER="BG40_65mm_1-holo4_003"
 #FILTER="OG550_65mm_1-holo4_003"
 
-DATE = 20230118
+#DATE = 20230118
 #FILTER = "BG40_65mm_1-holo4_003"
-FILTER = "OG550_65mm_1-holo4_003"
+#FILTER = "OG550_65mm_1-holo4_003"
 #FILTER = "empty-holo4_003"
+
+DATE = 20230119
+FILTER="empty-holo4_003"
+#FILTER="BG40_65mm_1-holo4_003"
+#FILTER="OG550_65mm_1-holo4_003"
 
 # input filename
 #----------------
@@ -239,9 +247,16 @@ defects = butler.get('defects',instrument=cameraName,detector=0)
 for index,row in df.iterrows():
     
     exposure_selected =row["date"]*100000+row["seq"]
+    
+    print(f"=================================== ISR for exposure {exposure_selected} ========================================")
 
-
+    # must use the calib associated to that exposures
     raw_img= butler.get('raw', dataId={'exposure': exposure_selected, 'instrument': 'LATISS', 'detector': 0}, collections = collection)
+    bias = butler.get("bias",instrument=cameraName, exposure= exposure_selected , detector=0, collections=calibCollections)
+    defects = butler.get('defects',instrument=cameraName, exposure= exposure_selected ,detector=0,collections=calibCollections)
+    
+    
+    # perform the ISR
     isr_img = isr_task.run(raw_img,bias=bias,defects=defects)
     
     arr=isr_img.exposure.image.array
@@ -259,7 +274,7 @@ for index,row in df.iterrows():
     filename_out = f"exposure_{exposure_selected}_pseudo-postisrccd.fits"
     fullfilename_out=os.path.join(path_out,filename_out)
     
-    print(filename_out)
+    print(f">>>>  output filename {filename_out}")
     
     hdr = fits.Header()
     
