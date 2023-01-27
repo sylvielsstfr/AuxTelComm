@@ -54,8 +54,8 @@ registry = butler.registry
 
 #### Date & Filter & Disperser
 # path index for each month
-DATE="20230117" # with "u/dagoret/BPS_manyspectro_v7 or v11"
-#DATE="20230118" # with "u/dagoret/BPS_manyspectro_v8 or v10" 
+#DATE="20230117" # with "u/dagoret/BPS_manyspectro_v7 or v11"
+DATE="20230118" # with "u/dagoret/BPS_manyspectro_v8 or v10" 
 #DATE="20230119" # with "u/dagoret/BPS_manyspectro_v9 or v12"
 
 filterdispersername = "empty~holo4_003"
@@ -74,8 +74,8 @@ configmode = "PSF2DFFM_REBIN2"
 #my_collection = "u/dagoret/BPS_manyspectro_v7" # january 20th 2023 (2023/01/17)
 #my_collection = "u/dagoret/BPS_manyspectro_v8" # january 23th 2023 (2023/01/18)
 #my_collection = "u/dagoret/BPS_manyspectro_v9" # january 23th 2023 (2023/01/19)
-#my_collection = "u/dagoret/BPS_manyspectro_v10" # january 27th 2023 (2023/01/18), output with the _b
-my_collection = "u/dagoret/BPS_manyspectro_v11" # january 26th 2023 (2023/01/17), output with the _b
+my_collection = "u/dagoret/BPS_manyspectro_v10" # january 27th 2023 (2023/01/18), output with the _b
+#my_collection = "u/dagoret/BPS_manyspectro_v11" # january 26th 2023 (2023/01/17), output with the _b
 #my_collection = "u/dagoret/BPS_manyspectro_v12" # january 26th 2023 (2023/01/19), output with the _b
 
 datasetRefs = registry.queryDatasets(datasetType='spectraction', collections=my_collection, where= "instrument='LATISS'")
