@@ -1,0 +1,49 @@
+pipelineYaml: '$ATMOSPEC_DIR/pipelines/processStar.yaml'
+
+# Just names, but UPDATE THIS AND KEEP THEM SHORT
+project: AuxtelHoloV12
+campaign: SPECTRO-2023
+
+# UPDATE THESE arguments to mirror the ones you use with command-line pipetask run
+payload:
+  payloadName: 'BPS_manyspectro_v12'
+  butlerConfig: /repo/embargo
+  inCollection: LATISS/raw/all,refcats,LATISS/calib
+  dataQuery: "instrument='LATISS' AND exposure.day_obs=20230119 AND physical_filter.name='empty~holo4_003' AND exposure.observation_type='science' AND exposure.science_program='spec'"
+  runPreCmdOpts: --long-log --log-level timer.lsst.resources=DEBUG 
+
+wmsServiceClass: lsst.ctrl.bps.parsl.ParslService
+computeSite: slurm
+
+parsl:
+  log_level: INFO
+
+site:
+  slurm:
+    class: lsst.ctrl.bps.parsl.sites.Slurm
+    nodes: 2
+    walltime: '20:00:00'     # This is 20 hours
+    cores_per_node: 100
+    qos: normal
+    scheduler_options: |
+      #SBATCH --partition=roma
+      #SBATCH --exclusive
+  triple_slurm:
+    class: lsst.ctrl.bps.parsl.sites.TripleSlurm
+    nodes: 1
+    cores_per_node: 100
+    qos: normal
+    small_memory: 2.0     # Units are GB
+    medium_memory: 4.0
+    large_memory: 8.0
+    small_walltime: '10.0'   # Units are hours
+    medium_walltime: '10.0'
+    large_walltime: '40.0'        
+  work_queue:
+    class: lsst.ctrl.bps.parsl.sites.work_queue.LocalSrunWorkQueue
+    worker_options: "--memory=480000"   # work_queue expects memory in MB
+    nodes_per_block: 10
+
+    monitorEnable: true
+    monitorFilename: monitoring.db
+
