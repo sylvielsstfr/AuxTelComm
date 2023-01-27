@@ -14,6 +14,7 @@ def extract_failures(job_dir):
     log_id=''
     exec_list=[]
     except_list=[]
+    obs_num_list=[]
     h, t = os.path.split(job_dir)
     hh, th = os.path.split(h)
     run_id=f'{th}-{t}'
@@ -26,6 +27,7 @@ def extract_failures(job_dir):
         error_lines=[]
         old_log_id = log_id
         log_id=f'{process}-{(log.split(".")[0]).split("_")[-2]}'
+        num_obs=int(log_id[-5:])
         with open(os.path.join(logdir,log)) as f:
             lines = f.readlines()
             prev_line=''
@@ -42,11 +44,17 @@ def extract_failures(job_dir):
                     if f"Execution of task '{process}'" in line and 'failed' in line:
                         sentences = line.split('. ')
                         exception = (sentences[-1].split('Exception '))[-1]
+                            
                 elif deb_line == 'Traceback' :
                     deb_traceback=loc
                     #print(f'{deb_traceback} > {line}')
                 #if 'Task' in line f'label={process}' in line and 'failed' in line:
                 elif exception != '' and line == exception :
+                    if "matmul" in exception:
+                        _excep = exception.split()
+                        _excep[-5] = '[dim1]'
+                        _excep[-1] = '[dim2])\n'
+                        exception = ' '.join(_excep)
                     old_traceback = traceback
                     traceback=''
                     end_traceback = loc
@@ -57,6 +65,7 @@ def extract_failures(job_dir):
                         num_failed+=1
                         exec_list.append(log_id)
                         except_list.append(exception)
+                        obs_num_list.append(num_obs)
                         with open(file_out, 'a') as res:
                             res.write(f'\n{log_id}:\n{traceback}')
 
@@ -67,7 +76,7 @@ def extract_failures(job_dir):
     with open(file_out, 'r') as res:
         print(res.read())
     '''
-    return exec_list, except_list
+    return exec_list, except_list, obs_num_list
     
 # input arg check
 try:
@@ -77,9 +86,14 @@ except IndexError:
     raise SystemExit
     
 if os.path.isdir(jobdir):
-    execs, excepts = extract_failures(jobdir)
+    execs, excepts, nums = extract_failures(jobdir)
     #print(execs)
     print('Identified errors during this run:')
-    for err in set(excepts) : print(f'\t{err[:-1]}')
+    for err in set(excepts) :
+        err_nums = []
+        for (exc, num) in zip(excepts, nums):
+            if exc == err : err_nums.append(num)
+        err_nums = np.sort(err_nums)
+        print(f'\t{err[:-1]} for obs. {err_nums}')
 else:
     raise FileNotFoundError(f"input path not found: '{jobdir}'")
