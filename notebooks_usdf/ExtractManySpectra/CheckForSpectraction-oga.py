@@ -7,7 +7,7 @@
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab
 # - creation date : 2022/10/31
-# - update : 2022/01/20
+# - update : 2023/01/31
 
 
 
@@ -54,9 +54,9 @@ registry = butler.registry
 
 #### Date & Filter & Disperser
 # path index for each month
-#DATE="20230117" # with "u/dagoret/BPS_manyspectro_v7 or v11"
-DATE="20230118" # with "u/dagoret/BPS_manyspectro_v8 or v10" 
-#DATE="20230119" # with "u/dagoret/BPS_manyspectro_v9 or v12"
+#DATE="20230117" # with "u/dagoret/BPS_manyspectro_v7 or v11", rebin=2
+DATE="20230118" # with "u/dagoret/BPS_manyspectro_v8 or v10", rebin=2  or v13 with rebin=1
+#DATE="20230119" # with "u/dagoret/BPS_manyspectro_v9 or v12",rebin=2
 
 filterdispersername = "empty~holo4_003"
 #filterdispersername = "BG40~holo4_003"
@@ -64,7 +64,10 @@ filterdispersername = "empty~holo4_003"
 
 
 # ### Spectractor
-configmode = "PSF2DFFM_REBIN2"
+#configmode = "PSF2DFFM_REBIN2"
+configmode = "PSF2DFFM_REBIN1"
+ext="_b"
+ext=""
 
 
 # ### The collection
@@ -74,9 +77,10 @@ configmode = "PSF2DFFM_REBIN2"
 #my_collection = "u/dagoret/BPS_manyspectro_v7" # january 20th 2023 (2023/01/17)
 #my_collection = "u/dagoret/BPS_manyspectro_v8" # january 23th 2023 (2023/01/18)
 #my_collection = "u/dagoret/BPS_manyspectro_v9" # january 23th 2023 (2023/01/19)
-my_collection = "u/dagoret/BPS_manyspectro_v10" # january 27th 2023 (2023/01/18), output with the _b
-#my_collection = "u/dagoret/BPS_manyspectro_v11" # january 26th 2023 (2023/01/17), output with the _b
-#my_collection = "u/dagoret/BPS_manyspectro_v12" # january 26th 2023 (2023/01/19), output with the _b
+#my_collection = "u/dagoret/BPS_manyspectro_v10" # january 27th 2023 (2023/01/18), output with the _b, rebin=2
+#my_collection = "u/dagoret/BPS_manyspectro_v11" # january 26th 2023 (2023/01/17), output with the _b, rebin=2
+#my_collection = "u/dagoret/BPS_manyspectro_v12" # january 26th 2023 (2023/01/19), output with the _b, rebin=2,
+my_collection = "u/dagoret/BPS_manyspectro_v13" # january 31th 2023 (2023/01/18), rebin=1,
 
 datasetRefs = registry.queryDatasets(datasetType='spectraction', collections=my_collection, where= "instrument='LATISS'")
 
@@ -197,7 +201,7 @@ df_infos["reftime"]=all_reftime
 NN = len(df_infos)
 
 
-summary_file = f"summaryspectra_{DATE}-{filterdispersername}-{configmode}_b.csv"
+summary_file = f"summaryspectra_{DATE}-{filterdispersername}-{configmode}-oga{ext}.csv"
 df_infos.to_csv(summary_file)
 
 
@@ -337,7 +341,7 @@ for idx in range(NN):
     all_out_data[all_exposures[idx]]=thedata
 
 
-pkl_outfilename=f'run-auxtel-holo-{DATE}-{filterdispersername}-{configmode}_b.pickle'
+pkl_outfilename=f'run-auxtel-holo-{DATE}-{filterdispersername}-{configmode}-oga{ext}.pickle'
 
 with open(pkl_outfilename, 'wb') as pickle_file:
     pickle.dump(all_out_data,pickle_file)
