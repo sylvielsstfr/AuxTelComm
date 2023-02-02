@@ -70,8 +70,8 @@ warnings.filterwarnings("ignore")
 #---------------
 
 
-#DATE = 20230117
-#FILTER="empty-holo4_003"
+DATE = 20230201
+FILTER="empty-holo4_003"
 #FILTER="BG40_65mm_1-holo4_003"
 #FILTER="OG550_65mm_1-holo4_003"
 
@@ -85,8 +85,8 @@ warnings.filterwarnings("ignore")
 #FILTER="BG40_65mm_1-holo4_003"
 #FILTER="OG550_65mm_1-holo4_003"
 
-DATE = 20230131
-FILTER = "empty-holo4_003"
+#DATE = 20230131
+#FILTER = "empty-holo4_003"
 
 # input filename
 #----------------
@@ -286,16 +286,38 @@ for index,row in df.iterrows():
         
     # need this    
     hdr["AMEND"] = hdr["AMSTART"]
-    
+
+
+    if hdr["AIRTEMP"] == None:
+        hdr["AIRTEMP"] = 10.0
+
+    if hdr["PRESSURE"] == None:
+        hdr["PRESSURE"] = 744.
+
+    if hdr["HUMIDITY"] == None:
+        hdr["HUMIDITY"] = 50.
+
+    if hdr["WINDSPD"] == None:
+        hdr["WINDSPD"] = 5.
+
+    if hdr["WINDDIR"] == None:
+        hdr["WINDDIR"] = 0.   
+
+    if hdr["SEEING"] == None:
+        hdr["SEEING"] = 1.15
+
+
+
+
     # be aware weather data may be missing
     
         
-    hdu = fits.PrimaryHDU(data=rotated_array,header=hdr)  # with headers
-    #hdu = fits.PrimaryHDU(data=all_my_raw_array[idx])
+    primary_hdu = fits.PrimaryHDU(header=hdr)
+    image_hdu = fits.ImageHDU(rotated_array)
+    hdu_list = fits.HDUList([primary_hdu, image_hdu])
     
-    hdul = fits.HDUList([hdu])
-    
-    hdul.writeto(fullfilename_out,overwrite=True)
+
+    hdu_list.writeto(fullfilename_out,overwrite=True)
     
 
 
