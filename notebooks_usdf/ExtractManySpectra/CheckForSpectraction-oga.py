@@ -82,7 +82,8 @@ ext=""
 #my_collection = "u/dagoret/BPS_manyspectro_v12" # january 26th 2023 (2023/01/19), output with the _b, rebin=2,
 #my_collection = "u/dagoret/BPS_manyspectro_v13" # january 31th 2023 (2023/01/18), rebin=1,
 #my_collection = "u/dagoret/BPS_manyspectro_v14" # january 31th 2023 (2023/01/17), rebin=1,
-my_collection = "u/dagoret/BPS_manyspectro_v15" # january 31th 2023 (2023/01/18), rebin=1,
+#my_collection = "u/dagoret/BPS_manyspectro_v15" # january 31th 2023 (2023/01/18), rebin=1,
+my_collection = "u/dagoret/BPS_manyspectro_v16" # february 1st 2023 (2023/02/03), rebin=1,
 
 datasetRefs = registry.queryDatasets(datasetType='spectraction', collections=my_collection, where= "instrument='LATISS'")
 
