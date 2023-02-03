@@ -11,7 +11,7 @@
 # 
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab
-# - creation date : 2023/12/08
+# - creation date : 2023/02/02
 # - last update : 2023/02/03
 # 
 # 
@@ -109,21 +109,23 @@ FILTER = "empty-holo4_003"
 filename_visits = f"all_visitdispersers/{DATE}/visitdispersers_{DATE}_filt_{FILTER}.list"
 
 
-# output path
-#---------------------
-top_path_out="my_postisrccd_img"
-path_out=f"{top_path_out}/{DATE}"
-
-# output path of type top/date/filter
+# output path of type top/filtername/date
 #----------------------------------------
+top_path_out="my_postisrccd_img"
 
+if not os.path.exists(top_path_out):
+    os.makedirs(top_path_out)
+
+
+path_out=f"{top_path_out}/{FILTER}"
 if not os.path.exists(path_out):
     os.makedirs(path_out)
+    
 
-path_out=f"{path_out}/{FILTER}"
-
+path_out=f"{path_out}/{DATE}"
 if not os.path.exists(path_out):
     os.makedirs(path_out)
+    
     
 
 # read list of exposures
