@@ -58,14 +58,17 @@ registry = butler.registry
 #DATE="20230118" # with "u/dagoret/BPS_manyspectro_v8 or v10", rebin=2  or v13 with rebin=1
 DATE="20230119" # with "u/dagoret/BPS_manyspectro_v9 or v12",rebin=2, or v15 and rebin=1
 
-filterdispersername = "empty~holo4_003"
+#DATE="20230131" 
+#DATE="20230201" 
+
+#filterdispersername = "empty~holo4_003"
 #filterdispersername = "BG40~holo4_003"
 #filterdispersername = "FELH0600~holo4_003"
-
+filterdispersername = "OG550_65mm_1~holo4_003"
 
 # ### Spectractor
 #configmode = "PSF2DFFM_REBIN2"
-configmode = "PSF2DFFM_REBIN1"
+configmode = "PSF2DFFM_REBIN2"
 #ext="_b"
 ext=""
 
@@ -77,13 +80,26 @@ ext=""
 #my_collection = "u/dagoret/BPS_manyspectro_v7" # january 20th 2023 (2023/01/17)
 #my_collection = "u/dagoret/BPS_manyspectro_v8" # january 23th 2023 (2023/01/18)
 #my_collection = "u/dagoret/BPS_manyspectro_v9" # january 23th 2023 (2023/01/19)
+
+#Good collections below with ACQ removed
+
 #my_collection = "u/dagoret/BPS_manyspectro_v10" # january 27th 2023 (2023/01/18), output with the _b, rebin=2
 #my_collection = "u/dagoret/BPS_manyspectro_v11" # january 26th 2023 (2023/01/17), output with the _b, rebin=2
 #my_collection = "u/dagoret/BPS_manyspectro_v12" # january 26th 2023 (2023/01/19), output with the _b, rebin=2,
 #my_collection = "u/dagoret/BPS_manyspectro_v13" # january 31th 2023 (2023/01/18), rebin=1,
 #my_collection = "u/dagoret/BPS_manyspectro_v14" # january 31th 2023 (2023/01/17), rebin=1,
 #my_collection = "u/dagoret/BPS_manyspectro_v15" # january 31th 2023 (2023/01/18), rebin=1,
-my_collection = "u/dagoret/BPS_manyspectro_v16" # february 1st 2023 (2023/02/03), rebin=1,
+#my_collection = "u/dagoret/BPS_manyspectro_v16" # february 1st 2023 (2023/02/03), rebin=1,
+
+
+
+#search for OG550 
+#my_collection = "u/dagoret/BPS_manyspectro_v19" # february 9th 2023 (2023/01/17), rebin=2,
+#my_collection = "u/dagoret/BPS_manyspectro_v20" # february 9th 2023 (2023/01/18), rebin=2,
+my_collection = "u/dagoret/BPS_manyspectro_v21" # february 9th 2023 (2023/01/19), rebin=2,
+
+#my_collection = "u/dagoret/BPS_manyspectro_v22" # february 9th 2023 (2023/01/31), rebin=2,
+#my_collection = "u/dagoret/BPS_manyspectro_v23" # february 9th 2023 (2023/02/01), rebin=2,
 
 datasetRefs = registry.queryDatasets(datasetType='spectraction', collections=my_collection, where= "instrument='LATISS'")
 
