@@ -404,8 +404,7 @@ class FitAtmosphericParams:
         Fit a grey term, precipitable water varpor and ozone
 
         """
-        
-        
+            
         res_fit = least_squares(func_residuals, params0,bounds=([0.1,0.001,50.],[2,9.5,550.]),args=[xdata,ydata,yerrdata,airmass,sedxthroughput])
         
         alpha_fit,pwv_fit,oz_fit = res_fit.x
@@ -425,9 +424,18 @@ class FitAtmosphericParams:
         oze =sigmas[2]*np.sqrt(chi2_per_deg)
         greye = sigmas[0]*np.sqrt(chi2_per_deg)
         
-        fit_dict = {"chi2":chi2,"ndeg":ndeg,"chi2_per_deg":chi2_per_deg,"pwv_fit":pwv_fit,"oz_fit":oz_fit,"grey_fit":alpha_fit,"pwve":pwve,"oze":oze,"greye":greye}
+        fit_dict = {"chi2":chi2,"ndeg":ndeg,"chi2_per_deg":chi2_per_deg,"popt":popt,"sigmas":sigmas,"pwv_fit":pwv_fit,"oz_fit":oz_fit,"grey_fit":alpha_fit,"pwve":pwve,"oze":oze,"greye":greye}
 
         return res_fit,fit_dict
+    
+    
+    def pred_greypwvo3(self,params,xdata,airmass,sedxthroughput):
+        """
+        """
+        flux_model = fluxpred(params,xdata,airmass,sedxthroughput)
+        return flux_model
+        
+        
 
 if __name__ == '__main__':
     #emul = SimpleAtmEmulator(os.path.join(atmosphtransmemullsst.__path__[0],'../data/simplegrid'))
