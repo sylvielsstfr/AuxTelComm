@@ -152,23 +152,36 @@ class SimpleAtmEmulator:
         return self.WL
             
     def GetRayleighTransparencyArray(self,wl,am):
-        pts = np.array([ np.array([the_wl,am],dtype=object)  for the_wl in wl ],dtype=object) 
-        return np.array([ self.func_rayleigh_train(pt) for pt in pts])
+        #pts = np.array([ np.array([the_wl,am],dtype=object)  for the_wl in wl ],dtype=object) 
+        #return np.array([ self.func_rayleigh_train(pt) for pt in pts])
+        pts = [ (the_wl,am) for the_wl in wl ]
+        pts = np.array(pts)
+        return self.func_rayleigh_train(pts)
     
     
     def GetO2absTransparencyArray(self,wl,am):
-        pts = np.array([ np.array([the_wl,am],dtype=object)   for the_wl in wl],dtype=object)
-        return np.array([ self.func_O2abs_train(pt) for pt in pts])
+        #pts = np.array([ np.array([the_wl,am],dtype=object)   for the_wl in wl],dtype=object)
+        #return np.array([ self.func_O2abs_train(pt) for pt in pts])
+        pts = [ (the_wl,am) for the_wl in wl ]
+        pts = np.array(pts)
+        return self.func_O2abs_train(pts)
     
     
     def GetPWVabsTransparencyArray(self,wl,am,pwv):
-        pts = np.array([ np.array([the_wl,am,pwv],dtype=object)   for the_wl in wl],dtype=object)
-        return  np.array([self.func_PWVabs_train(pt) for pt in pts])
+        #pts = np.array([ np.array([the_wl,am,pwv],dtype=object)   for the_wl in wl],dtype=object)
+        #return  np.array([self.func_PWVabs_train(pt) for pt in pts])
+        pts = [ (the_wl,am,pwv) for the_wl in wl ]
+        pts = np.array(pts)
+        return self.func_PWVabs_train(pts)
     
     
     def GetOZabsTransparencyArray(self,wl,am,oz):
-        pts = np.array([ np.array([the_wl,am,oz],dtype=object)   for the_wl in wl],dtype=object)
-        return np.array([self.func_OZabs_train(pt) for pt in pts])
+        #pts = np.array([ np.array([the_wl,am,oz],dtype=object)   for the_wl in wl],dtype=object)
+        #return np.array([self.func_OZabs_train(pt) for pt in pts])
+        pts = [ (the_wl,am,oz) for the_wl in wl ]
+        pts = np.array(pts)
+        return self.func_OZabs_train(pts)
+    
     
     def GetGriddedTransparencies(self,wl,am,pwv,oz,flagRayleigh=True,flagO2abs=True,flagPWVabs=True,flagOZabs=True):
         """
@@ -206,6 +219,10 @@ class SimpleAtmEmulator:
         if flagOZabs:
             transm *= self.GetOZabsTransparencyArray(wl,am,oz)
             
+        # if pts are array of array, RegularGridInterpolator returns an array of (n,1)
+        # In that case, one must flatten the array
+        if transm.ndim >= 2:
+            transm =transm.squeeze()
         return transm
             
     def GetAerosolsTransparencies(self,wl,am,ncomp,taus=None,betas=None):
@@ -281,7 +298,10 @@ class SimpleAtmEmulator:
 
 # global variable
 #emul = SimpleAtmEmulator(os.path.join(atmosphtransmemullsst.__path__[0],'../data/simplegrid'))
-emul = SimpleAtmEmulator(path='/Users/sylvie/MacOSX/GitHub/LSST/AuxTelComm/notebooks_usdf/FitAtmosphericParameters/data/simplegrid')
+#emul = SimpleAtmEmulator(path='/Users/sylvie/MacOSX/GitHub/LSST/AuxTelComm/notebooks_usdf/FitAtmosphericParameters/data/simplegrid')
+
+emul = SimpleAtmEmulator(path='/Users/dagoret/MacOSX/GitHub/LSST/AuxTelComm/notebooks_usdf/FitAtmosphericParameters/data/simplegrid')
+ 
  
     
 # Functions for the fit
@@ -321,6 +341,7 @@ def fluxpred(params,*arg):
         
 
     fl = alpha*emul.GetAllTransparencies(wl ,airmass,pwv,oz,ncomp=0,flagAerosols=False)
+    
     fl *= the_sedxthroughput
     return fl
 
@@ -355,7 +376,12 @@ def func_residuals(params,*arg):
     
      
     alpha,oz,pwv = params   # decode the parameters
-    residuals = (the_data - fluxpred(params,the_wl,the_airmass,the_sedthr))/the_dataerr
+    
+    
+    flux_model = fluxpred(params,the_wl,the_airmass,the_sedthr)
+    
+    
+    residuals = (the_data - flux_model)/the_dataerr
     
  
     
@@ -401,7 +427,7 @@ class FitAtmosphericParams:
         
         fit_dict = {"chi2":chi2,"ndeg":ndeg,"chi2_per_deg":chi2_per_deg,"pwv_fit":pwv_fit,"oz_fit":oz_fit,"grey_fit":alpha_fit,"pwve":pwve,"oze":oze,"greye":greye}
 
-        return res,fit_dict
+        return res_fit,fit_dict
 
 if __name__ == '__main__':
     #emul = SimpleAtmEmulator(os.path.join(atmosphtransmemullsst.__path__[0],'../data/simplegrid'))
