@@ -510,8 +510,25 @@ class FitAtmosphericParams:
         
         
 
-if __name__ == '__main__':
-    #emul = SimpleAtmEmulator(os.path.join(atmosphtransmemullsst.__path__[0],'../data/simplegrid'))
-    #emul = SimpleAtmEmulator()
-    print("Main")
-    emul = SimpleAtmEmulator(path='/Users/sylvie/MacOSX/GitHub/LSST/AuxTelComm/notebooks_usdf/FitAtmosphericParameters/data/simplegrid')
+
+def main():
+    print("============================================================")
+    print("Simple Atmospheric emulator for Rubin-LSST observatory")
+    print("============================================================")
+    
+    # retrieve the path of data
+    path_data =  find_data_path()  
+    # create emulator  
+    emul = SimpleAtmEmulator(path = path_data)
+    wl = [400.,800.,900.]
+    am=1.2
+    pwv =4.0
+    oz=300.
+    transm = emul.GetAllTransparencies(wl,am,pwv,oz)
+    print("wavelengths (nm) \t = ",wl)
+    print("transmissions    \t = ",transm)
+    
+    
+
+if __name__ == "__main__":
+    main()
