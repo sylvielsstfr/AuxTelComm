@@ -60,7 +60,7 @@ registry = butler.registry
 
 #DATE="20230131" 
 #DATE="20230201" 
-DATE="20220317" 
+DATE="20220630" 
 
 filterdispersername = "empty~holo4_003"
 #filterdispersername = "BG40~holo4_003"
@@ -77,9 +77,9 @@ ext="main"
 # ### The collection
 
 
-my_collection = "u/dagoret/BPS_manyspectro_v34" # february 17 2023 (2022/03/17), rebin=2,
-
-'BPS_manyspectro_v34'
+#my_collection = "u/dagoret/BPS_manyspectro_v34" # february 17 2023 (2022/03/17), rebin=2,
+#my_collection = "u/dagoret/BPS_manyspectro_v36" # february 18 2023 (2022/06/29), rebin=2,
+my_collection = "u/dagoret/BPS_manyspectro_v37" # february 18 2023 (2022/06/30), rebin=2,
 
 #search for OG550 
 #my_collection = "u/dagoret/BPS_manyspectro_v19" # february 9th 2023 (2023/01/17), rebin=2,
