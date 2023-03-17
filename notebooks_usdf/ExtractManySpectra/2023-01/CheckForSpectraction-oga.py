@@ -59,8 +59,16 @@ registry = butler.registry
 #DATE="20230119" # with "u/dagoret/BPS_manyspectro_v9 or v12",rebin=2, or v15 and rebin=1
 
 #DATE="20230131" 
-DATE="20230201" 
+#DATE="20230201" 
 #DATE="20230202" 
+#DATE="20230214"
+#DATE="20230215" 
+#DATE="20230216" 
+#DATE="20230228" 
+#DATE="20230301"
+#DATE="20230302"
+#DATE="20221207"
+DATE="20221208"
 
 filterdispersername = "empty~holo4_003"
 #filterdispersername = "BG40~holo4_003"
@@ -68,7 +76,7 @@ filterdispersername = "empty~holo4_003"
 #filterdispersername = "OG550_65mm_1~holo4_003"
 
 # ### Spectractor
-#configmode = "PSF2DFFM_REBIN2"
+configmode = "PSF2DFFM_REBIN2"
 #configmode = "PSF2DFFM_REBIN1"
 #ext="_b"
 ext=""
@@ -94,8 +102,16 @@ ext=""
 #my_collection = "u/dagoret/BPS_manyspectro_v17" # february 1st 2023 (2023/02/01), rebin=1,
 #my_collection = "u/dagoret/BPS_manyspectro_v18" # february 1st 2023 (2023/02/02), rebin=1,
 
-my_collection = "u/dagoret/BPS_manyspectro_v40" # february 1st 2023 (2023/02/01), rebin=2,
-
+#my_collection = "u/dagoret/BPS_manyspectro_v40" # february 1st 2023 (2023/02/01), rebin=2,
+#my_collection = "u/dagoret/BPS_manyspectro_v41" # february 2nd 2023 (2023/02/02), rebin=2,
+#my_collection = "u/dagoret/BPS_manyspectro_v42" # february 14th 2023 (2023/02/14), rebin=2,
+#my_collection = "u/dagoret/BPS_manyspectro_v43" # february 15th 2023 (2023/02/14), rebin=2
+#my_collection = "u/dagoret/BPS_manyspectro_v44" # february 16th 2023 (2023/02/14), rebin=2
+#my_collection = "u/dagoret/BPS_manyspectro_v45" # february 28th 2023  rebin=2
+#my_collection = "u/dagoret/BPS_manyspectro_v46" # march 1th 2023 , rebin=2
+#my_collection = "u/dagoret/BPS_manyspectro_v47" # March 2th 2023 , rebin=2
+#my_collection = "u/dagoret/BPS_manyspectro_v48" # December 07 2022 , rebin=2
+my_collection = "u/dagoret/BPS_manyspectro_v49" # December 07 2022 , rebin=2
 
 
 #search for OG550 
