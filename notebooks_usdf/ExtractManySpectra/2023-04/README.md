@@ -1,5 +1,7 @@
 # README.md : ExtractrdSpectra April 2023
 
+- last update 2023-04-06
+
 ## Config of DM
 
 
@@ -22,11 +24,18 @@
 
 - **CheckForSpectraction-oga-spectractorv2_4.ipynb** : extract spectra from butler and write in h5 file  
 
+- **ViewSpectraction-oga-spectractorv2_4.ipynb** : same, but focused to view order1 and order2 in datafile
+
 - **ReadH5file.ipynb** : read H5 file (test)
 
-- **ConvertH5filetoPandas.ipynb** : convert H5 file attributes in pandas file (no spectrum)  
+- **ConvertH5filetoPandas.ipynb** : convert H5 file attributes in pandas files (no spectrum) , one per night 
 
 
-- **AnaPandasFiles.ipynb** : pandas file
+- **AnaPandasFiles.ipynb** : Analyse pandas file, one pernight
 
-- **SearchForBadSpectra.ipynb**: Find criteria to identify a bad spectrum
+- **AnaPandasMultiFiles.ipynb** : Aanlyse all pandas files, all nights
+
+
+- **SearchForBadSpectra.ipynb**: Find criteria to identify what is a  bad spectrum, generate the list of bad numbers
+
+- **SearchForBadSpectraandbadtracking.ipynb**: Study the impact of bad tracking on Spectra 
