@@ -480,7 +480,7 @@ class FitAtmosphericParamsCov:
         global g_sedxthroughput 
         g_sedxthroughput = sedxthroughput
             
-        res_fit = curve_fit(func_model_greypw,  xdata=xdata, ydata=ydata, p0=params0,sigma = covdata,bounds=([0.1,0.001],[2,9.5])])
+        res_fit = curve_fit(func_model_greypw,  xdata=xdata, ydata=ydata, p0=params0,sigma = covdata,bounds=([0.1,0.001],[2,9.5]))
         
         alpha_fit,pwv_fit = res_fit.x
     
