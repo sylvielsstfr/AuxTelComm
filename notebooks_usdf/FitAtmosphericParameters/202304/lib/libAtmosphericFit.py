@@ -428,9 +428,10 @@ class FitAtmosphericParamsCov:
         g_sedxthroughput = sedxthroughput
 
             
-        popt,pcov,res_fit = curve_fit(func_model_greypwvo3, xdata=xdata, ydata=ydata, p0=params0,sigma = covdata,bounds=([0.1,0.001,50.],[2,9.5,550.]), full_output=True)
+        res_fit = curve_fit(func_model_greypwvo3, xdata=xdata, ydata=ydata, p0=params0,sigma = covdata,bounds=([0.1,0.001,50.],[2,9.5,550.]), full_output=True)
         
-        alpha_fit,pwv_fit,oz_fit = res_fit.x
+        popt,pcov,fit_dict = res_fit
+        
     
     
         # results fo the fit
