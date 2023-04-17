@@ -359,19 +359,23 @@ def func_model_greypwvo3(x, *params):
   """
 
   global emul
-  alpha,pwv,oz = params    
+  
+  
+  
+  #alpha,pwv,oz = params    
+  alpha,pwv,oz = params[0],params[1],params[2]
    
   wl = x
   the_sedxthroughput = g_sedxthroughput
   airmass = g_airmass
   
-  #print(f"func_model_greypwvo3() get global airmass {airmass}") 
+
   
   fl = alpha*emul.GetAllTransparencies(wl ,airmass,pwv,oz,ncomp=0,flagAerosols=False)
   fl *= the_sedxthroughput
   return fl
 
-def func_model_greypw(x, *params):
+def func_model_greypwv(x, *params):
   """
   Evaluate the flux
   
@@ -390,7 +394,9 @@ def func_model_greypw(x, *params):
 
   global emul
     
-  alpha,pwv = params   
+  #alpha,pwv = params
+  alpha=params[0]
+  pwv=params[1]   
   oz=300. 
     
   wl = x
@@ -481,7 +487,7 @@ class FitAtmosphericParamsCov:
         global g_sedxthroughput 
         g_sedxthroughput = sedxthroughput
 
-        flux_model = func_model_greypwvo3(xdata,params)
+        flux_model = func_model_greypwvo3(xdata,*params)
         return flux_model
     
     #--------
@@ -499,7 +505,7 @@ class FitAtmosphericParamsCov:
         global g_sedxthroughput 
         g_sedxthroughput = sedxthroughput
             
-        res_fit = curve_fit(func_model_greypw,  xdata=xdata, ydata=ydata, p0=params0,sigma = covdata,bounds=([0.1,0.001],[2,9.5]))
+        res_fit = curve_fit(func_model_greypwv,  xdata=xdata, ydata=ydata, p0=params0,sigma = covdata,bounds=([0.1,0.001],[2,9.5]),full_output=True)
         
         popt = res_fit[0]
         pcov = res_fit[1]
@@ -515,7 +521,7 @@ class FitAtmosphericParamsCov:
         chi2_per_ndf = chi2/ndf
         
         #another method to calculate residuals
-        pred = func_model_greypwvo3(xdata,*popt)
+        pred = func_model_greypwv(xdata,*popt)
         residuals = ydata-pred
         r=residuals
         chi2 = r.T @ np.linalg.inv(covdata) @ r
@@ -531,7 +537,7 @@ class FitAtmosphericParamsCov:
         
         fit_dict = {"chi2":chi2,"ndeg":ndf,"chi2_per_deg":chi2_per_ndf,"popt":popt,"sigmas":sigmas,"pwv_fit":pwv_fit,"grey_fit":alpha_fit,"pwve":pwve,"greye":greye}
 
-        return popt,sigmas,fit_dict
+        return popt,sigmas,normresiduals,fit_dict
         
         
     
@@ -547,7 +553,7 @@ class FitAtmosphericParamsCov:
         g_sedxthroughput = sedxthroughput
 
 
-        flux_model = func_model_greypwv(xdata,params)
+        flux_model = func_model_greypwv(xdata,*params)
         return flux_model
     
     
