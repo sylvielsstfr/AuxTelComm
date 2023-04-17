@@ -365,7 +365,7 @@ def func_model_greypwvo3(x, *params):
   the_sedxthroughput = g_sedxthroughput
   airmass = g_airmass
   
-  print(f"func_model_greypwvo3() get global airmass {airmass}") 
+  #print(f"func_model_greypwvo3() get global airmass {airmass}") 
   
   fl = alpha*emul.GetAllTransparencies(wl ,airmass,pwv,oz,ncomp=0,flagAerosols=False)
   fl *= the_sedxthroughput
@@ -461,7 +461,7 @@ class FitAtmosphericParamsCov:
         
         fit_dict = {"chi2":chi2,"ndeg":ndf,"chi2_per_deg":chi2_per_ndf,"popt":popt,"sigmas":sigmas,"pwv_fit":pwv_fit,"oz_fit":oz_fit,"grey_fit":alpha_fit,"pwve":pwve,"oze":oze,"greye":greye}
 
-        return popt,sigmas,fit_dict
+        return popt,sigmas,normresiduals,fit_dict
     
     
     def pred_greypwvo3(self,params,xdata,airmass,sedxthroughput):
