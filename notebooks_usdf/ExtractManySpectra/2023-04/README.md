@@ -39,3 +39,6 @@
 - **SearchForBadSpectra.ipynb**: Find criteria to identify what is a  bad spectrum, generate the list of bad numbers
 
 - **SearchForBadSpectraandbadtracking.ipynb**: Study the impact of bad tracking on Spectra 
+
+
+- **ViewPostISRCCD-oga-spectractorv2_4.ipynb** : Example for extracting the postISRCCD from my collection
