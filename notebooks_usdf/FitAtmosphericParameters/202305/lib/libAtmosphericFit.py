@@ -3,7 +3,7 @@
 # Author          : Sylvie Dagoret-Campagne
 # Affiliaton      : IJCLab/IN2P3/CNRS
 # Creation Date   : 2023/02/18
-# Last update     : 2023/04/15
+# Last update     : 2023/06/06 (cloudy night, increase range of grey term)
 #
 # A python tool to fit quickly atmospheric transmission of Auxtel Spectra with scipy.optimize and
 # using the atmospheric emulator atmosphtransmemullsst
@@ -434,7 +434,10 @@ class FitAtmosphericParamsCov:
         global g_sedxthroughput 
         g_sedxthroughput = sedxthroughput
  
-        res_fit = curve_fit(func_model_greypwvo3, xdata=xdata, ydata=ydata, p0=params0,sigma = covdata,bounds=([0.1,0.001,50.],[2,9.5,550.]), full_output=True)     
+        #res_fit = curve_fit(func_model_greypwvo3, xdata=xdata, ydata=ydata, p0=params0,sigma = covdata,bounds=([0.1,0.001,50.],[2,9.5,550.]), full_output=True) 
+    
+        # FOR CLOUDY nights
+        res_fit = curve_fit(func_model_greypwvo3, xdata=xdata, ydata=ydata, p0=params0,sigma = covdata,bounds=([0.005,0.001,50.],[50,9.5,550.]), full_output=True) 
     
         popt = res_fit[0]
         pcov = res_fit[1]
@@ -505,7 +508,10 @@ class FitAtmosphericParamsCov:
         global g_sedxthroughput 
         g_sedxthroughput = sedxthroughput
             
-        res_fit = curve_fit(func_model_greypwv,  xdata=xdata, ydata=ydata, p0=params0,sigma = covdata,bounds=([0.1,0.001],[2,9.5]),full_output=True)
+        #res_fit = curve_fit(func_model_greypwv,  xdata=xdata, ydata=ydata, p0=params0,sigma = covdata,bounds=([0.1,0.001],[2,9.5]),full_output=True)
+        
+        # For Cloudy nights
+        res_fit = curve_fit(func_model_greypwv,  xdata=xdata, ydata=ydata, p0=params0,sigma = covdata,bounds=([0.005,0.001],[50,9.5]),full_output=True)
         
         popt = res_fit[0]
         pcov = res_fit[1]
