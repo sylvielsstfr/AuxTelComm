@@ -12,7 +12,7 @@
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab
 # - creation date : 2023/12/08
-# - last update : 2023/02/03
+# - last update : 2023/07/19
 # 
 # 
 
@@ -69,19 +69,18 @@ warnings.filterwarnings("ignore")
 # Configuration
 #---------------
 
-
 #DATE = 20230117
 #FILTER="empty-holo4_003"
 #FILTER="BG40_65mm_1-holo4_003"
 #FILTER="OG550_65mm_1-holo4_003"
 
-DATE = 20230118
-FILTER = "BG40_65mm_1-holo4_003"
+#DATE = 20230118
+#FILTER = "BG40_65mm_1-holo4_003"
 #FILTER = "OG550_65mm_1-holo4_003"
 #FILTER = "empty-holo4_003"
 
-#DATE = 20230119
-#FILTER="empty-holo4_003"
+DATE = 20230119
+FILTER="empty-holo4_003"
 #FILTER="BG40_65mm_1-holo4_003"
 #FILTER="OG550_65mm_1-holo4_003"
 
@@ -102,6 +101,24 @@ FILTER = "BG40_65mm_1-holo4_003"
 #FILTER="BG40_65mm_1-holo4_003"
 #FILTER="OG550_65mm_1-holo4_003"
 
+#DATE = 20230215
+#FILTER="empty-holo4_003"
+
+
+#DATE = 20230315
+#FILTER="empty-holo4_003"
+
+#DATE = 20230316
+#FILTER="empty-holo4_003"
+
+#DATE = 20230704
+#FILTER = "empty-holo4_003"
+
+#DATE = 20230705
+#FILTER = "empty-holo4_003"
+
+#DATE = 20230706
+#FILTER = "empty-holo4_003"
 
 # input filename
 #----------------
@@ -176,13 +193,17 @@ isr_config.doBias: True
 
 isr_task = IsrTask(config=isr_config)
 
+###########################################
+# REPO=/repo/embargo
+# butler query-collections $REPO LATISS/calib
+#############################################
 
 calibType = 'bias'
 physical_filter = 'empty~empty'
 cameraName = 'LATISS'
 # Collection name containing the verification outputs.
 calibCollections = ['LATISS/calib','LATISS/raw/all',
-                   'LATISS/calib/DM-28636',
+'LATISS/calib/DM-28636',
 'LATISS/calib/DM-28636/curated/19700101T000000Z',
 'LATISS/calib/DM-28636/curated/20180101T000000Z',
 'LATISS/calib/DM-28636/unbounded',
@@ -250,7 +271,48 @@ calibCollections = ['LATISS/calib','LATISS/raw/all',
 'LATISS/calib/DM-36719/verifyFlat-SDSSi.20221107a/20221108T014950Z',
 'LATISS/calib/DM-36719/verifyFlat-SDSSr.20221107a',
 'LATISS/calib/DM-36719/verifyFlat-SDSSr.20221107a/20221108T000940Z',
-'LATISS/calib/unbounded','LATISS/defaults','LATISS/raw/all']
+'LATISS/calib/DM-39505',                    
+'LATISS/calib/DM-39505/crosstalk.20230602',
+'LATISS/calib/DM-38946',
+'LATISS/calib/DM-38946/noRGseq/bias.20230503',
+'LATISS/calib/DM-38946/noRGseq/dark.20230503',
+'LATISS/calib/DM-38946/noRGseq/flat-g.20230503',
+'LATISS/calib/DM-38946/noRGseq/flat-r.20230503',
+'LATISS/calib/DM-38946/noRGseq/flat-i.20230503',
+'u/czw/DM-37811/parOStest.20230202a/calib/flat-OG550.20230207a',
+'u/czw/DM-37811/parOStest.20230202a/calib/flat-BG40.20230207a', 
+'u/czw/DM-37811/parOStest.20230202a/calib/flat-SDSSr.20230203a',
+'u/czw/DM-37811/parOStest.20230202a/calib/flat-SDSSg.20230203a',
+'u/czw/DM-37811/parOStest.20230202a/calib/flat-SDSSi.20230202a',
+'u/czw/DM-37811/parOStest.20230202a/calib/dark.20230202a',
+'u/czw/DM-37811/parOStest.20230202a/calib/bias.20230202a',
+'LATISS/calib/DM-37587/flat-BG40.20230113a',
+'LATISS/calib/DM-37587/flat-OG550.20230113a',
+'LATISS/calib/DM-37587/flat-SDSSr.20230113a',
+'LATISS/calib/DM-36719',
+'LATISS/calib/DM-36719/bias.20221107',
+'LATISS/calib/DM-36719/dark.20221107',
+'LATISS/calib/DM-36719/flat-SDSSi.20221107',
+'LATISS/calib/DM-36719/flat-SDSSr.20221107',
+'LATISS/calib/DM-36719/flat-SDSSg.20221107',
+'LATISS/calib/DM-36484/bias.20221005a',
+'LATISS/calib/DM-36484/dark.20221006a',
+'LATISS/calib/DM-36484/flat-SDSSg.20221006a',
+'LATISS/calib/DM-36484/flat-SDSSr.20221006a',
+'LATISS/calib/DM-36484/flat-SDSSi.20221006a',
+'u/czw/defects.20220608',
+'LATISS/calib/DM-33875',                                        
+'u/czw/DM-28920/calib/bias.20210720',                 
+'u/czw/DM-28920/calib/dark.20210720a',     
+'u/calib/DM-32209-20211013a-g',
+'u/calib/DM-32209-20211013a-felh',
+'u/czw/DM-28920/calib/flat.20210720',
+'u/czw/DM-28920/calib/defect.20210720a',
+'LATISS/calib/DM-39635',
+'LATISS/calib/DM-39635/unbounded','LATISS/defaults','LATISS/raw/all']                   
+                   
+                   
+
 
 # get Master Bias
 #---------------------
@@ -288,13 +350,22 @@ for index,row in df.iterrows():
     md = meta.toDict()
 
     the_object = md['OBJECT']
+    
+    if the_object == "MU-COL":
+        md['OBJECT']="HD38666"
+        the_object = md['OBJECT']
+        
+    if the_object == "ETA1-DOR":
+        md['OBJECT']="HD42525"
+        the_object = md['OBJECT']
+    
     the_am= md['AMSTART']
     the_filter=md['FILTER']
 
     filename_out = f"exposure_{exposure_selected}_pseudo-postisrccd.fits"
     fullfilename_out=os.path.join(path_out,filename_out)
     
-    print(f">>>>  output filename {filename_out}")
+    print(f">>>>  output filename {filename_out} target {the_object}")
     
     hdr = fits.Header()
     
