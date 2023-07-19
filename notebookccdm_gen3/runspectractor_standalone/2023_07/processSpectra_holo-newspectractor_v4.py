@@ -7,7 +7,7 @@
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab/IN2P3/CNES, DESC-LSST fullmember, behalf AuxTel Teal VERA C. Rubin observatory
 # - creation date : 2023-07-18
-# - Last update : 2023-07-18
+# - Last update : 2023-07-19
 
 # source /sps/lsst/groups/auxtel/softs/MySetup_py39_SDC.sh 
 
@@ -147,7 +147,7 @@ disperser_label = filterdispersername.split("~")[-1]
 
 # select if we run at CC or not (locally) 
 # /sps/lsst/groups/auxtel/data/2022/holo/20220317
-HOSTCC = False
+HOSTCC = True
 LAPTOP = False
 
 
@@ -157,7 +157,8 @@ if HOSTCC:
     path_auxtel="/sps/lsst/groups/auxtel"
     path_spectractor=os.path.join(path_auxtel,"softs/github/desc/Spectractor")
     path_spectractor_config=os.path.join(path_spectractor,"config")
-    path_images=os.path.join(path_auxtel,"data/2023/"+filterdispersername+"/"+DATE)
+    #path_images=os.path.join(path_auxtel,"data/2023/"+filterdispersername+"/"+DATE)
+    path_images=os.path.join(path_auxtel,"data/hack_usdf/my_postisrccd_img_forspectractor_2023/"+filterdispersername+"/"+DATE)
     if configdir == "":
         path_output_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+DATE)
     else:
