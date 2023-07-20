@@ -84,8 +84,8 @@ warnings.filterwarnings("ignore")
 #FILTER="BG40_65mm_1-holo4_003"
 #FILTER="OG550_65mm_1-holo4_003"
 
-#DATE = 20230131
-#FILTER = "empty-holo4_003"
+DATE = 20230131
+FILTER = "empty-holo4_003"
 #FILTER="BG40_65mm_1-holo4_003"
 #FILTER="OG550_65mm_1-holo4_003"
 
@@ -121,8 +121,8 @@ warnings.filterwarnings("ignore")
 #FILTER = "empty-holo4_003"
 
 
-DATE = 20230718
-FILTER = "empty-holo4_003"
+#DATE = 20230718
+#FILTER = "empty-holo4_003"
 
 
 # input filename
@@ -355,12 +355,15 @@ for index,row in df.iterrows():
     md = meta.toDict()
 
     the_object = md['OBJECT']
+    old_name = ""
     
     if the_object == "MU-COL":
+        old_name = the_object
         md['OBJECT']="HD38666"
         the_object = md['OBJECT']
         
     if the_object == "ETA1-DOR":
+        old_name = the_object
         md['OBJECT']="HD42525"
         the_object = md['OBJECT']
     
@@ -370,7 +373,11 @@ for index,row in df.iterrows():
     filename_out = f"exposure_{exposure_selected}_pseudo-postisrccd.fits"
     fullfilename_out=os.path.join(path_out,filename_out)
     
-    print(f">>>>  output filename {filename_out} target {the_object}")
+    if old_name == "":
+        print(f">>>>  output filename {filename_out} target {the_object}")
+    else:
+         print(f">>>>  output filename {filename_out} target {the_object} ({old_name})")
+        
     
     hdr = fits.Header()
     
