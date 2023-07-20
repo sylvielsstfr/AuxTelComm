@@ -12,7 +12,7 @@
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab
 # - creation date : 2023/12/08
-# - last update : 2023/07/19
+# - last update : 2023/07/20
 # 
 # 
 
@@ -79,8 +79,8 @@ warnings.filterwarnings("ignore")
 #FILTER = "OG550_65mm_1-holo4_003"
 #FILTER = "empty-holo4_003"
 
-DATE = 20230119
-FILTER="empty-holo4_003"
+#DATE = 20230119
+#FILTER="empty-holo4_003"
 #FILTER="BG40_65mm_1-holo4_003"
 #FILTER="OG550_65mm_1-holo4_003"
 
@@ -119,6 +119,11 @@ FILTER="empty-holo4_003"
 
 #DATE = 20230706
 #FILTER = "empty-holo4_003"
+
+
+DATE = 20230718
+FILTER = "empty-holo4_003"
+
 
 # input filename
 #----------------
