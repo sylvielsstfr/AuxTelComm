@@ -55,8 +55,8 @@ from lsst.ip.isr import  OverscanCorrectionTaskConfig, OverscanCorrectionTask
 
 
 # LSST Display
-import lsst.afw.display as afwDisplay
-afwDisplay.setDefaultBackend('matplotlib')
+#import lsst.afw.display as afwDisplay
+#afwDisplay.setDefaultBackend('matplotlib')
 
 
 
@@ -84,8 +84,8 @@ warnings.filterwarnings("ignore")
 #FILTER="BG40_65mm_1-holo4_003"
 #FILTER="OG550_65mm_1-holo4_003"
 
-DATE = 20230131
-FILTER = "empty-holo4_003"
+#DATE = 20230131
+#FILTER = "empty-holo4_003"
 #FILTER="BG40_65mm_1-holo4_003"
 #FILTER="OG550_65mm_1-holo4_003"
 
@@ -124,6 +124,8 @@ FILTER = "empty-holo4_003"
 #DATE = 20230718
 #FILTER = "empty-holo4_003"
 
+DATE = 20230720
+FILTER = "empty-holo4_003"
 
 # input filename
 #----------------
