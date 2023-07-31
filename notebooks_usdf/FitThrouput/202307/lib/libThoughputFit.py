@@ -2,8 +2,8 @@
 #
 # Author          : Sylvie Dagoret-Campagne
 # Affiliaton      : IJCLab/IN2P3/CNRS
-# Creation Date   : 2023/07/31
-# Last update     : 2023/07/29 
+# Creation Date   : 2023/07/29
+# Last update     : 2023/07/31 
 #
 # A python tool to fit quickly atmospheric transmission of Auxtel Spectra with scipy.optimize and
 # using the atmospheric emulator atmosphtransmemullsst
@@ -126,7 +126,6 @@ class ThrouputCut(Throughput):
 
               self.bandindexes_list = np.sort(self.bandindexes_list)
 
-              print(self.bandindexes_list)
               self.wl = np.delete(self.wl,self.bandindexes_list )
               self.th = np.delete(self.th,self.bandindexes_list )
               self.eth = np.delete(self.eth,self.bandindexes_list )
@@ -145,13 +144,13 @@ class ThrouputParams(ThrouputCut):
               key = item[0]
               val = item[1]
 
-              print(key)
-
               xx = val["wl"]
               yy = val["th"]
-              print("key = ",key,"xx = ",xx,"yy= ",yy)
-              print(xx.dtype)
-              xpoints = np.linspace(xx[0],xx[-1],reso)
+            
+              xmin = xx[0]
+              xmax = xx[-1]
+              
+              xpoints = np.arange(xmin+reso/2.,xmax,reso)
               ypoints = np.interp(xpoints,xx,yy)
               points_list = {}
               points_list["wl"] = xpoints
