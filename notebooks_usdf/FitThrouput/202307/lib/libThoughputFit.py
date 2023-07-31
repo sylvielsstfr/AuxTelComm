@@ -87,8 +87,8 @@ class Throughput:
               dfin = pd.read_csv(path,index_col=0)
           
               x = dfin["wavelength"].values
-              y = dfin["throu"].values
-              ey = dfin["errthrou"].values
+              y = dfin["newthrou"].values
+              ey = dfin["newthrouerr"].values
 
               self.wl = x
               self.th = y
@@ -102,6 +102,7 @@ class ThrouputCut(Throughput):
    
           self.absband_list = absband_list
           self.bandindexes_list = np.array([],dtype=int)
+          self.removedbands = {}
    
           if self.absband_list is not None:
               for item in Dict_Absbands.items():
@@ -115,9 +116,13 @@ class ThrouputCut(Throughput):
                  
 
                   if key in self.absband_list:
-                      print(key)
                       indexes_to_remove = np.where(np.logical_and(self.wl>=the_xmin,self.wl<=the_xmax))[0]
                       self.bandindexes_list = np.union1d(self.bandindexes_list,indexes_to_remove)
+                      points_list = {}
+                      points_list["wl"] = self.wl[indexes_to_remove]
+                      points_list["th"] = self.th[indexes_to_remove]
+                      points_list["eth"] = self.eth[indexes_to_remove]
+                      self.removedbands[key] =  points_list
 
               self.bandindexes_list = np.sort(self.bandindexes_list)
 
@@ -125,6 +130,33 @@ class ThrouputCut(Throughput):
               self.wl = np.delete(self.wl,self.bandindexes_list )
               self.th = np.delete(self.th,self.bandindexes_list )
               self.eth = np.delete(self.eth,self.bandindexes_list )
+
+
+class ThrouputParams(ThrouputCut):
+   
+    def __init__(self,path,absband_list,reso=10.0) :
+          super().__init__(path,absband_list)
+
+          # list of throughput points that can be recalculated
+          self.parambands = {}
+   
+          for item in self.removedbands.items():
+              
+              key = item[0]
+              val = item[1]
+
+              print(key)
+
+              xx = val["wl"]
+              yy = val["th"]
+              print("key = ",key,"xx = ",xx,"yy= ",yy)
+              print(xx.dtype)
+              xpoints = np.linspace(xx[0],xx[-1],reso)
+              ypoints = np.interp(xpoints,xx,yy)
+              points_list = {}
+              points_list["wl"] = xpoints
+              points_list["th"] = ypoints
+              self.parambands[key] = points_list
 
 
 
