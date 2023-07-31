@@ -2,7 +2,7 @@
 #
 # Author          : Sylvie Dagoret-Campagne
 # Affiliaton      : IJCLab/IN2P3/CNRS
-# Creation Date   : 2023/07/29
+# Creation Date   : 2023/07/31
 # Last update     : 2023/07/29 
 #
 # A python tool to fit quickly atmospheric transmission of Auxtel Spectra with scipy.optimize and
@@ -20,14 +20,12 @@ from atmosphtransmemullsst.simpleatmospherictransparencyemulator import SimpleAt
 from scipy.optimize import curve_fit,least_squares
 from scipy.interpolate import RegularGridInterpolator
 import numpy as np
+import pandas as pd
 import pickle
 
-
-
-
-print("libAtmosphericFit.py :: Use atmosphtransmemullsst.__path__[0],'../data/simplegrid as the path to data")
+print("libThroughputFit.py :: Use atmosphtransmemullsst.__path__[0],'../data/simplegrid as the path to data")
 data_path = os.path.join(atmosphtransmemullsst.__path__[0],'../data/simplegrid')
-print(f"libAtmosphericFit.py :: data_path = {data_path}")
+print(f"libThroughputFit.py :: data_path = {data_path}")
 
        
 # The emulator as a global variable
@@ -36,6 +34,17 @@ emul = SimpleAtmEmulator(data_path)
 #need those two global variables
 g_airmass = 0
 g_sedxthrouput = None
+
+
+# Dictionnary of absorption band
+Dict_Absbands = {} 
+Dict_Absbands["O3"] = (550.,650.,0)
+Dict_Absbands["O2_1"] = (685.,695.,1)
+Dict_Absbands["O2_2"] = (760.,770.,1)
+Dict_Absbands["H2O_1"] = (715.,735.,2)
+Dict_Absbands["H2O_2"] = (815.,835.,2)
+Dict_Absbands["H2O_3"] = (925.,980.,2)
+Absbands_Colors = ['yellow','cyan','green']
 
 
 
@@ -62,6 +71,71 @@ def transmpred_ampwvozaer(params,*arg):
   transm = emul.GetAllTransparencies(wl ,am,pwv,oz,ncomp=1,taus=[vaod],betas=[beta],flagAerosols=True)
   return transm
 
+
+class Throughput:
+    """
+      Class for throughput
+    """
+    def __init__(self, path) :
+            filtyp = path.split(".")[-1]
+            if filtyp == "txt":
+              array = np.loadtxt(path)
+              x = array[:,0]
+              y = array[:,1]
+              ey = 0
+            else:
+              dfin = pd.read_csv(path,index_col=0)
+          
+              x = dfin["wavelength"].values
+              y = dfin["throu"].values
+              ey = dfin["errthrou"].values
+
+              self.wl = x
+              self.th = y
+              self.eth = ey
+
+
+class ThrouputCut(Throughput):
+   
+    def __init__(self,path,absband_list) :
+          super().__init__(path)
+   
+          self.absband_list = absband_list
+          self.bandindexes_list = np.array([],dtype=int)
+   
+          if self.absband_list is not None:
+              for item in Dict_Absbands.items():
+                  
+                  key = item[0]
+                  val = item[1]
+                  idx_abscolor = val[2]
+                  the_xmin = val[0]
+                  the_xmax = val[1]
+
+                 
+
+                  if key in self.absband_list:
+                      print(key)
+                      indexes_to_remove = np.where(np.logical_and(self.wl>=the_xmin,self.wl<=the_xmax))[0]
+                      self.bandindexes_list = np.union1d(self.bandindexes_list,indexes_to_remove)
+
+              self.bandindexes_list = np.sort(self.bandindexes_list)
+
+              print(self.bandindexes_list)
+              self.wl = np.delete(self.wl,self.bandindexes_list )
+              self.th = np.delete(self.th,self.bandindexes_list )
+              self.eth = np.delete(self.eth,self.bandindexes_list )
+
+
+
+
+   
+  
+
+
+
+
+        
 
 ########################## Fitting class with curve_fit method ###################################################### 
 # scipy.optimize.curve_fit(f, xdata, ydata, p0=None, sigma=None, 
