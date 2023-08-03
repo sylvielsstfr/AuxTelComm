@@ -3,7 +3,7 @@
 # Author          : Sylvie Dagoret-Campagne
 # Affiliaton      : IJCLab/IN2P3/CNRS
 # Creation Date   : 2023/07/29
-# Last update     : 2023/07/31 
+# Last update     : 2023/08/03 
 #
 # A python tool to fit quickly atmospheric transmission of Auxtel Spectra with scipy.optimize and
 # using the atmospheric emulator atmosphtransmemullsst
@@ -21,7 +21,9 @@ from scipy.optimize import curve_fit,least_squares
 from scipy.interpolate import RegularGridInterpolator
 import numpy as np
 import pandas as pd
-import pickle
+
+from sklearn.gaussian_process import GaussianProcessRegressor, kernels
+
 
 print("libThroughputFit.py :: Use atmosphtransmemullsst.__path__[0],'../data/simplegrid as the path to data")
 data_path = os.path.join(atmosphtransmemullsst.__path__[0],'../data/simplegrid')
@@ -98,6 +100,9 @@ class Throughput:
 class ThrouputCut(Throughput):
    
     def __init__(self,path,absband_list) :
+          """
+          Remove points in the absband_list
+          """
           super().__init__(path)
    
           self.absband_list = absband_list
@@ -114,7 +119,7 @@ class ThrouputCut(Throughput):
                   the_xmax = val[1]
 
                  
-
+                  # Check if this absband is activated 
                   if key in self.absband_list:
                       indexes_to_remove = np.where(np.logical_and(self.wl>=the_xmin,self.wl<=the_xmax))[0]
                       self.bandindexes_list = np.union1d(self.bandindexes_list,indexes_to_remove)
@@ -125,19 +130,19 @@ class ThrouputCut(Throughput):
                       self.removedbands[key] =  points_list
 
               self.bandindexes_list = np.sort(self.bandindexes_list)
-
+              # remove all points from each band
               self.wl = np.delete(self.wl,self.bandindexes_list )
               self.th = np.delete(self.th,self.bandindexes_list )
               self.eth = np.delete(self.eth,self.bandindexes_list )
 
 
-class ThrouputParams(ThrouputCut):
+class ThrouputAddPointsReso(ThrouputCut):
    
     def __init__(self,path,absband_list,reso=10.0) :
           super().__init__(path,absband_list)
 
           # list of throughput points that can be recalculated
-          self.parambands = {}
+          self.pointsinbands = {}
    
           for item in self.removedbands.items():
               
@@ -155,13 +160,72 @@ class ThrouputParams(ThrouputCut):
               points_list = {}
               points_list["wl"] = xpoints
               points_list["th"] = ypoints
-              self.parambands[key] = points_list
+              self.pointsinbands[key] = points_list
 
 
-
-
+class ThrouputAddPointsN(ThrouputCut):
    
-  
+    def __init__(self,path,absband_list,npoints_list) :
+          super().__init__(path,absband_list)
+
+          # number of points per band
+          self.dict_npoints = dict(zip(absband_list, npoints_list))
+
+        
+           # list of throughput points that can be recalculated
+          self.pointsinbands = {}
+   
+          for item in self.removedbands.items():
+              
+              key = item[0]
+              val = item[1]
+
+              xx = val["wl"]
+              yy = val["th"]
+            
+              xmin = xx[0]
+              xmax = xx[-1]
+              npts = self.dict_npoints[key]
+              nintervals = npts+1
+              reso = (xmax-xmin)/nintervals
+              
+              xpoints = np.linspace(xmin+reso,xmax-reso,npts)
+              ypoints = np.interp(xpoints,xx,yy)
+              points_list = {}
+              points_list["wl"] = xpoints
+              points_list["th"] = ypoints
+              self.pointsinbands[key] = points_list
+
+class ThrouputParamsAddPointsN(ThrouputAddPointsN):
+
+      
+    def __init__(self,path,absband_list,npoints_list) :
+          super().__init__(path,absband_list,npoints_list)
+
+          self.throughputscale = {} 
+
+          # set the relative throuput scale for added points
+          for item in self.pointsinbands.items():
+              key = item[0]
+              val = item[1]
+              npts = len(val["th"])
+              self.throughputscale[key] = np.ones(npts)
+
+          self.newpointsinbands = self.pointsinbands.copy()
+
+    def setnewscales(self,dict_new_scale):
+          for item in self.newpointsinbands.items():
+              key = item[0]
+              val = item[1]
+              xx = val["wl"]
+              yy = val["th"]
+              yynew = yy*dict_new_scale[key]
+              val["th"] = yynew
+          
+        
+
+        
+           
 
 
 
