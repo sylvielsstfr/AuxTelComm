@@ -25,6 +25,7 @@ import pandas as pd
 from sklearn.gaussian_process import GaussianProcessRegressor, kernels
 
 
+
 print("libThroughputFit.py :: Use atmosphtransmemullsst.__path__[0],'../data/simplegrid as the path to data")
 data_path = os.path.join(atmosphtransmemullsst.__path__[0],'../data/simplegrid')
 print(f"libThroughputFit.py :: data_path = {data_path}")
@@ -154,8 +155,14 @@ class ThrouputAddPointsReso(ThrouputCut):
             
               xmin = xx[0]
               xmax = xx[-1]
+              xcenter = (xmin+xmax)/2.
+
+              xright = np.arange(xcenter,xmax,reso)
+              xleft = np.arange(-xcenter,-xmin,reso)
+              xleft = -xleft
+              xleft = xleft[:-1]
               
-              xpoints = np.arange(xmin+reso/2.,xmax,reso)
+              xpoints = np.union1d(xleft,xright)
               ypoints = np.interp(xpoints,xx,yy)
               points_list = {}
               points_list["wl"] = xpoints
@@ -221,6 +228,38 @@ class ThrouputParamsAddPointsN(ThrouputAddPointsN):
               yy = val["th"]
               yynew = yy*dict_new_scale[key]
               val["th"] = yynew
+
+    def fitthrouputwithgp(self,x):
+          X = self.wl 
+          Y = self.th 
+          EY = self.eth
+
+          EYmax = np.max(EY)*10.
+         
+          for item in self.newpointsinbands.items():
+              key = item[0]
+              val = item[1]
+              xx = val["wl"]
+              yy = val["th"]
+              eyy = np.full(len(yy),EYmax)
+              X = np.append(X,xx)
+              Y = np.append(Y,yy)
+              EY = np.append(EY,eyy)
+
+          indexes_sorted = np.argsort(X)
+          X = X[indexes_sorted]
+          Y = Y[indexes_sorted]
+          EY = EY[indexes_sorted]
+
+          kernel = kernels.RBF(0.5, (20, 150.0))
+          gp = GaussianProcessRegressor(kernel=kernel, alpha=(EY)** 2 ,random_state=0)
+
+
+          gp.fit(X[:, None], Y)
+          f, f_err = gp.predict(x[:, None], return_std=True)
+          return f,f_err
+
+        
           
         
 
