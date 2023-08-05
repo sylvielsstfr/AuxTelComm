@@ -275,9 +275,13 @@ class FitThroughputandAtmosphericParamsCov:
     This class mainly uses curve_fit method of scipy.optimize
 
     """
-    def __init__(self,sed_wl,sed_fl,throughput) :
+    def __init__(self,sed_wl,sed_fl,throughput,wlmin,wlmax) :
         print("Init FitThroughputandAtmosphericParamsCov")
         
+        # wl
+        self.wlmin = wlmin
+        self.wlmax = wlmax
+
         # SED
         self.sed_wl = sed_wl
         self.sed_fl = sed_fl
@@ -294,30 +298,75 @@ class FitThroughputandAtmosphericParamsCov:
         self.aer0 = 0.
 
     @staticmethod
-    def flattendatacurve(X,Y,Z,ninfo):
+    def flattendatacurve(X,Y,Z,ninfo,wlmin,wlmax):
         """
         Decode the 2D data to flatten them
+        Keep the data in the appropriate wavelength range
         """
         am = X[:,2]   # airmasses
         nwl = X[:,3].astype(int)  #number of wl points 
+        nwlsel = np.zeros(len(am),dtype=int)
         nspec = X.shape[0]
     
         for idx in range (nspec):
+           
+            x = X[idx,ninfo:nwl[idx]+ninfo]
+            y = Y[idx,:nwl[idx]]
+            z = Z[idx,:nwl[idx]]
+
+            indexes_sel = np.where(np.logical_and(x>wlmin,x<wlmax))[0]
+            x = x[indexes_sel]
+            y = y[indexes_sel]
+            z = z[indexes_sel]
+
             if idx == 0:
-                x = X[idx,ninfo:nwl[idx]+ninfo]
-                y = Y[idx,:nwl[idx]]
-                z = Z[idx,:nwl[idx]]
+                xx = x
+                yy = y
+                zz = z
             else:
-                x = np.append(x,X[idx,ninfo:nwl[idx]+ninfo])
-                y = np.append(y,Y[idx,:nwl[idx]])
-                z = np.append(z,Z[idx,:nwl[idx]])
+                xx = np.append(xx,x)
+                yy = np.append(yy,y)
+                zz = np.append(zz,z)
+
+            nwlsel[idx] = len(x)
         
-        return x,y,z,am,nwl
+        return xx,yy,zz,am,nwlsel
     
-    def fluxprediction(self):
+    def computetheseds(self):
         """
         """
-        pass
+        nobs = len(self.airmasses)
+        count = 0
+        for iobs in range(nobs):
+            npts_obs = self.npts[iobs]
+            wl = self.wl[count:count+npts_obs]
+            
+            if iobs == 0:
+                all_sed = self.f_sed(wl)
+            else:
+                all_sed = np.append(all_sed, self.f_sed(wl ) ) 
+        return all_sed
+    
+    def computethethroughputs(self):
+        """
+        """
+        newscales = { "O3": [1.0,1.0,1.0],"O2_2": [1.0],"H2O_2": [1.0],"H2O_3": [1.,1.,1.,1. ]}
+        self.th.setnewscales(newscales)
+
+      
+        nobs = len(self.airmasses)
+        count = 0
+        for iobs in range(nobs):
+            npts_obs = self.npts[iobs]
+            wl = self.wl[count:count+npts_obs]
+            y_th,ey_th = self.th.fitthrouputwithgp(wl)
+
+            if iobs == 0:
+                all_th = y_th
+            else:
+                all_th = np.append(all_th, y_th ) 
+        return all_th
+
 
 
     def fitmultievent_greypwvo3aer(self , X,Y,EY,ninfo):
@@ -326,7 +375,7 @@ class FitThroughputandAtmosphericParamsCov:
         """
 
         # first flatten the data before the fit
-        X,Y,EY,am,npts = FitThroughputandAtmosphericParamsCov.flattendatacurve(X,Y,EY,ninfo)
+        X,Y,EY,am,npts = FitThroughputandAtmosphericParamsCov.flattendatacurve(X,Y,EY,ninfo,self.wlmin,self.wlmax)
 
         self.wl = X         # 1D wavelength array for all observations 
         self.fl = Y         # 1D fluxarray for all observations 
@@ -338,6 +387,16 @@ class FitThroughputandAtmosphericParamsCov:
         assert self.npts.sum()    == self.wl.shape[0] 
         assert self.wl.shape[0]   == self.fl.shape[0] 
         assert self.efl.shape[0]  == self.fl.shape[0] 
+        assert self.airmasses.shape[0]  == self.npts.shape[0]
+
+        # Compute SED
+        self.all_seds = self.computetheseds()
+
+        # Compute the throughputs
+        self.all_throughputs = self.computethethroughputs()
+
+        
+
 
 
         popt = []
