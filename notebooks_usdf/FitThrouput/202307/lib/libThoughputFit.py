@@ -263,26 +263,22 @@ class ThrouputParamsAddPointsN(ThrouputAddPointsN):
           
         
 
-        
-           
-
-
-
-
-        
 
 ########################## Fitting class with curve_fit method ###################################################### 
 # scipy.optimize.curve_fit(f, xdata, ydata, p0=None, sigma=None, 
 # absolute_sigma=False, check_finite=True, bounds=(-inf, inf), method=None, jac=None, *, full_output=False, **kwargs)
 ######################################################################################################################
-class FitAtmosphericParamsCov:
+class FitThroughputandAtmosphericParamsCov:
     """
     Class to handle a buch of different methods for fitting
     This class mainly uses curve_fit method of scipy.optimize
 
     """
-    def __init__(self):
-        print("Init FitAtmosphericParamsCov")
+    def __init__(self,Nobs,airmasses_list = []):
+        print("Init FitThroughputandAtmosphericParamsCov")
+        Nobs = Nobs
+        airmasses_list = airmasses_list
+
         
     #######################################################    
     # Static methods defining the model of fluxes    
