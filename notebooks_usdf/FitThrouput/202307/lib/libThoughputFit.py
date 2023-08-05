@@ -1,9 +1,9 @@
-# libAtmosphericFit
+# libThroughputFit
 #
 # Author          : Sylvie Dagoret-Campagne
 # Affiliaton      : IJCLab/IN2P3/CNRS
-# Creation Date   : 2023/07/29
-# Last update     : 2023/08/03 
+# Creation Date   : 2023/08/04
+# Last update     : 2023/08/05 
 #
 # A python tool to fit quickly atmospheric transmission of Auxtel Spectra with scipy.optimize and
 # using the atmospheric emulator atmosphtransmemullsst
@@ -19,6 +19,7 @@ from atmosphtransmemullsst.simpleatmospherictransparencyemulator import SimpleAt
 
 from scipy.optimize import curve_fit,least_squares
 from scipy.interpolate import RegularGridInterpolator
+from scipy import interpolate
 import numpy as np
 import pandas as pd
 
@@ -274,249 +275,80 @@ class FitThroughputandAtmosphericParamsCov:
     This class mainly uses curve_fit method of scipy.optimize
 
     """
-    def __init__(self,Nobs,airmasses_list = []):
+    def __init__(self,sed_wl,sed_fl,throughput) :
         print("Init FitThroughputandAtmosphericParamsCov")
-        Nobs = Nobs
-        airmasses_list = airmasses_list
-
         
-    #######################################################    
-    # Static methods defining the model of fluxes    
-    # function that calculate y = f(x)
-    ######################################################
+        # SED
+        self.sed_wl = sed_wl
+        self.sed_fl = sed_fl
+        self.f_sed = interpolate.interp1d(sed_wl,sed_fl,bounds_error=False,fill_value="extrapolate")
+
+
+        # Throughput model
+        self.th = throughput
+
+        # atmospheric parameters
+        self.grey0 = 1.0
+        self.pwv0 = 4.0
+        self.oz0 = 300.
+        self.aer0 = 0.
+
     @staticmethod
-    def func_model_greypwvo3(x, *params):
-      """
-      Evaluate the flux
-  
-      Parameters 
-         x : the abscisse , ie the wavelength array
-         params : array of parameters to fit (amplitude, pwv, ozone)
+    def flattendatacurve(X,Y,Z,ninfo):
+        """
+        Decode the 2D data to flatten them
+        """
+        am = X[:,2]   # airmasses
+        nwl = X[:,3].astype(int)  #number of wl points 
+        nspec = X.shape[0]
+    
+        for idx in range (nspec):
+            if idx == 0:
+                x = X[idx,ninfo:nwl[idx]+ninfo]
+                y = Y[idx,:nwl[idx]]
+                z = Z[idx,:nwl[idx]]
+            else:
+                x = np.append(x,X[idx,ninfo:nwl[idx]+ninfo])
+                y = np.append(y,Y[idx,:nwl[idx]])
+                z = np.append(z,Z[idx,:nwl[idx]])
+        
+        return x,y,z,am,nwl
+    
+    def fluxprediction(self):
+        """
+        """
+        pass
 
-          Required global variables for the model
-          g_airmass :airmass
-          g_sedxthroughput : the throughput time SED
 
-      Return
-        the array of fluxes
+    def fitmultievent_greypwvo3aer(self , X,Y,EY,ninfo):
+        """
+        Do the fit
+        """
 
-      """
+        # first flatten the data before the fit
+        X,Y,EY,am,npts = FitThroughputandAtmosphericParamsCov.flattendatacurve(X,Y,EY,ninfo)
 
-      global emul
-  
-      #alpha,pwv,oz = params    
-      alpha,pwv,oz = params[0],params[1],params[2]
+        self.wl = X         # 1D wavelength array for all observations 
+        self.fl = Y         # 1D fluxarray for all observations 
+        self.efl = EY       # 1D error on flux array for all observations
+        self.airmasses = am # 1D array of airmass for all observations
+        self.npts = npts    # 1D array of the number of wl/flux points for each observation
+
+
+        assert self.npts.sum()    == self.wl.shape[0] 
+        assert self.wl.shape[0]   == self.fl.shape[0] 
+        assert self.efl.shape[0]  == self.fl.shape[0] 
+
+
+        popt = []
+        pcov= []
+        res= []
+        myfit = []
+
+        return popt,pcov,res,myfit
+
+
    
-      wl = x
-      the_sedxthroughput = g_sedxthroughput
-      airmass = g_airmass
-  
-      fl = alpha*emul.GetAllTransparencies(wl ,airmass,pwv,oz,ncomp=0,flagAerosols=False)
-      fl *= the_sedxthroughput
-      return fl
-    
-    @staticmethod
-    def func_model_greypwv(x, *params):
-      """
-        Evaluate the flux
-        Parameters 
-           x : the abscisse , ie the wavelength array
-          params : array of parameters to fit (amplitude, pwv)
-
-        Required global variables
-          g_airmass : the airmass
-           g_sedxthroughput : the sed time throughput
-
-        Return
-          the array of fluxes
-      """
-
-      global emul
-    
-      #alpha,pwv = params
-      alpha=params[0]
-      pwv=params[1]   
-      oz=300. 
-    
-      wl = x
-      the_sedxthroughput = g_sedxthroughput
-      airmass = g_airmass
-      fl = alpha*emul.GetAllTransparencies(wl ,airmass,pwv,oz,ncomp=0,flagAerosols=False)
-      fl *= the_sedxthroughput
-      return fl
-  
-
-    def fit_greypwvo3(self,params0,xdata,ydata,covdata,airmass,sedxthroughput):
-        """
-        Fit a grey term, precipitable water varpor and ozone.
-        It provides the covariance matrix (not the error vector)
-
-        """
-        # first pass the global parameters to the func_model_grewpwvo3 function
-        global g_airmass 
-        g_airmass = airmass
-        global g_sedxthroughput 
-        g_sedxthroughput = sedxthroughput
- 
-        #res_fit = curve_fit(func_model_greypwvo3, xdata=xdata, ydata=ydata, p0=params0,sigma = covdata,bounds=([0.1,0.001,50.],[2,9.5,550.]), full_output=True) 
-    
-        # FOR CLOUDY nights
-        res_fit = curve_fit(FitAtmosphericParamsCov.func_model_greypwvo3, xdata=xdata, ydata=ydata, p0=params0,sigma = covdata,bounds=([0.005,0.001,50.],[50,9.5,550.]), full_output=True) 
-    
-        popt = res_fit[0]
-        pcov = res_fit[1]
-        cf_dict = res_fit[2]
-    
-        # compute the errors on fitted parameters
-        sigmas = np.sqrt(np.diagonal(pcov))
-        # compute the normalized residuals  
-        normresiduals=cf_dict['fvec']
-        # compute the chi2 from the 
-        chi2= np.sum(normresiduals**2)
-        ndf = len(normresiduals)-len(popt)
-        chi2_per_ndf = chi2/ndf
-        
-        #another method to calculate residuals
-        pred = FitAtmosphericParamsCov.func_model_greypwvo3(xdata,*popt)
-        residuals = ydata-pred
-        r=residuals
-        chi2 = r.T @ np.linalg.inv(covdata) @ r
-        ndf = len(residuals)-len(popt)
-        chi2_per_ndf = chi2/ndf
-      
-        pwv_fit = popt[1]
-        oz_fit = popt[2]
-        alpha_fit = popt[0]
-        
-        pwve = sigmas[1]*np.sqrt(chi2_per_ndf)
-        oze =sigmas[2]*np.sqrt(chi2_per_ndf)
-        greye = sigmas[0]*np.sqrt(chi2_per_ndf)
-        
-        fit_dict = {"chi2":chi2,"ndeg":ndf,"chi2_per_deg":chi2_per_ndf,"popt":popt,"sigmas":sigmas,"pwv_fit":pwv_fit,"oz_fit":oz_fit,"grey_fit":alpha_fit,"pwve":pwve,"oze":oze,"greye":greye}
-
-        return popt,sigmas,normresiduals,fit_dict
-    
-    def pred_greypwvo3(self,params,xdata,airmass,sedxthroughput):
-        """
-        Parameters
-          params parameters of the fit , ie alpha, pwv,oz
-          xdata : wavelength array
-          airmass : airmass
-          sedxthroughput : product of the SED by the throughput
-          
-        Return
-          the flux array for the xdata array
-        """
-        # first pass the global parameters
-        global g_airmass 
-        g_airmass = airmass
-        global g_sedxthroughput 
-        g_sedxthroughput = sedxthroughput
-
-        flux_model = FitAtmosphericParamsCov.func_model_greypwvo3(xdata,*params)
-        return flux_model
-    
-    #--------
-    
-    def fit_greypwv(self,params0,xdata,ydata,covdata,airmass,sedxthroughput):
-        """
-        Fit a grey term, precipitable water varpor but No  ozone.
-        This case applies when fittingg with the red filter.
-        It is assumed an ozone value of 300 DB
-
-        """
-        # first pass the global parameters
-        global g_airmass 
-        g_airmass = airmass
-        global g_sedxthroughput 
-        g_sedxthroughput = sedxthroughput
-            
-        #res_fit = curve_fit(func_model_greypwv,  xdata=xdata, ydata=ydata, p0=params0,sigma = covdata,bounds=([0.1,0.001],[2,9.5]),full_output=True)
-        
-        # For Cloudy nights
-        res_fit = curve_fit(FitAtmosphericParamsCov.func_model_greypwv,  xdata=xdata, ydata=ydata, p0=params0,sigma = covdata,bounds=([0.005,0.001],[50,9.5]),full_output=True)
-        
-        popt = res_fit[0]
-        pcov = res_fit[1]
-        cf_dict = res_fit[2]
-    
-        # compute the errors on fitted parameters
-        sigmas = np.sqrt(np.diagonal(pcov))
-        # compute the normalized residuals  
-        normresiduals=cf_dict['fvec']
-        # compute the chi2 from the 
-        chi2= np.sum(normresiduals**2)
-        ndf = len(normresiduals)-len(popt)
-        chi2_per_ndf = chi2/ndf
-        
-        #another method to calculate residuals
-        pred = FitAtmosphericParamsCov.func_model_greypwv(xdata,*popt)
-        residuals = ydata-pred
-        r=residuals
-        chi2 = r.T @ np.linalg.inv(covdata) @ r
-        ndf = len(residuals)-len(popt)
-        chi2_per_ndf = chi2/ndf
-      
-        pwv_fit = popt[1]
-        alpha_fit = popt[0]
-        
-        
-        pwve = sigmas[1]*np.sqrt(chi2_per_ndf)
-        greye = sigmas[0]*np.sqrt(chi2_per_ndf)
-        
-        fit_dict = {"chi2":chi2,"ndeg":ndf,"chi2_per_deg":chi2_per_ndf,"popt":popt,"sigmas":sigmas,"pwv_fit":pwv_fit,"grey_fit":alpha_fit,"pwve":pwve,"greye":greye}
-
-        return popt,sigmas,normresiduals,fit_dict
-        
-        
-    
-    
-    def pred_greypwv(self,params,xdata,airmass,sedxthroughput):
-        """
-        """
-
-        # first pass the global parameters
-        global g_airmass 
-        g_airmass = airmass
-        global g_sedxthroughput 
-        g_sedxthroughput = sedxthroughput
-
-
-        flux_model = FitAtmosphericParamsCov.func_model_greypwv(xdata,*params)
-        return flux_model
-    
-    
-    #-------------------
-
-    def fit_transmampwvozaer(self,params0,xdata,ydata):
-        """
-        Fit transmission
-
-        """            
-        res_fit = least_squares(FitAtmosphericParamsCov.func_residuals_tramampwvozaer, params0,bounds=([1.001,0.001,0.001,0,-3],[2.499,9.5,599,0.5,0]),args=[xdata,ydata])
-        
-        # results fo the fit
-        popt= res_fit.x
-        J = res_fit.jac
-        pcov = np.linalg.inv(J.T.dot(J))
-        sigmas = np.sqrt(np.diagonal(pcov))
-        cost=res_fit.cost
-        residuals = res_fit.fun
-        chi2=np.sum(residuals**2)
-        ndeg = J.shape[0]- popt.shape[0]
-        chi2_per_deg = chi2/ndeg
-        
-        
-        fit_dict = {"chi2":chi2,"ndeg":ndeg,"chi2_per_deg":chi2_per_deg,"popt":popt,"sigmas":sigmas}
-
-        return res_fit,fit_dict
-    
-    
-    def pred_transmampwvozaer(self,params,xdata):
-        """
-        """
-        transm_model = transmpred_ampwvozaer(params,xdata)
-        return transm_model
         
 ################################################################################################        
 
