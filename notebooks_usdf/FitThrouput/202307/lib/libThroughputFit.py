@@ -25,6 +25,9 @@ import pandas as pd
 
 from sklearn.gaussian_process import GaussianProcessRegressor, kernels
 
+import copy
+from collections import OrderedDict
+
 
 
 print("libThroughputFit.py :: Use atmosphtransmemullsst.__path__[0],'../data/simplegrid as the path to data")
@@ -41,7 +44,7 @@ g_sedxthrouput = None
 
 
 # Dictionnary of absorption band
-Dict_Absbands = {} 
+Dict_Absbands = OrderedDict() 
 Dict_Absbands["O3"] = (550.,650.,0)
 Dict_Absbands["O2_1"] = (685.,695.,1)
 Dict_Absbands["O2_2"] = (760.,770.,1)
@@ -109,7 +112,7 @@ class ThrouputCut(Throughput):
    
           self.absband_list = absband_list
           self.bandindexes_list = np.array([],dtype=int)
-          self.removedbands = {}
+          self.removedbands = OrderedDict()
    
           if self.absband_list is not None:
               for item in Dict_Absbands.items():
@@ -125,7 +128,7 @@ class ThrouputCut(Throughput):
                   if key in self.absband_list:
                       indexes_to_remove = np.where(np.logical_and(self.wl>=the_xmin,self.wl<=the_xmax))[0]
                       self.bandindexes_list = np.union1d(self.bandindexes_list,indexes_to_remove)
-                      points_list = {}
+                      points_list = OrderedDict()
                       points_list["wl"] = self.wl[indexes_to_remove]
                       points_list["th"] = self.th[indexes_to_remove]
                       points_list["eth"] = self.eth[indexes_to_remove]
@@ -144,10 +147,9 @@ class ThrouputAddPointsReso(ThrouputCut):
           super().__init__(path,absband_list)
 
           # list of throughput points that can be recalculated
-          self.pointsinbands = {}
+          self.pointsinbands = OrderedDict()
    
-          for item in self.removedbands.items():
-              
+          for item in self.removedbands.items():         
               key = item[0]
               val = item[1]
 
@@ -170,6 +172,8 @@ class ThrouputAddPointsReso(ThrouputCut):
               points_list["th"] = ypoints
               self.pointsinbands[key] = points_list
 
+            
+
 
 class ThrouputAddPointsN(ThrouputCut):
    
@@ -177,11 +181,11 @@ class ThrouputAddPointsN(ThrouputCut):
           super().__init__(path,absband_list)
 
           # number of points per band
-          self.dict_npoints = dict(zip(absband_list, npoints_list))
+          self.dict_npoints = OrderedDict(zip(absband_list, npoints_list))
 
         
            # list of throughput points that can be recalculated
-          self.pointsinbands = {}
+          self.pointsinbands = OrderedDict()
    
           for item in self.removedbands.items():
               
@@ -210,7 +214,8 @@ class ThrouputParamsAddPointsN(ThrouputAddPointsN):
     def __init__(self,path,absband_list,npoints_list) :
           super().__init__(path,absband_list,npoints_list)
 
-          self.throughputscale = {} 
+          # we have a dict of scales  
+          self.throughputscale = OrderedDict()
 
           # set the relative throuput scale for added points
           for item in self.pointsinbands.items():
@@ -219,16 +224,46 @@ class ThrouputParamsAddPointsN(ThrouputAddPointsN):
               npts = len(val["th"])
               self.throughputscale[key] = np.ones(npts)
 
+          # new points in band are original ones  
           self.newpointsinbands = self.pointsinbands.copy()
 
-    def setnewscales(self,dict_new_scale):
-          for item in self.newpointsinbands.items():
+
+        # compute the number of parameters
+    def countnumberofparams(self):
+            countparams = 0
+            for item in self.newpointsinbands.items():
               key = item[0]
               val = item[1]
               xx = val["wl"]
               yy = val["th"]
-              yynew = yy*dict_new_scale[key]
-              val["th"] = yynew
+              countparams += len(xx)
+            return countparams
+    
+    def printinfo(self):
+            print(f"Throughputinfo : {self.__class__.__name__}")
+            nparams = self.countnumberofparams()
+            printf(f"\t number of params = {nparams}")
+            for item in self.pointsinbands.items():
+                key = item[0]
+                val = item[1]
+                npts = len(val["th"])
+                scales = self.throughputscale[key]
+                print(f"\t {key} , {len(val)}", scales)
+
+
+    def setnewscales(self,dict_new_scale):
+          """
+          When new setnewscales is called, the new points are updated
+          """
+          # loop on new points that must be updated
+          for item in self.newpointsinbands.items():
+              key = item[0] # retrieve the key
+              val = item[1] # retrive the previous values that must be updated
+              xx = val["wl"]
+              yy = val["th"]
+              self.throughputscale[key] = dict_new_scale[key]  # keep track of the new scale values
+              yynew = self.pointsinbands["th"]*dict_new_scale[key]
+              val["th"] = yynew  # update the new throughout values
 
     def fitthrouputwithgp(self,x):
           X = self.wl 
@@ -290,6 +325,7 @@ class FitThroughputandAtmosphericParamsCov:
 
         # Throughput model
         self.th = throughput
+        self.npts_th    = self.th.countnumberofparams()
 
         # atmospheric parameters
         self.grey0 = 0
@@ -338,7 +374,7 @@ class FitThroughputandAtmosphericParamsCov:
     def computetheseds(self):
         """
         """
-        nobs = len(self.airmasses)
+        nobs = self.nobs
         count = 0
         for iobs in range(nobs):
             npts_obs = self.npts[iobs]
@@ -358,7 +394,7 @@ class FitThroughputandAtmosphericParamsCov:
         self.th.setnewscales(newscales)
 
       
-        nobs = len(self.airmasses)
+        nobs = self.nobs
         count = 0
         for iobs in range(nobs):
             npts_obs = self.npts[iobs]
@@ -385,9 +421,9 @@ class FitThroughputandAtmosphericParamsCov:
         greyod = atmparams[4:]
 
 
-        nobs = len(self.airmasses)
+        
         count = 0
-        for iobs in range(nobs):
+        for iobs in range(self.nobs):
 
             npts_obs = self.npts[iobs]
             wl = self.wl[count:count+npts_obs]
@@ -406,6 +442,10 @@ class FitThroughputandAtmosphericParamsCov:
 
 
         
+    def fitparamsandthroughputfunc(self,x,*params):
+        """
+        Function  for fitting the model
+        """
 
 
 
@@ -424,6 +464,7 @@ class FitThroughputandAtmosphericParamsCov:
         self.airmasses = am # 1D array of airmass for all observations
         self.npts      = npts    # 1D array of the number of wl/flux points for each observation
         self.nobs      = len(am)
+      
 
 
         assert self.npts.sum()    == self.wl.shape[0] 
@@ -461,7 +502,8 @@ class FitThroughputandAtmosphericParamsCov:
 
 
 
-        
+         # compute relative residuals
+        self.all_residuals =  (self.fl - self.all_specmodel)/self.efl
 
 
 
