@@ -100,6 +100,18 @@ class Throughput:
               self.wl = x
               self.th = y
               self.eth = ey
+              self.totaln = len(x)
+
+    def printinfo(self):
+            """
+            print information ion the throughput
+            """
+            print(f"Throughputinfo : {self.__class__.__name__}")
+            print(f"Total number of points {self.totaln}")
+            print("\t wl  = ",self.wl[:5])
+            print("\t th  = ",self.th[:5])
+            print("\t eth = ",self.eth[:5])
+
 
 
 class ThrouputCut(Throughput):
@@ -140,6 +152,18 @@ class ThrouputCut(Throughput):
               self.th = np.delete(self.th,self.bandindexes_list )
               self.eth = np.delete(self.eth,self.bandindexes_list )
 
+    
+    
+    def printinfo(self):
+            """
+            print information ion the throughput
+            """
+            print(f"Throughputinfo : {self.__class__.__name__}")
+            super().printinfo()
+
+
+
+
 
 class ThrouputAddPointsReso(ThrouputCut):
    
@@ -171,6 +195,34 @@ class ThrouputAddPointsReso(ThrouputCut):
               points_list["wl"] = xpoints
               points_list["th"] = ypoints
               self.pointsinbands[key] = points_list
+
+    def countnumberofparams(self):
+            """
+            compute the number of parameters
+            """
+            countparams = 0
+            for item in self.pointsinbands.items():
+              key = item[0]
+              val = item[1]
+              xx = val["wl"]
+              yy = val["th"]
+              countparams += len(xx)
+            return countparams
+    
+    def printinfo(self):
+            """
+            print information in the throughput
+            """
+            super().printinfo()
+            print(f"Throughputinfo : {self.__class__.__name__}")
+            nparams = self.countnumberofparams()
+            print(f"\t number of points in bands = {nparams}")
+            for item in self.pointsinbands.items():
+                key = item[0]
+                val = item[1]
+                npts = len(val["th"])
+               
+                print(f"\t {key} , npts = {npts}")
 
             
 
@@ -208,6 +260,35 @@ class ThrouputAddPointsN(ThrouputCut):
               points_list["th"] = ypoints
               self.pointsinbands[key] = points_list
 
+   
+    def countnumberofparams(self):
+            """
+            compute the number of parameters
+            """
+            countparams = 0
+            for item in self.pointsinbands.items():
+              key = item[0]
+              val = item[1]
+              xx = val["wl"]
+              yy = val["th"]
+              countparams += len(xx)
+            return countparams
+    
+    def printinfo(self):
+            """
+            print information in the throughput
+            """
+            super().printinfo()
+            print(f"Throughputinfo : {self.__class__.__name__}")
+            nparams = self.countnumberofparams()
+            print(f"\t number of points in bands = {nparams}")
+            for item in self.pointsinbands.items():
+                key = item[0]
+                val = item[1]
+                npts = len(val["th"])
+               
+                print(f"\t {key} , npts = {npts}")
+
 class ThrouputParamsAddPointsN(ThrouputAddPointsN):
 
       
@@ -228,8 +309,11 @@ class ThrouputParamsAddPointsN(ThrouputAddPointsN):
           self.newpointsinbands = self.pointsinbands.copy()
 
 
-        # compute the number of parameters
+    
     def countnumberofparams(self):
+            """
+            compute the number of parameters
+            """
             countparams = 0
             for item in self.newpointsinbands.items():
               key = item[0]
@@ -240,15 +324,19 @@ class ThrouputParamsAddPointsN(ThrouputAddPointsN):
             return countparams
     
     def printinfo(self):
+            """
+            print information on the object
+            """
+            super().printinfo()
             print(f"Throughputinfo : {self.__class__.__name__}")
             nparams = self.countnumberofparams()
-            printf(f"\t number of params = {nparams}")
+            print(f"\t number of params = {nparams}")
             for item in self.pointsinbands.items():
                 key = item[0]
                 val = item[1]
                 npts = len(val["th"])
                 scales = self.throughputscale[key]
-                print(f"\t {key} , {len(val)}", scales)
+                print(f"\t {key} , npts = {npts}", scales)
 
 
     def setnewscales(self,dict_new_scale):
@@ -262,7 +350,7 @@ class ThrouputParamsAddPointsN(ThrouputAddPointsN):
               xx = val["wl"]
               yy = val["th"]
               self.throughputscale[key] = dict_new_scale[key]  # keep track of the new scale values
-              yynew = self.pointsinbands["th"]*dict_new_scale[key]
+              yynew = self.pointsinbands[key]["th"]*dict_new_scale[key]
               val["th"] = yynew  # update the new throughout values
 
     def fitthrouputwithgp(self,x):
