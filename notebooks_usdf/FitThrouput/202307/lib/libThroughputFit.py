@@ -455,10 +455,9 @@ class FitThroughputandAtmosphericParamsCov:
         atmparams[8] = 0.2
         atmparams[10] = 0.5
 
-
-        print(atmparams)
-
         self.all_atmtransm = self.computeatmosphere(*atmparams)
+
+        self.all_specmodel =  self.all_seds * self.all_throughputs * self.all_atmtransm 
 
 
 
