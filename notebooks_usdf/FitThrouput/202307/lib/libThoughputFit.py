@@ -292,10 +292,13 @@ class FitThroughputandAtmosphericParamsCov:
         self.th = throughput
 
         # atmospheric parameters
-        self.grey0 = 1.0
+        self.grey0 = 0
         self.pwv0 = 4.0
         self.oz0 = 300.
         self.aer0 = 0.
+        self.tau0 = 0.
+        self.beta0 = 1.
+        
 
     @staticmethod
     def flattendatacurve(X,Y,Z,ninfo,wlmin,wlmax):
@@ -347,10 +350,11 @@ class FitThroughputandAtmosphericParamsCov:
                 all_sed = np.append(all_sed, self.f_sed(wl ) ) 
         return all_sed
     
-    def computethethroughputs(self):
+    def computethethroughputs(self,newscales):
         """
+        Compute throughput
         """
-        newscales = { "O3": [1.0,1.0,1.0],"O2_2": [1.0],"H2O_2": [1.0],"H2O_3": [1.,1.,1.,1. ]}
+        
         self.th.setnewscales(newscales)
 
       
@@ -366,6 +370,43 @@ class FitThroughputandAtmosphericParamsCov:
             else:
                 all_th = np.append(all_th, y_th ) 
         return all_th
+    
+
+    def computeatmosphere(self,*atmparams):
+        """
+        Compute atmospheric attenuation
+        """
+
+        # decode atmospheric parameters
+        pwv  = atmparams[0]
+        oz   = atmparams[1]
+        vaod = atmparams[2]
+        beta = atmparams[3]
+        greyod = atmparams[4:]
+
+
+        nobs = len(self.airmasses)
+        count = 0
+        for iobs in range(nobs):
+
+            npts_obs = self.npts[iobs]
+            wl = self.wl[count:count+npts_obs]
+            am = self.airmasses[iobs]
+
+
+            transm = emul.GetAllTransparencies(wl ,am,pwv,oz,ncomp=1,taus=[vaod],betas=[beta],flagAerosols=True)
+            transm_att = np.exp(-greyod[iobs]*am)*transm
+
+           
+            if iobs == 0:
+                all_transm = transm_att
+            else:
+                all_transm = np.append(all_transm, transm_att ) 
+        return all_transm
+
+
+        
+
 
 
 
@@ -377,11 +418,12 @@ class FitThroughputandAtmosphericParamsCov:
         # first flatten the data before the fit
         X,Y,EY,am,npts = FitThroughputandAtmosphericParamsCov.flattendatacurve(X,Y,EY,ninfo,self.wlmin,self.wlmax)
 
-        self.wl = X         # 1D wavelength array for all observations 
-        self.fl = Y         # 1D fluxarray for all observations 
-        self.efl = EY       # 1D error on flux array for all observations
+        self.wl        = X         # 1D wavelength array for all observations 
+        self.fl        = Y         # 1D fluxarray for all observations 
+        self.efl       = EY       # 1D error on flux array for all observations
         self.airmasses = am # 1D array of airmass for all observations
-        self.npts = npts    # 1D array of the number of wl/flux points for each observation
+        self.npts      = npts    # 1D array of the number of wl/flux points for each observation
+        self.nobs      = len(am)
 
 
         assert self.npts.sum()    == self.wl.shape[0] 
@@ -393,7 +435,32 @@ class FitThroughputandAtmosphericParamsCov:
         self.all_seds = self.computetheseds()
 
         # Compute the throughputs
-        self.all_throughputs = self.computethethroughputs()
+
+        #set the throughput parameters to fit
+        newscales = { "O3": [1.0,1.0,1.0],"O2_2": [1.0],"H2O_2": [1.0],"H2O_3": [1.,1.,1.,1. ]}
+        self.all_throughputs = self.computethethroughputs(newscales)
+
+
+        # compute the atmospheric transmission
+        atmparams = np.zeros((self.nobs+4))
+
+        ## set parameters
+        atmparams[0] = self.pwv0
+        atmparams[1] = self.oz0
+        atmparams[2] = self.tau0
+        atmparams[3] = self.beta0
+        atmparams[4:] = np.full((self.nobs), self.grey0)
+
+        atmparams[6] = 0.1
+        atmparams[8] = 0.2
+        atmparams[10] = 0.5
+
+
+        print(atmparams)
+
+        self.all_atmtransm = self.computeatmosphere(*atmparams)
+
+
 
         
 
