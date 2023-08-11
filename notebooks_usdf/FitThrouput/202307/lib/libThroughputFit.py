@@ -610,7 +610,7 @@ class FitThroughputandAtmosphericParamsCov:
 
         #decode parameters
 
-        print("fitparamsandthroughputfunc:: decode params",*params)
+        #print("fitparamsandthroughputfunc:: decode params",*params)
 
         #atmospheric parameters
         pwv  = params[0]
@@ -625,7 +625,7 @@ class FitThroughputandAtmosphericParamsCov:
         atmparams[3] = beta
         atmparams[4:] = greyods
 
-        print("decoded atmparams",atmparams)
+        #print("decoded atmparams",atmparams)
 
 
         #
@@ -645,7 +645,7 @@ class FitThroughputandAtmosphericParamsCov:
               npts = len(xx)
               newscaledict[key] = thparams[ipointer:ipointer+npts]
               ipointer += npts
-        print('decoded newscaledict',newscaledict)
+        #print('decoded newscaledict',newscaledict)
 
         
         # compute the new throughput
