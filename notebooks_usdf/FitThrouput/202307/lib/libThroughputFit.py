@@ -3,7 +3,7 @@
 # Author          : Sylvie Dagoret-Campagne
 # Affiliaton      : IJCLab/IN2P3/CNRS
 # Creation Date   : 2023/08/04
-# Last update     : 2023/08/05 
+# Last update     : 2023/08/11 
 #
 # A python tool to fit quickly atmospheric transmission of Auxtel Spectra with scipy.optimize and
 # using the atmospheric emulator atmosphtransmemullsst
@@ -342,6 +342,7 @@ class ThrouputParamsAddPointsN(ThrouputAddPointsN):
     def setnewscales(self,dict_new_scale):
           """
           When new setnewscales is called, the new points are updated
+          The scale is the factor by which the throuput should be multiplied
           """
           # loop on new points that must be updated
           for item in self.newpointsinbands.items():
@@ -413,7 +414,8 @@ class FitThroughputandAtmosphericParamsCov:
 
         # Throughput model
         self.th = throughput
-        self.npts_th    = self.th.countnumberofparams()
+        self.npts_th = self.th.countnumberofparams()
+        self.params_th = np.ones(self.npts_th)
 
         # atmospheric parameters
         self.grey0 = 0
@@ -423,7 +425,20 @@ class FitThroughputandAtmosphericParamsCov:
         self.tau0 = 0.
         self.beta0 = 1.
         
+        #init only
+        self.nobs = 0
+        self.nparams =  self.npts_th
 
+
+        self.params0 = np.empty(self.nparams)
+
+    
+    def printinfo(self):  
+       
+        print(f"FitThroughputandAtmosphericParamsCov : {self.__class__.__name__}")
+
+         
+         
     @staticmethod
     def flattendatacurve(X,Y,Z,ninfo,wlmin,wlmax):
         """
@@ -478,17 +493,18 @@ class FitThroughputandAtmosphericParamsCov:
         """
         Compute throughput
         """
-        
+        #define the new scales for variables points in throughputs
         self.th.setnewscales(newscales)
 
       
         nobs = self.nobs
         count = 0
+        # fit gaussian process on each obs (on a given set of wavelength)
         for iobs in range(nobs):
             npts_obs = self.npts[iobs]
             wl = self.wl[count:count+npts_obs]
             y_th,ey_th = self.th.fitthrouputwithgp(wl)
-
+            #buildup the 1D array of throuputs for all observation
             if iobs == 0:
                 all_th = y_th
             else:
@@ -532,15 +548,87 @@ class FitThroughputandAtmosphericParamsCov:
         
     def fitparamsandthroughputfunc(self,x,*params):
         """
-        Function  for fitting the model
+        Function  for fitting the model using curve_fit
+
+        - x is the array of wavelengths for all observation 
+        - params is the array of parameters to fit
+               pwv  = params[0]
+               oz   = params[1]
+               vaod = params[2]
+               beta = params[3]
+               greyod = params[4:self.nobs+4]
+               params[self.nobs+4:] throughput parameters
+               newscales = { "O3": [1.0,1.0,1.0],"O2_2": [1.0],"H2O_2": [1.0],"H2O_3": [1.,1.,1.,1. ]}
+
         """
+
+        #decode parameters
+
+        print("fitparamsandthroughputfunc:: decode params",*params)
+
+        #atmospheric parameters
+        pwv  = params[0]
+        oz   = params[1]
+        vaod = params[2]
+        beta = params[3]
+        greyods = params[4:self.nobs+4]
+        atmparams = np.zeros(self.nobs+4)
+        atmparams[0] = pwv
+        atmparams[1] = oz
+        atmparams[2] = vaod
+        atmparams[3] = beta
+        atmparams[4:] = greyods
+
+        print("decoded atmparams",atmparams)
+
+
+        #
+        thparams = params[self.nobs+4:]
+        # generate the new scale
+        #newscales = { "O3": [1.0,1.0,1.0],"O2_2": [1.0],"H2O_2": [1.0],"H2O_3": [1.,1.,1.,1. ]}
+        #th.setnewscales(newscales)
+
+        newscaledict = OrderedDict()
+        ipointer = 0
+        # loop on points in bands
+        for item in self.th.pointsinbands.items():
+              key = item[0]
+              val = item[1]
+              xx = val["wl"]
+              yy = val["th"]
+              npts = len(xx)
+              newscaledict[key] = thparams[ipointer:ipointer+npts]
+              ipointer += npts
+        print('decoded newscaledict',newscaledict)
+
+        
+        # compute the new throughput
+        self.all_throughputs = self.computethethroughputs(newscaledict)
+
+        # compute the atmosphere
+        self.all_atmtransm = self.computeatmosphere(*atmparams)
+
+        # compute the predicted fluxes
+        self.all_specmodel =  self.all_seds * self.all_throughputs * self.all_atmtransm 
+
+        return  self.all_specmodel
+
+             
+
+        
 
 
 
 
     def fitmultievent_greypwvo3aer(self , X,Y,EY,ninfo):
         """
-        Do the fit
+        Do the fit by calling curve_fit
+            provide the data 
+            X
+            Y
+            EY
+            ninfo
+
         """
 
         # first flatten the data before the fit
@@ -552,13 +640,23 @@ class FitThroughputandAtmosphericParamsCov:
         self.airmasses = am # 1D array of airmass for all observations
         self.npts      = npts    # 1D array of the number of wl/flux points for each observation
         self.nobs      = len(am)
-      
 
+        self.nparams = self.nobs + self.npts_th
+        self.params_th = np.ones(self.npts_th)
 
+       
+        # few checks of data consistency
         assert self.npts.sum()    == self.wl.shape[0] 
         assert self.wl.shape[0]   == self.fl.shape[0] 
         assert self.efl.shape[0]  == self.fl.shape[0] 
         assert self.airmasses.shape[0]  == self.npts.shape[0]
+
+
+         # initial parameters 
+        params_atm0 = np.array([self.pwv0,self.oz0,self.aer0,self.beta0])
+        params_greratts0 = np.full(self.nobs,self.grey0)
+        params_throughput0 = self.params_th
+        self.params0 = np.concatenate((params_atm0,params_greratts0, params_throughput0))
 
         # Compute SED
         self.all_seds = self.computetheseds()
@@ -566,8 +664,9 @@ class FitThroughputandAtmosphericParamsCov:
         # Compute the throughputs
 
         #set the throughput parameters to fit
-        newscales = { "O3": [1.0,1.0,1.0],"O2_2": [1.0],"H2O_2": [1.0],"H2O_3": [1.,1.,1.,1. ]}
-        self.all_throughputs = self.computethethroughputs(newscales)
+        thp = np.array([1,1,1, 1 , 1 , 1,1,1,1])
+        newscales = { "O3": [thp[0], thp[1], thp[2] ],"O2_2": [thp[3]],"H2O_2": [thp[4]],"H2O_3": [thp[5] , thp[6], thp[7], thp[8] ]}
+        self.all_throughputs0 = self.computethethroughputs(newscales)
 
 
         # compute the atmospheric transmission
@@ -584,23 +683,39 @@ class FitThroughputandAtmosphericParamsCov:
         atmparams[8] = 0.2
         atmparams[10] = 0.5
 
-        self.all_atmtransm = self.computeatmosphere(*atmparams)
+        self.all_atmtransm0 = self.computeatmosphere(*atmparams)
 
-        self.all_specmodel =  self.all_seds * self.all_throughputs * self.all_atmtransm 
 
+        self.all_specmodel0 =  self.all_seds * self.all_throughputs0 * self.all_atmtransm0 
+        # compute relative residuals
+        self.all_residuals0 =  (self.fl - self.all_specmodel0)/self.efl
+
+        params0 = np.concatenate((atmparams,thp))
+
+        #scipy.optimize.curve_fit(f, xdata, ydata, p0=None, sigma=None, absolute_sigma=False, 
+        #check_finite=None, bounds=(-inf, inf), method=None, jac=None, *, full_output=False, nan_policy=None, **kwargs)
+        res_fit = curve_fit(self.fitparamsandthroughputfunc,X,Y,p0=params0,sigma=EY,full_output=True)
+
+        popt = res_fit[0]
+        pcov = res_fit[1]
+        cf_dict = res_fit[2]
+    
+        # compute the errors on fitted parameters
+        sigmas = np.sqrt(np.diagonal(pcov))
+        # compute the normalized residuals  
+        normresiduals=cf_dict['fvec']
+        # compute the chi2 from the 
+        chi2= np.sum(normresiduals**2)
+        ndf = len(normresiduals)-len(popt)
+        chi2_per_ndf = chi2/ndf
+        
 
 
          # compute relative residuals
         self.all_residuals =  (self.fl - self.all_specmodel)/self.efl
 
 
-
-        popt = []
-        pcov= []
-        res= []
-        myfit = []
-
-        return popt,pcov,res,myfit
+        return popt,pcov,cf_dict,sigmas,normresiduals,chi2,ndf,chi2_per_ndf
 
 
    
