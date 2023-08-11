@@ -714,7 +714,7 @@ class FitThroughputandAtmosphericParamsCov:
         params_throughputmax = np.full(self.npts_th,1.5)
         paramsmax= np.concatenate((params_atmmax,params_grerattsmax,  params_throughputmax ))
 
-        bounds = zip(paramsmin,paramsmax)
+        bounds = (paramsmin,paramsmax)
 
         
 
