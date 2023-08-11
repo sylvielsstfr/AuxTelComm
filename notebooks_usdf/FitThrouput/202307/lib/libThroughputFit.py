@@ -316,11 +316,11 @@ class ThrouputParamsAddPointsN(ThrouputAddPointsN):
             """
             countparams = 0
             for item in self.newpointsinbands.items():
-              key = item[0]
-              val = item[1]
-              xx = val["wl"]
-              yy = val["th"]
-              countparams += len(xx)
+                key = item[0]
+                val = item[1]
+                xx = val["wl"]
+                yy = val["th"]
+                countparams += len(xx)
             return countparams
     
     def printinfo(self):
@@ -336,23 +336,55 @@ class ThrouputParamsAddPointsN(ThrouputAddPointsN):
                 val = item[1]
                 npts = len(val["th"])
                 scales = self.throughputscale[key]
-                print(f"\t {key} , npts = {npts}", scales)
+                print(f"\t {key} , npts = {npts}, scale parameters = ", scales)
+            print("\t \t - original points values : ", self.pointsinbands)
+            print("\t \t - new points values : ", self.newpointsinbands)
 
 
     def setnewscales(self,dict_new_scale):
-          """
-          When new setnewscales is called, the new points are updated
-          The scale is the factor by which the throuput should be multiplied
-          """
-          # loop on new points that must be updated
-          for item in self.newpointsinbands.items():
-              key = item[0] # retrieve the key
-              val = item[1] # retrive the previous values that must be updated
-              xx = val["wl"]
-              yy = val["th"]
-              self.throughputscale[key] = dict_new_scale[key]  # keep track of the new scale values
-              yynew = self.pointsinbands[key]["th"]*dict_new_scale[key]
-              val["th"] = yynew  # update the new throughout values
+            """
+            When new setnewscales is called, the new points are updated
+            The scale is the factor by which the throuput should be multiplied
+            """
+            # loop on new points that must be updated
+            for item in self.newpointsinbands.items():
+                key = item[0] # retrieve the key
+                val = item[1] # retrive the previous values that must be updated
+                xx = copy.deepcopy(val["wl"])
+                yy = copy.deepcopy(val["th"])
+                self.throughputscale[key] = dict_new_scale[key]  # keep track of the new scale values
+                yynew = copy.deepcopy(self.pointsinbands[key]["th"]) * dict_new_scale[key]
+               
+                self.newpointsinbands[key] = {"wl":xx,"th":yynew} # update the new throughout values
+                #print("\t setnewscales() ::",key," scale:",dict_new_scale[key]," old=", self.pointsinbands[key]["th"]," new=" ,yynew)
+
+            #print("\t setnewscales() ::" ,"old = ",self.pointsinbands)
+            #print("\t setnewscales() ::" ,"new = ",self.newpointsinbands)
+          
+
+    def setuniscales(self):
+            """
+            set scale factor to 1 for initialisation
+            """
+            unitparams = np.array([])
+            unitparamsdict = {}  # newscales = { "O3": [0.95,1.05,1.01],"O2_2": [1.05],"H2O_2": [0.97],"H2O_3": [1.1,1.2, 0.9, 0.8 ]}
+            for item in self.newpointsinbands.items():
+                key = item[0] # retrieve the key
+                val = item[1] # retrive the previous values that must be updated
+                xx = copy.deepcopy(val["wl"])
+                yy = copy.deepcopy(val["th"])
+                nn = len(yy)
+                scalearray = np.full(nn,1)
+                self.throughputscale[key] = scalearray   # keep track of the new scale values
+                yynew = copy.deepcopy(self.pointsinbands[key]["th"]) * scalearray
+                self.newpointsinbands[key] = {"wl":xx,"th":yynew} # update the new throughout values
+                unitparams = np.append(unitparams,scalearray)
+                unitparamsdict[key] = scalearray 
+                #print("\t setuniscales() ::",key," scale:",scalearray," old=", self.pointsinbands[key]["th"]," new=" ,yynew)
+            #print("\t setnewscales() ::" ,"old = ",self.pointsinbands)
+            #print("\t setnewscales() ::" ,"new = ",self.newpointsinbands)
+            return unitparams,unitparamsdict
+
 
     def fitthrouputwithgp(self,x):
           X = self.wl 
@@ -424,6 +456,20 @@ class FitThroughputandAtmosphericParamsCov:
         self.aer0 = 0.
         self.tau0 = 0.
         self.beta0 = 1.
+
+        self.greymin = 0
+        self.pwvmin = 0.0
+        self.ozmin = 100
+        self.aermin = 0.
+        self.taumin = 0.
+        self.betamin = 0.001
+
+        self.greymax = 5.
+        self.pwvmax = 100.
+        self.ozmax = 500
+        self.aermax = 0.5
+        self.taumax = 0.5
+        self.betamax = 3.8
         
         #init only
         self.nobs = 0
@@ -658,15 +704,29 @@ class FitThroughputandAtmosphericParamsCov:
         params_throughput0 = self.params_th
         self.params0 = np.concatenate((params_atm0,params_greratts0, params_throughput0))
 
+        params_atmmin = np.array([self.pwvmin,self.ozmin,self.aermin,self.betamin])
+        params_grerattsmin = np.full(self.nobs,self.greymin)
+        params_throughputmin = np.full(self.npts_th,0.5)
+        paramsmin = np.concatenate((params_atmmin,params_grerattsmin,  params_throughputmin ))
+
+        params_atmmax = np.array([self.pwvmax,self.ozmax,self.aermax,self.betamax])
+        params_grerattsmax = np.full(self.nobs,self.greymax)
+        params_throughputmax = np.full(self.npts_th,1.5)
+        paramsmax= np.concatenate((params_atmmax,params_grerattsmax,  params_throughputmax ))
+
+        bounds = zip(paramsmin,paramsmax)
+
+        
+
         # Compute SED
         self.all_seds = self.computetheseds()
 
         # Compute the throughputs
 
         #set the throughput parameters to fit
-        thp = np.array([1,1,1, 1 , 1 , 1,1,1,1])
-        newscales = { "O3": [thp[0], thp[1], thp[2] ],"O2_2": [thp[3]],"H2O_2": [thp[4]],"H2O_3": [thp[5] , thp[6], thp[7], thp[8] ]}
-        self.all_throughputs0 = self.computethethroughputs(newscales)
+        throughput_param_arr, throughput_param_dict = self.th.setuniscales()
+        
+        self.all_throughputs0 = self.computethethroughputs(throughput_param_dict)
 
 
         # compute the atmospheric transmission
@@ -690,11 +750,11 @@ class FitThroughputandAtmosphericParamsCov:
         # compute relative residuals
         self.all_residuals0 =  (self.fl - self.all_specmodel0)/self.efl
 
-        params0 = np.concatenate((atmparams,thp))
+        params0 = np.concatenate((atmparams,throughput_param_arr))
 
         #scipy.optimize.curve_fit(f, xdata, ydata, p0=None, sigma=None, absolute_sigma=False, 
         #check_finite=None, bounds=(-inf, inf), method=None, jac=None, *, full_output=False, nan_policy=None, **kwargs)
-        res_fit = curve_fit(self.fitparamsandthroughputfunc,X,Y,p0=params0,sigma=EY,full_output=True)
+        res_fit = curve_fit(self.fitparamsandthroughputfunc,X,Y,p0=params0,sigma=EY,bounds=bounds,full_output=True)
 
         popt = res_fit[0]
         pcov = res_fit[1]
