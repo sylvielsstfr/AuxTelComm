@@ -3,7 +3,7 @@
 # Author          : Sylvie Dagoret-Campagne
 # Affiliaton      : IJCLab/IN2P3/CNRS
 # Creation Date   : 2023/08/04
-# Last update     : 2023/08/11 
+# Last update     : 2023/08/14 
 #
 # A python tool to fit quickly atmospheric transmission of Auxtel Spectra with scipy.optimize and
 # using the atmospheric emulator atmosphtransmemullsst
@@ -28,7 +28,14 @@ from sklearn.gaussian_process import GaussianProcessRegressor, kernels
 import copy
 from collections import OrderedDict
 
-
+pd.options.display.max_columns = 10
+#pd.set_printoptions(precision=6)
+# Environment settings: 
+pd.set_option('display.max_column', None)
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_seq_items', None)
+pd.set_option('display.max_colwidth', 1000)
+pd.set_option('expand_frame_repr', True)
 
 print("libThroughputFit.py :: Use atmosphtransmemullsst.__path__[0],'../data/simplegrid as the path to data")
 data_path = os.path.join(atmosphtransmemullsst.__path__[0],'../data/simplegrid')
@@ -308,7 +315,22 @@ class ThrouputParamsAddPointsN(ThrouputAddPointsN):
           # new points in band are original ones  
           self.newpointsinbands = self.pointsinbands.copy()
 
-
+    def getparamsnames(self):
+        """
+        Retrun the array of throughput params names
+        """
+        paramsnames = []
+        for item in self.pointsinbands.items():
+              key = item[0]
+              val = item[1]
+              npts = len(val["th"])
+              indexes = np.arange(npts)
+              for index in indexes:
+                  paramsnames.append(f"thr{key}_{index}")
+        paramsnames = np.array(paramsnames)
+        return paramsnames
+                  
+        
     
     def countnumberofparams(self):
             """
@@ -387,34 +409,40 @@ class ThrouputParamsAddPointsN(ThrouputAddPointsN):
 
 
     def fitthrouputwithgp(self,x):
-          X = self.wl 
-          Y = self.th 
-          EY = self.eth
+            """
+            Do the throuput points interpolation doing a Gaussian Process fit
+            
+            x : input wavelength
+            """
+            X = self.wl 
+            Y = self.th 
+            EY = self.eth
 
-          EYmax = np.max(EY)*10.
+            EYmax = np.max(EY)*10.
          
-          for item in self.newpointsinbands.items():
-              key = item[0]
-              val = item[1]
-              xx = val["wl"]
-              yy = val["th"]
-              eyy = np.full(len(yy),EYmax)
-              X = np.append(X,xx)
-              Y = np.append(Y,yy)
-              EY = np.append(EY,eyy)
+            for item in self.newpointsinbands.items():
+                key = item[0]
+                val = item[1]
+                xx = val["wl"]
+                yy = val["th"]
+                eyy = np.full(len(yy),EYmax)
+                X = np.append(X,xx)
+                Y = np.append(Y,yy)
+                EY = np.append(EY,eyy)
 
-          indexes_sorted = np.argsort(X)
-          X = X[indexes_sorted]
-          Y = Y[indexes_sorted]
-          EY = EY[indexes_sorted]
+            indexes_sorted = np.argsort(X)
+            X = X[indexes_sorted]
+            Y = Y[indexes_sorted]
+            EY = EY[indexes_sorted]
 
-          kernel = kernels.RBF(0.5, (20, 150.0))
-          gp = GaussianProcessRegressor(kernel=kernel, alpha=(EY)** 2 ,random_state=0)
+            # Initialise gaussian process with a kernel RBF
+            kernel = kernels.RBF(0.5, (20, 150.0))
+            gp = GaussianProcessRegressor(kernel=kernel, alpha=(EY)** 2 ,random_state=0)
 
-
-          gp.fit(X[:, None], Y)
-          f, f_err = gp.predict(x[:, None], return_std=True)
-          return f,f_err
+            # fit the throughput curve with the gaussian process (interpolation at the required points)
+            gp.fit(X[:, None], Y)
+            f, f_err = gp.predict(x[:, None], return_std=True)
+            return f,f_err
 
         
           
@@ -465,7 +493,7 @@ class FitThroughputandAtmosphericParamsCov:
         self.betamin = 0.001
 
         self.greymax = 5.
-        self.pwvmax = 100.
+        self.pwvmax = 10.
         self.ozmax = 500
         self.aermax = 0.5
         self.taumax = 0.5
@@ -477,6 +505,10 @@ class FitThroughputandAtmosphericParamsCov:
 
 
         self.params0 = np.empty(self.nparams)
+        
+        # number of calls for fitting
+        self.nfitcalls = 0
+        self.dfparams = None
 
     
     def printinfo(self):  
@@ -522,6 +554,7 @@ class FitThroughputandAtmosphericParamsCov:
     
     def computetheseds(self):
         """
+        Compute the 1D array for the SED
         """
         nobs = self.nobs
         count = 0
@@ -537,7 +570,7 @@ class FitThroughputandAtmosphericParamsCov:
     
     def computethethroughputs(self,newscales):
         """
-        Compute throughput
+        Compute the 1D array for the throughput
         """
         #define the new scales for variables points in throughputs
         self.th.setnewscales(newscales)
@@ -560,7 +593,7 @@ class FitThroughputandAtmosphericParamsCov:
 
     def computeatmosphere(self,*atmparams):
         """
-        Compute atmospheric attenuation
+        Compute the atmospheric attenuation from the atmospheric parameters
         """
 
         # decode atmospheric parameters
@@ -590,7 +623,26 @@ class FitThroughputandAtmosphericParamsCov:
                 all_transm = np.append(all_transm, transm_att ) 
         return all_transm
 
-
+    def printparams(self,params):
+        """
+        Print parameters
+        the traching of the parameter values is done in the self.dfparams pandas dataframe
+        """
+        colname = f'call{self.nfitcalls}'  
+        #if self.dfparams == None:        
+        #    self.dfparams = pd.DataFrame(params,index = self.params_names,columns=[colname])
+        #else:
+        #    self.dfparams[colname] = params
+        
+        self.dfparams[colname] = params
+            
+        with pd.option_context('display.float_format', '{:,.6f}'.format):
+            print(self.dfparams)
+            
+        
+            
+            
+        
         
     def fitparamsandthroughputfunc(self,x,*params):
         """
@@ -609,8 +661,11 @@ class FitThroughputandAtmosphericParamsCov:
         """
 
         #decode parameters
-
-        #print("fitparamsandthroughputfunc:: decode params",*params)
+        self.nfitcalls += 1
+        
+        if self.nfitcalls % 10 == 0:
+            #print(f"fitparamsandthroughputfunc:: ncoalls = {self.nfitcalls} decode params",*params)
+            self.printparams(params)
 
         #atmospheric parameters
         pwv  = params[0]
@@ -630,10 +685,8 @@ class FitThroughputandAtmosphericParamsCov:
 
         #
         thparams = params[self.nobs+4:]
-        # generate the new scale
-        #newscales = { "O3": [1.0,1.0,1.0],"O2_2": [1.0],"H2O_2": [1.0],"H2O_3": [1.,1.,1.,1. ]}
-        #th.setnewscales(newscales)
-
+        
+        # build the throughput new scales
         newscaledict = OrderedDict()
         ipointer = 0
         # loop on points in bands
@@ -645,8 +698,7 @@ class FitThroughputandAtmosphericParamsCov:
               npts = len(xx)
               newscaledict[key] = thparams[ipointer:ipointer+npts]
               ipointer += npts
-        #print('decoded newscaledict',newscaledict)
-
+        
         
         # compute the new throughput
         self.all_throughputs = self.computethethroughputs(newscaledict)
@@ -699,10 +751,21 @@ class FitThroughputandAtmosphericParamsCov:
 
 
          # initial parameters 
+         
+         #atmospheric parameters (libradtran params and aerosols)
         params_atm0 = np.array([self.pwv0,self.oz0,self.aer0,self.beta0])
-        params_greratts0 = np.full(self.nobs,self.grey0)
+        params_atm_names = np.array(["pwv","oz","tau","beta"])
+        
+        #grey attenuations
+        params_greyatts0 = np.full(self.nobs,self.grey0)
+        params_greyatts_names = np.array([f"grey_{idx}" for idx in range(self.nobs)])
+        
+        #throughput attenuation
         params_throughput0 = self.params_th
-        self.params0 = np.concatenate((params_atm0,params_greratts0, params_throughput0))
+        params_throughput_names = self.th.getparamsnames()
+        
+        self.params0 = np.concatenate((params_atm0,params_greyatts0, params_throughput0))
+        self.params_names = np.concatenate((params_atm_names,params_greyatts_names, params_throughput_names))
 
         params_atmmin = np.array([self.pwvmin,self.ozmin,self.aermin,self.betamin])
         params_grerattsmin = np.full(self.nobs,self.greymin)
@@ -714,7 +777,8 @@ class FitThroughputandAtmosphericParamsCov:
         params_throughputmax = np.full(self.npts_th,1.5)
         paramsmax= np.concatenate((params_atmmax,params_grerattsmax,  params_throughputmax ))
 
-        bounds = (paramsmin,paramsmax)
+        #parameters bounds
+        self.paramsbounds = (paramsmin,paramsmax)
 
         
 
@@ -754,7 +818,11 @@ class FitThroughputandAtmosphericParamsCov:
 
         #scipy.optimize.curve_fit(f, xdata, ydata, p0=None, sigma=None, absolute_sigma=False, 
         #check_finite=None, bounds=(-inf, inf), method=None, jac=None, *, full_output=False, nan_policy=None, **kwargs)
-        res_fit = curve_fit(self.fitparamsandthroughputfunc,X,Y,p0=params0,sigma=EY,bounds=bounds,full_output=True)
+        
+        # before doing the fit reset the number of call fit counter and create the parameter tracking dataframe
+        self.nfitcalls = 0
+        self.dfparams = pd.DataFrame(index=self.params_names)
+        res_fit = curve_fit(self.fitparamsandthroughputfunc,X,Y,p0=params0,sigma=EY,bounds=self.paramsbounds,full_output=True)
 
         popt = res_fit[0]
         pcov = res_fit[1]
