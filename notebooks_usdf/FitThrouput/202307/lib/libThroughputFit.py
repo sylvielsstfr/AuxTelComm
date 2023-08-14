@@ -492,11 +492,11 @@ class FitThroughputandAtmosphericParamsCov:
         self.taumin = 0.
         self.betamin = 0.001
 
-        self.greymax = 5.
+        self.greymax = 1.
         self.pwvmax = 10.
         self.ozmax = 500
-        self.aermax = 0.5
-        self.taumax = 0.5
+        self.aermax = 0.3
+        self.taumax = 0.3
         self.betamax = 3.8
         
         #init only
