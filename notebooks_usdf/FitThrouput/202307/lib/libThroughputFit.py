@@ -1244,9 +1244,9 @@ class FitAtmosphericParamsOnlyCov:
         atmparams[3] = self.beta0
         atmparams[4:] = np.full((self.nobs), self.grey0)
 
-        atmparams[6] = 0.1
-        atmparams[8] = 0.2
-        atmparams[10] = 0.5
+        #atmparams[6] = 0.1
+        #atmparams[8] = 0.2
+        #atmparams[10] = 0.5
 
         self.all_atmtransm0 = self.computeatmosphere(*atmparams)
 
