@@ -6,8 +6,8 @@
 
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab/IN2P3/CNES, DESC-LSST fullmember, behalf AuxTel Teal VERA C. Rubin observatory
-# - creation date : 2023-07-18
-# - Last update : 2023-07-19
+# - creation date : 2023-08-28
+# - Last update : 2023-08-28
 
 # source /sps/lsst/groups/auxtel/softs/MySetup_py39_SDC.sh 
 
@@ -15,6 +15,83 @@ import sys
 print("python path       : ",sys.path)
 print("python executable : ",sys.executable)
 print("python version    : ",sys.version)
+
+
+def is_nan(x):
+    return (x != x)
+
+def GetPaths(computer_name):
+    """
+    """
+    
+    if computer_name == "HOSTCC":
+        
+        path_auxtel="/sps/lsst/groups/auxtel"
+        path_spectractor=os.path.join(path_auxtel,"softs/github/desc/Spectractor")
+        path_spectractor_config=os.path.join(path_spectractor,"config")
+    
+        path_images=os.path.join(path_auxtel,"data/hack_usdf/my_postisrccd_img_forspectractor_2023/"+filterdispersername+"/"+DATE)
+        if configdir == "":
+            path_output_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+DATE)
+        else:
+            path_output_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir+"/"+DATE)
+            path_topoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir)
+            path_toptopoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername)
+            path_toptoptopoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode)
+        
+    elif computer_name == "LAPTOP1":
+        path_auxtel="/Users/dagoret/DATA/AuxTelData2023"
+        path_spectractor=os.path.join(path_auxtel,"/Users/dagoret/MacOSX/GitHub/LSST/Spectractor")
+        path_spectractor_config=os.path.join(path_spectractor,"config")
+        path_images=os.path.join(path_auxtel,"data/2023/"+filterdispersername+"/"+DATE)
+        if configdir == "":
+            path_output_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+DATE)
+        else:
+            path_output_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir+"/"+DATE)
+            path_topoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir)
+            path_toptopoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername)
+            path_toptoptopoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode)
+        
+        
+    elif computer_name == "WORKIMAC":
+        path_auxtel="/Users/sylvie/DATA/AuxTelData2023"
+        path_spectractor=os.path.join(path_auxtel,"/Users/sylvie/MacOSX/GitHub/LSST/Spectractor")
+        path_spectractor_config=os.path.join(path_spectractor,"config")
+        path_images=os.path.join(path_auxtel,"data/2023/"+filterdispersername+"/"+DATE)
+        if configdir == "":
+            path_output_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+DATE)
+        else:
+            path_output_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir+"/"+DATE)
+            path_topoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir)
+            path_toptopoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername)
+            path_toptoptopoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode)
+            
+            
+        
+    elif computer_name == "HOMEIMAC":
+        path_auxtel="/Volumes/Backup2020/DATA"
+        path_spectractor=os.path.join(path_auxtel,"MacOSX/GitHub/LSST/Spectractor")
+        path_spectractor_config=os.path.join(".","config")
+        path_images=os.path.join(path_auxtel,"hack_usdf/my_postisrccd_img_forspectractor_2023/"+filterdispersername+"/"+DATE)
+        
+        # /Volumes/Backup2020/DATA/AuxTelDATA2023/data/2023/OutputSpectractor
+        
+        if configdir == "":
+            path_output_spectractor=os.path.join(path_auxtel,"AuxTelDATA2023/data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+DATE)
+        else:
+            path_output_spectractor=os.path.join(path_auxtel,"AuxTelDATA2023/data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir+"/"+DATE)
+            path_topoutput_spectractor=os.path.join(path_auxtel,"AuxTelDATA2023/data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir)
+            path_toptopoutput_spectractor=os.path.join(path_auxtel,"AuxTelDATA2023/data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername)
+            path_toptoptopoutput_spectractor=os.path.join(path_auxtel,"AuxTelDATA2023/data/2023/OutputSpectractor/"+imagemode)
+            
+        
+    else:
+        print(f"Unknown computer {computer_name}")
+        
+              
+    return path_auxtel,path_spectractor,path_spectractor_config,path_images,path_toptoptopoutput_spectractor, path_toptopoutput_spectractor, path_topoutput_spectractor, path_output_spectractor
+        
+
 
 #-----------------------------------------------------------------------------------------------
 # Handle input arguments
@@ -145,54 +222,11 @@ imagemode = "postISRCCD"
 
 disperser_label = filterdispersername.split("~")[-1]
 
-# select if we run at CC or not (locally) 
-# /sps/lsst/groups/auxtel/data/2022/holo/20220317
-HOSTCC = True
-LAPTOP = False
+# select the computer type
 
+mycomputer_name = "HOMEIMAC"
+path_auxtel,path_spectractor,path_spectractor_config,path_images,path_toptoptopoutput_spectractor, path_toptopoutput_spectractor, path_topoutput_spectractor, path_output_spectractor  = GetPaths(mycomputer_name)
 
-
-# Set path depending on which computer running (according HOSTCC)
-if HOSTCC:
-    path_auxtel="/sps/lsst/groups/auxtel"
-    path_spectractor=os.path.join(path_auxtel,"softs/github/desc/Spectractor")
-    path_spectractor_config=os.path.join(path_spectractor,"config")
-    #path_images=os.path.join(path_auxtel,"data/2023/"+filterdispersername+"/"+DATE)
-    path_images=os.path.join(path_auxtel,"data/hack_usdf/my_postisrccd_img_forspectractor_2023/"+filterdispersername+"/"+DATE)
-    if configdir == "":
-        path_output_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+DATE)
-    else:
-        path_output_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir+"/"+DATE)
-        path_topoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir)
-        path_toptopoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername)
-        path_toptoptopoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode)
-
-else:
-    if not LAPTOP:
-        path_auxtel="/Users/sylvie/DATA/AuxTelData2023"
-        path_spectractor=os.path.join(path_auxtel,"/Users/sylvie/MacOSX/GitHub/LSST/Spectractor")
-        path_spectractor_config=os.path.join(path_spectractor,"config")
-        path_images=os.path.join(path_auxtel,"data/2023/"+filterdispersername+"/"+DATE)
-        if configdir == "":
-            path_output_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+DATE)
-        else:
-            path_output_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir+"/"+DATE)
-            path_topoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir)
-            path_toptopoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername)
-            path_toptoptopoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode)
-    else:
-        path_auxtel="/Users/dagoret/DATA/AuxTelData2023"
-        path_spectractor=os.path.join(path_auxtel,"/Users/dagoret/MacOSX/GitHub/LSST/Spectractor")
-        path_spectractor_config=os.path.join(path_spectractor,"config")
-        path_images=os.path.join(path_auxtel,"data/2023/"+filterdispersername+"/"+DATE)
-        if configdir == "":
-            path_output_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+DATE)
-        else:
-            path_output_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir+"/"+DATE)
-            path_topoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir)
-            path_toptopoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode+"/"+filterdispersername)
-            path_toptoptopoutput_spectractor=os.path.join(path_auxtel,"data/2023/OutputSpectractor/"+imagemode)
-        
 
 
 
@@ -205,8 +239,7 @@ print(f"path_output_spectractor       = {path_output_spectractor}")
 
 
 
-def is_nan(x):
-    return (x != x)
+## logbooks
 
 
 # # Logbook for input file selection
