@@ -124,8 +124,21 @@ warnings.filterwarnings("ignore")
 #DATE = 20230718
 #FILTER = "empty-holo4_003"
 
-DATE = 20230720
+#DATE = 20230720
+#FILTER = "empty-holo4_003"
+
+#DATE = 20230801
+#FILTER = "empty-holo4_003"
+
+#DATE = 20230802
+#FILTER = "empty-holo4_003"
+
+#DATE = 20230815
+#FILTER = "empty-holo4_003"
+
+DATE = 20230817
 FILTER = "empty-holo4_003"
+
 
 # input filename
 #----------------
