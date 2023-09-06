@@ -96,12 +96,12 @@ def GetPaths(computer_name):
         # /Volumes/Backup2020/DATA/AuxTelDATA2023/data/2023/OutputSpectractor
         
         if configdir == "":
-            path_output_spectractor=os.path.join(path_auxtel,"AuxTelDATA2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+DATE)
+            path_output_spectractor=os.path.join(path_auxtel,"AuxtelData2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+DATE)
         else:
-            path_output_spectractor=os.path.join(path_auxtel,"AuxTelDATA2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir+"/"+DATE)
-            path_topoutput_spectractor=os.path.join(path_auxtel,"AuxTelDATA2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir)
-            path_toptopoutput_spectractor=os.path.join(path_auxtel,"AuxTelDATA2023/OutputSpectractor/"+imagemode+"/"+filterdispersername)
-            path_toptoptopoutput_spectractor=os.path.join(path_auxtel,"AuxTelDATA2023/OutputSpectractor/"+imagemode)
+            path_output_spectractor=os.path.join(path_auxtel,"AuxtelData2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir+"/"+DATE)
+            path_topoutput_spectractor=os.path.join(path_auxtel,"AuxtelData2023/OutputSpectractor/"+imagemode+"/"+filterdispersername+"/"+configdir)
+            path_toptopoutput_spectractor=os.path.join(path_auxtel,"AuxtelData2023/OutputSpectractor/"+imagemode+"/"+filterdispersername)
+            path_toptoptopoutput_spectractor=os.path.join(path_auxtel,"AuxtelData2023/OutputSpectractor/"+imagemode)
         
         
     else:
