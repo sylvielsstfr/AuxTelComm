@@ -88,8 +88,8 @@ def GetPaths(computer_name):
     
     
     elif computer_name == "USDF":
-        path_auxtel="/home/d/dagoret/rubin-user/DATA"
-        path_spectractor=os.path.join("/home/d/dagoret","repos/repos_w_2023_35/Spectractor")
+        path_auxtel="/sdf/home/d/dagoret/rubin-user/DATA"
+        path_spectractor=os.path.join("/sdf/home/d/dagoret","repos/repos_w_2023_35/Spectractor")
         path_spectractor_config=os.path.join(".","config")
         path_images=os.path.join(path_auxtel,"AuxtelData2023/my_postisrccd_img_forspectractor_2023/"+filterdispersername+"/"+DATE)
         
@@ -200,7 +200,7 @@ import shutil
 # # Configuration
 # ## Config for the notebook
 
-version="v6.0"  # version of flipping
+version="v7.0"  # version of flipping
 # create output directories if not exist and clean existing files
 FLAG_MANAGE_OUTPUT_SPECTRACTOR=True
 # allow to run reconstruction with Spectractor
@@ -243,7 +243,7 @@ disperser_label = filterdispersername.split("~")[-1]
 
 # select the computer type
 
-mycomputer_name = "HOMEIMAC"
+mycomputer_name = "USDF"
 path_auxtel,path_spectractor,path_spectractor_config,path_images,path_toptoptopoutput_spectractor, path_toptopoutput_spectractor, path_topoutput_spectractor, path_output_spectractor  = GetPaths(mycomputer_name)
 
 
