@@ -4,17 +4,19 @@
 # # Make postISRCCD from raw for Spectractor StandAlone
 # 
 # 
-# - work with Weakly_2023_01
+# - work with Weakly_2023_35
 # - use jupyter kernel LSST : **lsst_distrib_2023_01**
 # 
 # 
 # 
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab
-# - creation date : 2023/12/08
-# - last update : 2023/07/20
+# - creation date : 2023/09/15
+# - last update : 2023/09/18
 # 
 # 
+#write output file according hierarchy
+#         DATE/Filter 
 
 
 import os
@@ -136,8 +138,28 @@ warnings.filterwarnings("ignore")
 #DATE = 20230815
 #FILTER = "empty-holo4_003"
 
-DATE = 20230817
-FILTER = "empty-holo4_003"
+#DATE = 20230817
+#FILTER = "empty-holo4_003"
+
+
+#DATE = 20230912
+#FILTER="cyl_lens-holo4_001"
+#FILTER="cyl_lens-holo4_003"
+#FILTER="collimator-holo4_003"
+#FILTER="empty-holo4_001"
+#FILTER="empty-holo4_003"
+
+DATE = 20230913
+#FILTER="collimator-holo4_003"
+#FILTER="cyl_lens-holo4_003"
+#FILTER="empty-holo4_003"
+FILTER="empty-holo4_001"
+
+DATE = 20230914
+#FILTER="collimator-holo4_003"
+#FILTER="cyl_lens-holo4_003"
+#FILTER="empty-holo4_003"
+FILTER="empty-holo4_001"
 
 
 # input filename
@@ -222,114 +244,7 @@ calibType = 'bias'
 physical_filter = 'empty~empty'
 cameraName = 'LATISS'
 # Collection name containing the verification outputs.
-calibCollections = ['LATISS/calib','LATISS/raw/all',
-'LATISS/calib/DM-28636',
-'LATISS/calib/DM-28636/curated/19700101T000000Z',
-'LATISS/calib/DM-28636/curated/20180101T000000Z',
-'LATISS/calib/DM-28636/unbounded',
-'LATISS/calib/DM-33875',
-'LATISS/calib/DM-36484/bias.20221005a',
-'LATISS/calib/DM-36484/biasGen.20221005a',
-'LATISS/calib/DM-36484/biasGen.20221005a/20221006T000101Z',
-'LATISS/calib/DM-36484/dark.20221006a',
-'LATISS/calib/DM-36484/darkGen.20221005a',
-'LATISS/calib/DM-36484/darkGen.20221005a/20221006T222501Z',
-'LATISS/calib/DM-36484/darkGen.20221006a',
-'LATISS/calib/DM-36484/darkGen.20221006a/20221006T222921Z',
-'LATISS/calib/DM-36484/flat-SDSSg.20221006a',
-'LATISS/calib/DM-36484/flat-SDSSi.20221006a',
-'LATISS/calib/DM-36484/flat-SDSSr.20221006a',
-'LATISS/calib/DM-36484/flatGen-SDSSg.20221006a',
-'LATISS/calib/DM-36484/flatGen-SDSSg.20221006a/20221007T002703Z',
-'LATISS/calib/DM-36484/flatGen-SDSSi.20221006a',
-'LATISS/calib/DM-36484/flatGen-SDSSi.20221006a/20221007T003732Z',
-'LATISS/calib/DM-36484/flatGen-SDSSiD.20221006a',
-'LATISS/calib/DM-36484/flatGen-SDSSiD.20221006a/20221007T004708Z',
-'LATISS/calib/DM-36484/flatGen-SDSSr.20221006a',
-'LATISS/calib/DM-36484/flatGen-SDSSr.20221006a/20221006T233657Z',
-'LATISS/calib/DM-36484/verifyBias.20221005a',
-'LATISS/calib/DM-36484/verifyBias.20221005a/20221006T000747Z',
-'LATISS/calib/DM-36484/verifyBias.20221005a/20221006T213237Z',
-'LATISS/calib/DM-36484/verifyBias.20221005b',
-'LATISS/calib/DM-36484/verifyBias.20221005b/20221019T205236Z',
-'LATISS/calib/DM-36484/verifyDark.20221006a',
-'LATISS/calib/DM-36484/verifyDark.20221006a/20221006T224403Z',
-'LATISS/calib/DM-36484/verifyFlat-SDSSg.20221006a',
-'LATISS/calib/DM-36484/verifyFlat-SDSSg.20221006a/20221007T003418Z',
-'LATISS/calib/DM-36484/verifyFlat-SDSSi.20221006a',
-'LATISS/calib/DM-36484/verifyFlat-SDSSi.20221006a/20221007T004423Z',
-'LATISS/calib/DM-36484/verifyFlat-SDSSr.20221006a',
-'LATISS/calib/DM-36484/verifyFlat-SDSSr.20221006a/20221006T234341Z',
-'LATISS/calib/DM-36719',
-'LATISS/calib/DM-36719/bias.20221107',
-'LATISS/calib/DM-36719/biasGen.20221107a',
-'LATISS/calib/DM-36719/biasGen.20221107a/20221107T205127Z',
-'LATISS/calib/DM-36719/biasGen.20221107b',
-'LATISS/calib/DM-36719/biasGen.20221107b/20221107T213306Z',
-'LATISS/calib/DM-36719/dark.20221107',
-'LATISS/calib/DM-36719/darkGen.20221107a',
-'LATISS/calib/DM-36719/darkGen.20221107a/20221107T223409Z',
-'LATISS/calib/DM-36719/flat-SDSSg.20221107',
-'LATISS/calib/DM-36719/flat-SDSSi.20221107',
-'LATISS/calib/DM-36719/flat-SDSSr.20221107',
-'LATISS/calib/DM-36719/flatGen-SDSSg.20221107a',
-'LATISS/calib/DM-36719/flatGen-SDSSg.20221107a/20221108T002737Z',
-'LATISS/calib/DM-36719/flatGen-SDSSi.20221107a',
-'LATISS/calib/DM-36719/flatGen-SDSSi.20221107a/20221108T005202Z',
-'LATISS/calib/DM-36719/flatGen-SDSSr.20221107a',
-'LATISS/calib/DM-36719/flatGen-SDSSr.20221107a/20221107T235401Z',
-'LATISS/calib/DM-36719/ptcGen-SDSSr.20221107a',
-'LATISS/calib/DM-36719/ptcGen-SDSSr.20221107a/20221108T180421Z',
-'LATISS/calib/DM-36719/verifyBias.20221107b',
-'LATISS/calib/DM-36719/verifyBias.20221107b/20221107T220410Z',
-'LATISS/calib/DM-36719/verifyDark.20221107a',
-'LATISS/calib/DM-36719/verifyDark.20221107a/20221107T232823Z',
-'LATISS/calib/DM-36719/verifyFlat-SDSSg.20221107a',
-'LATISS/calib/DM-36719/verifyFlat-SDSSg.20221107a/20221108T004225Z',
-'LATISS/calib/DM-36719/verifyFlat-SDSSi.20221107a',
-'LATISS/calib/DM-36719/verifyFlat-SDSSi.20221107a/20221108T012110Z',
-'LATISS/calib/DM-36719/verifyFlat-SDSSi.20221107a/20221108T014950Z',
-'LATISS/calib/DM-36719/verifyFlat-SDSSr.20221107a',
-'LATISS/calib/DM-36719/verifyFlat-SDSSr.20221107a/20221108T000940Z',
-'LATISS/calib/DM-39505',                    
-'LATISS/calib/DM-39505/crosstalk.20230602',
-'LATISS/calib/DM-38946',
-'LATISS/calib/DM-38946/noRGseq/bias.20230503',
-'LATISS/calib/DM-38946/noRGseq/dark.20230503',
-'LATISS/calib/DM-38946/noRGseq/flat-g.20230503',
-'LATISS/calib/DM-38946/noRGseq/flat-r.20230503',
-'LATISS/calib/DM-38946/noRGseq/flat-i.20230503',
-'u/czw/DM-37811/parOStest.20230202a/calib/flat-OG550.20230207a',
-'u/czw/DM-37811/parOStest.20230202a/calib/flat-BG40.20230207a', 
-'u/czw/DM-37811/parOStest.20230202a/calib/flat-SDSSr.20230203a',
-'u/czw/DM-37811/parOStest.20230202a/calib/flat-SDSSg.20230203a',
-'u/czw/DM-37811/parOStest.20230202a/calib/flat-SDSSi.20230202a',
-'u/czw/DM-37811/parOStest.20230202a/calib/dark.20230202a',
-'u/czw/DM-37811/parOStest.20230202a/calib/bias.20230202a',
-'LATISS/calib/DM-37587/flat-BG40.20230113a',
-'LATISS/calib/DM-37587/flat-OG550.20230113a',
-'LATISS/calib/DM-37587/flat-SDSSr.20230113a',
-'LATISS/calib/DM-36719',
-'LATISS/calib/DM-36719/bias.20221107',
-'LATISS/calib/DM-36719/dark.20221107',
-'LATISS/calib/DM-36719/flat-SDSSi.20221107',
-'LATISS/calib/DM-36719/flat-SDSSr.20221107',
-'LATISS/calib/DM-36719/flat-SDSSg.20221107',
-'LATISS/calib/DM-36484/bias.20221005a',
-'LATISS/calib/DM-36484/dark.20221006a',
-'LATISS/calib/DM-36484/flat-SDSSg.20221006a',
-'LATISS/calib/DM-36484/flat-SDSSr.20221006a',
-'LATISS/calib/DM-36484/flat-SDSSi.20221006a',
-'u/czw/defects.20220608',
-'LATISS/calib/DM-33875',                                        
-'u/czw/DM-28920/calib/bias.20210720',                 
-'u/czw/DM-28920/calib/dark.20210720a',     
-'u/calib/DM-32209-20211013a-g',
-'u/calib/DM-32209-20211013a-felh',
-'u/czw/DM-28920/calib/flat.20210720',
-'u/czw/DM-28920/calib/defect.20210720a',
-'LATISS/calib/DM-39635',
-'LATISS/calib/DM-39635/unbounded','LATISS/defaults','LATISS/raw/all']                   
+calibCollections = ['LATISS/calib','LATISS/raw/all',]                   
                    
                    
 
@@ -339,8 +254,8 @@ calibCollections = ['LATISS/calib','LATISS/raw/all',
 
 butler = dafButler.Butler(repo, collections=calibCollections)
 camera = butler.get('camera', instrument=cameraName)
-bias = butler.get('bias',instrument=cameraName,detector=0)
-defects = butler.get('defects',instrument=cameraName,detector=0)
+#bias = butler.get('bias',instrument=cameraName,detector=0)
+#defects = butler.get('defects',instrument=cameraName,detector=0)
 
 
 # Save in files
@@ -356,6 +271,18 @@ for index,row in df.iterrows():
     raw_img= butler.get('raw', dataId={'exposure': exposure_selected, 'instrument': 'LATISS', 'detector': 0}, collections = collection)
     bias = butler.get("bias",instrument=cameraName, exposure= exposure_selected , detector=0, collections=calibCollections)
     defects = butler.get('defects',instrument=cameraName, exposure= exposure_selected ,detector=0,collections=calibCollections)
+
+    # get metadata
+    bias_md = dict(bias.getMetadata())
+    MB_date= bias_md['CALIB_CREATION_DATE']
+    MB_time = bias_md['CALIB_CREATION_TIME']
+    print(f"Exposure {exposure_selected}, DATE for Master Bias with short calib list",MB_date, MB_time)
+    
+    defects_md = dict(defects.getMetadata()) 
+    DF_date= defects_md['CALIB_CREATION_DATE']
+    DF_time = defects_md['CALIB_CREATION_TIME']
+    print(f"Exposure {exposure_selected}, DATE for Master Defect with short calib list",DF_date, DF_time)
+ 
     
     
     # perform the ISR
