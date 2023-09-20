@@ -143,23 +143,23 @@ warnings.filterwarnings("ignore")
 
 
 #DATE = 20230912
-#FILTER="cyl_lens-holo4_001"
-#FILTER="cyl_lens-holo4_003"
-#FILTER="collimator-holo4_003"
-#FILTER="empty-holo4_001"
-#FILTER="empty-holo4_003"
+#FILTER="cyl_lens~holo4_001"
+#FILTER="cyl_lens~holo4_003"
+#FILTER="collimator~holo4_003"
+#FILTER="empty~holo4_001"
+#FILTER="empty~holo4_003"
 
-DATE = 20230913
-#FILTER="collimator-holo4_003"
-#FILTER="cyl_lens-holo4_003"
-#FILTER="empty-holo4_003"
-FILTER="empty-holo4_001"
+#DATE = 20230913
+#FILTER="collimator~holo4_003"
+#FILTER="cyl_lens~holo4_003"
+#FILTER="empty~holo4_003"
+#FILTER="empty~holo4_001"
 
 DATE = 20230914
-#FILTER="collimator-holo4_003"
-#FILTER="cyl_lens-holo4_003"
-#FILTER="empty-holo4_003"
-FILTER="empty-holo4_001"
+#FILTER="collimator~holo4_003"
+#FILTER="cyl_lens~holo4_003"
+#FILTER="empty~holo4_003"
+FILTER="empty~holo4_001"
 
 
 # input filename
