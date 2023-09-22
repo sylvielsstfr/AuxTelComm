@@ -76,16 +76,23 @@ warnings.filterwarnings("ignore")
 
 
 
-DATE = 20230914
+#DATE = 20230914
 #my_collection = "u/dagoret/spectro/collimatorholo4003noflat/runs_20230914"
 #FILTER="collimator~holo4_003"
 #my_collection = "u/dagoret/spectro/emptyholo4003noflat/runs_20230914"
 #FILTER="empty~holo4_003"
-my_collection = "u/dagoret/spectro/emptyholo4001noflat/runs_20230914"
-FILTER="empty~holo4_001"
+#my_collection = "u/dagoret/spectro/emptyholo4001noflat/runs_20230914"
+#FILTER="empty~holo4_001"
 
 
+#DATE = 20230117
+#my_collection = "u/dagoret/BPS_manyspectro_v100"
+#FILTER="empty~holo4_003"
 
+
+DATE = 20230118
+my_collection = "u/dagoret/BPS_manyspectro_v102"
+FILTER="empty~holo4_003"
 
 
 

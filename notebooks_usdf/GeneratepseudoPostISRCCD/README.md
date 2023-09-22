@@ -2,7 +2,7 @@
 
 - author : Sylvie Dagoret-Campagne
 - creation date : September 2023
-- last update 2023-09-18
+- last update 2023-09-20
 
 
 ## Purpose
@@ -25,7 +25,7 @@ The choice of DATE and filter is done through the files
 Notebooks can be used when there is a small number of exposures, a flag activate visualisation
 
 - **MakeMyPostISRCCDfromRawForSpectractorSD.ipynb**  
-- **MakeMyPostISRCCDfromRawForSpectractorSD_v2.ipynb**
+- **MakeMyPostISRCCDfromRawForSpectractorSD_v2.ipynb**, this is what I need
 
 
 ## scripts
@@ -33,5 +33,10 @@ Notebooks can be used when there is a small number of exposures, a flag activate
 Script xan be used for fast running. No visudalisation
 
 - **MakeMyPostISRCCDfromRawForSpectractorSD.py**  
-- **MakeMyPostISRCCDfromRawForSpectractorSD_v2.py**
+- **MakeMyPostISRCCDfromRawForSpectractorSD_v2.py** this is what I need
 
+## New 
+
+The good procedure is to extract PostISRCCD from PostISRCCD
+
+- **MakeMyPostISRCCDfromDMPostISRCCDForSpectractorSD.ipynb**  
