@@ -90,10 +90,19 @@ warnings.filterwarnings("ignore")
 #FILTER="empty~holo4_003"
 
 
-DATE = 20230118
-my_collection = "u/dagoret/BPS_manyspectro_v102"
-FILTER="empty~holo4_003"
+#DATE = 20230118
+#my_collection = "u/dagoret/BPS_manyspectro_v102"
+#FILTER="empty~holo4_003"
 
+
+
+DATE = 20211006
+my_collection = "u/dagoret/spectro/w_2023_44_spec3.0.3/holo_SDSS_g_oct2021"
+FILTER="SDSS_g~holo4_003"
+
+#DATE = 20211103
+#my_collection = "u/dagoret/spectro/w_2023_44_spec3.0.3/holo_SDSS_g_nov2021"
+#FILTER="SDSS_g~holo4_003"
 
 
 # output path
@@ -117,8 +126,8 @@ if not os.path.exists(path_out):
 # From the butler and the given user collection
 #--------------------------------------------------
 
-#repo = "/sdf/group/rubin/repo/main" # repo/main
-repo="/sdf/group/rubin/repo/oga/"  # /repo/embargo
+repo = "/sdf/group/rubin/repo/main" # repo/main
+#repo="/sdf/group/rubin/repo/oga/"  # /repo/embargo
 butler = dafButler.Butler(repo)
 registry = butler.registry
 
