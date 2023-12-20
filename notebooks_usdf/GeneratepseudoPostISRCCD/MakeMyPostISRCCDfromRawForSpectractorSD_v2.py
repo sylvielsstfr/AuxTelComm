@@ -4,7 +4,7 @@
 # # Make postISRCCD from raw for Spectractor StandAlone
 # 
 # 
-# - work with Weakly_2023_35
+# - work with Weakly_2023_44
 # - use jupyter kernel LSST : **lsst_distrib_2023_01**
 # 
 # 
@@ -12,7 +12,7 @@
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab
 # - creation date : 2023/09/15
-# - last update : 2023/09/18
+# - last update : 2023/12/20
 # 
 # 
 #write output file according hierarchy
@@ -155,11 +155,40 @@ warnings.filterwarnings("ignore")
 #FILTER="empty~holo4_003"
 #FILTER="empty~holo4_001"
 
-DATE = 20230914
+#DATE = 20230914
 #FILTER="collimator~holo4_003"
 #FILTER="cyl_lens~holo4_003"
 #FILTER="empty~holo4_003"
-FILTER="empty~holo4_001"
+#FILTER="empty~holo4_001"
+
+
+
+
+############### 2021 ##############  In repo main
+#-rw-r--r-- 1 dagoret rubin_users 338 Dec 20 01:35 visitdispersers_20211006_filt_BG40-holo4_003.list
+#-rw-r--r-- 1 dagoret rubin_users 338 Dec 20 01:35 visitdispersers_20211006_filt_empty-holo4_003.list
+#-rw-r--r-- 1 dagoret rubin_users 338 Dec 20 01:35 visitdispersers_20211006_filt_FELH0600-holo4_003.list
+#-rw-r--r-- 1 dagoret rubin_users 338 Dec 20 01:35 visitdispersers_20211006_filt_SDSSg-holo4_003.list
+
+
+#DATE = 20211006
+#FILTER="SDSSg-holo4_003"
+#FILTER="BG40-holo4_003"
+#FILTER="collimator-holo4_003"
+#FILTER="empty-holo4_003"
+
+#-rw-r--r-- 1 dagoret rubin_users 442 Dec 20 01:36 visitdispersers_20211103_filt_BG40-holo4_003.list
+#-rw-r--r-- 1 dagoret rubin_users 442 Dec 20 01:36 visitdispersers_20211103_filt_empty-holo4_003.list
+#-rw-r--r-- 1 dagoret rubin_users 559 Dec 20 01:36 visitdispersers_20211103_filt_FELH0600-holo4_003.list
+#-rw-r--r-- 1 dagoret rubin_users 442 Dec 20 01:36 visitdispersers_20211103_filt_SDSSg-holo4_003.list
+
+
+DATE = 20211103
+FILTER="SDSSg-holo4_003"
+#FILTER="BG40-holo4_003"
+#FILTER="collimator-holo4_003"
+#FILTER="empty-holo4_003"
+
 
 
 # input filename
@@ -205,8 +234,8 @@ for index,row in df.iterrows():
 #-------
 
 
-#repo = '/sdf/group/rubin/repo/main'
-repo="/sdf/group/rubin/repo/oga/"
+repo = '/sdf/group/rubin/repo/main'
+#repo="/sdf/group/rubin/repo/oga/"
 butler = dafButler.Butler(repo)
 registry = butler.registry
 
@@ -274,16 +303,28 @@ for index,row in df.iterrows():
 
     # get metadata
     bias_md = dict(bias.getMetadata())
-    MB_date= bias_md['CALIB_CREATION_DATE']
-    MB_time = bias_md['CALIB_CREATION_TIME']
-    print(f"Exposure {exposure_selected}, DATE for Master Bias with short calib list",MB_date, MB_time)
+    try:
+        MB_date= bias_md['CALIB_CREATION_DATE']
+        MB_time = bias_md['CALIB_CREATION_TIME']
+        print(f"Exposure {exposure_selected}, DATE for Master Bias with short calib list",MB_date, MB_time)
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+        MB_date= bias_md['CALIB_CREATE_DATE']
+        MB_time = bias_md['CALIB_CREATE_TIME']
+        print(f"Exposure {exposure_selected}, DATE for Master Bias with short calib list",MB_date, MB_time)
+            
     
     defects_md = dict(defects.getMetadata()) 
-    DF_date= defects_md['CALIB_CREATION_DATE']
-    DF_time = defects_md['CALIB_CREATION_TIME']
-    print(f"Exposure {exposure_selected}, DATE for Master Defect with short calib list",DF_date, DF_time)
- 
-    
+    try:
+        DF_date= defects_md['CALIB_CREATION_DATE']
+        DF_time = defects_md['CALIB_CREATION_TIME']
+        print(f"Exposure {exposure_selected}, DATE for Master Defect with short calib list",DF_date, DF_time)
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+        DF_date= defects_md['CALIB_CREATE_DATE']
+        DF_time = defects_md['CALIB_CREATE_TIME']
+        print(f"Exposure {exposure_selected}, DATE for Master Defect with short calib list",DF_date, DF_time)
+
     
     # perform the ISR
     isr_img = isr_task.run(raw_img,bias=bias,defects=defects)
