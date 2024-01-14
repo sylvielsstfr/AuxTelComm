@@ -87,6 +87,7 @@ def filter_data(butler,collection,dateobs,records, sigma_clip=3,remove_withfilte
 
         suptitle = f"Observations : {dateobs} \n collection = {collection}"
         plt.suptitle(suptitle,fontsize=10,y=1.00)
+        plt.tight_layout()
         plt.show()
     return [s for i,s in enumerate(specs) if filter_indices[i]]
 
@@ -135,6 +136,7 @@ def plot_spectra(spectra, colorparams,collection,dateobs):
     suptitle = f"collection = {collection}"
     plt.title(title)
     plt.suptitle(suptitle,fontsize=10)
+    plt.tight_layout()
     plt.show()
     return fig
 
