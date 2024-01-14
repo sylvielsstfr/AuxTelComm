@@ -6,6 +6,8 @@ import matplotlib.colors as mcolors
 import matplotlib.cm as cm
 
 
+# Spectra
+
 def select_files(butler,collection, where):
     """
     Select all records according the where clause
@@ -16,7 +18,7 @@ def select_files(butler,collection, where):
     records = sorted(records, key=lambda x: x.id, reverse=False)
     return records
 
-def filter_data(butler,collection,dateobs,records, sigma_clip=3,remove_withfilters = True):  # pragma: no cover
+def filter_data(butler,collection,dateobs,records, sigma_clip=3,remove_withfilters = True, plot_flag = False):  # pragma: no cover
     """
     Spectrum reconstruction Quality Selection
     """
@@ -78,17 +80,19 @@ def filter_data(butler,collection,dateobs,records, sigma_clip=3,remove_withfilte
             continue
         filter_indices *= np.logical_and(params[par] > np.median(params[par]) - sigma_clip * median_abs_deviation(params[par]),
                                          params[par] < np.median(params[par]) + sigma_clip * median_abs_deviation(params[par]))
-    for par in params.keys():
-        fig = plt.figure(figsize=(8,4))
-        plt.plot(k, params[par])
-        plt.plot(k[filter_indices], params[par][filter_indices], "ko")
-        plt.grid()
-        plt.title(par)
+    if  plot_flag:
+        for par in params.keys():
+            fig = plt.figure(figsize=(8,4))
+            plt.plot(k, params[par])
+            plt.plot(k[filter_indices], params[par][filter_indices], "ko")
+            plt.grid()
+            plt.title(par)
 
-        suptitle = f"Observations : {dateobs} \n collection = {collection}"
-        plt.suptitle(suptitle,fontsize=10,y=1.00)
-        plt.tight_layout()
-        plt.show()
+            suptitle = f"Observations : {dateobs} \n collection = {collection}"
+            plt.suptitle(suptitle,fontsize=10,y=1.00)
+            plt.tight_layout()
+            plt.show()
+            
     return [s for i,s in enumerate(specs) if filter_indices[i]]
 
 
@@ -139,4 +143,103 @@ def plot_spectra(spectra, colorparams,collection,dateobs):
     plt.tight_layout()
     plt.show()
     return fig
+
+
+# SMOOTHING
+
+def smooth_data_convolve_my_average(arr, span):
+    re = np.convolve(arr, np.ones(span * 2 + 1) / (span * 2 + 1), mode="same")
+
+    # The "my_average" part: shrinks the averaging window on the side that 
+    # reaches beyond the data, keeps the other side the same size as given 
+    # by "span"
+    re[0] = np.average(arr[:span])
+    for i in range(1, span + 1):
+        re[i] = np.average(arr[:i + span])
+        re[-i] = np.average(arr[-i - span:])
+    return re
+
+def smooth_data_np_average(arr, span):  # my original, naive approach
+    return [np.average(arr[val - span:val + span + 1]) for val in range(len(arr))]
+
+def smooth_data_np_convolve(arr, span):
+    return np.convolve(arr, np.ones(span * 2 + 1) / (span * 2 + 1), mode="same")
+
+def smooth_data_np_cumsum_my_average(arr, span):
+    cumsum_vec = np.cumsum(arr)
+    moving_average = (cumsum_vec[2 * span:] - cumsum_vec[:-2 * span]) / (2 * span)
+
+    # The "my_average" part again. Slightly different to before, because the
+    # moving average from cumsum is shorter than the input and needs to be padded
+    front, back = [np.average(arr[:span])], []
+    for i in range(1, span):
+        front.append(np.average(arr[:i + span]))
+        back.insert(0, np.average(arr[-i - span:]))
+    back.insert(0, np.average(arr[-2 * span:]))
+    return np.concatenate((front, moving_average, back))
+
+def smooth_data_lowess(arr, span):
+    x = np.linspace(0, 1, len(arr))
+    return sm.nonparametric.lowess(arr, x, frac=(5*span / len(arr)), return_sorted=False)
+
+def smooth_data_kernel_regression(arr, span):
+    # "span" smoothing parameter is ignored. If you know how to 
+    # incorporate that with kernel regression, please comment below.
+    kr = KernelReg(arr, np.linspace(0, 1, len(arr)), 'c')
+    return kr.fit()[0]
+
+def smooth_data_savgol_0(arr, span):  
+    return savgol_filter(arr, span * 2 + 1, 0)
+
+def smooth_data_savgol_1(arr, span):  
+    return savgol_filter(arr, span * 2 + 1, 1)
+
+def smooth_data_savgol_2(arr, span):  
+    return savgol_filter(arr, span * 2 + 1, 2)
+
+def smooth_data_fft(arr, span):  # the scaling of "span" is open to suggestions
+    w = fftpack.rfft(arr)
+    spectrum = w ** 2
+    cutoff_idx = spectrum < (spectrum.max() * (1 - np.exp(-span / 2000)))
+    w[cutoff_idx] = 0
+    return fftpack.irfft(w)
+
+
+# Integrals
+
+
+def fII0(wl,s):
+    """
+    Parameters:
+    S : is the atmospheric transmission times the instrumental transmission
+    wl :is the wavelength transmission
+
+    return:
+    II0 integral which is unitless
+    """
+
+    # clean
+    indexes_sel = np.where(s>0.002)[0]
+    wlmin = wl[indexes_sel].min()
+    wlmax = wl[indexes_sel].max()
+
+    indexes_sel = np.where(np.logical_and(wl>wlmin,wl<wlmax))[0]
+    
+    return np.trapz(s[indexes_sel]/wl[indexes_sel],wl[indexes_sel])
+      
+def fII1(wl,phi,wlb):
+    """
+    """
+    return np.trapz(phi*(wl-wlb),wl)
+  
+def ZPT(wl,s):
+    """
+    Parameter:
+    S : is the atmospheric transmission times the instrumental transmission
+    wl :is the wavelength transmission
+
+    return:
+    The Zero point
+    """
+    return 2.5*np.log10(fII0(wl,s)) + ZPTconst
 
