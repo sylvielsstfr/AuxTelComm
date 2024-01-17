@@ -304,7 +304,7 @@ def plot_atmtransmission_zcorr(spectra, colorparams,all_calspecs_sm,tel,disp,col
     plt.show()
     
 
-def plot_atmtransmission_zcorr_antatmsim(spectra, colorparams,all_calspecs_sm,tel,disp,collection,dateobs,am=1,pwv=2,oz=300,vaod=0.01,grey=0.1):
+def plot_atmtransmission_zcorr_antatmsim(spectra, colorparams,all_calspecs_sm,tel,disp,collection,dateobs,df_atm,am=1,pwv=2,oz=300,vaod=0.01,grey=0.99):
     """
     plot spectra
     """
@@ -313,6 +313,11 @@ def plot_atmtransmission_zcorr_antatmsim(spectra, colorparams,all_calspecs_sm,te
     import matplotlib.cm as cm
     colormap = cm.Reds
     #colormap = cm.jet 
+
+    # find average atmospheric parameters
+    df_good = df_atm[df_atm.filtered].drop(["id","filtered"],axis=1)
+    m_A1 , m_ozone, m_PWV, m_VAOD = df_good.median().values
+    print(" mean atm parameters",m_A1 , m_ozone, m_PWV, m_VAOD)
 
     all_meas_atmtransmissions = []
 
@@ -323,6 +328,20 @@ def plot_atmtransmission_zcorr_antatmsim(spectra, colorparams,all_calspecs_sm,te
     fig  = plt.figure(figsize=(11,6))
     count = 0
     for spec in spectra:
+        
+        row = df_atm[df_atm.id == spec.dataId]
+        (s_id, s_target, s_A1, s_ozone, s_PWV, s_VAOD, s_flag) = row.values[0]
+        
+        if s_flag:
+            pwv=s_PWV
+            oz=s_ozone
+            vaod=s_VAOD
+            grey=m_A1
+        else:
+            pwv=m_PWV
+            oz=m_ozone
+            vaod=m_VAOD
+            grey=m_A1
             
         target_name = spec.target.label
 
@@ -355,16 +374,17 @@ def plot_atmtransmission_zcorr_antatmsim(spectra, colorparams,all_calspecs_sm,te
     
     textstr = '\n'.join((
     r'$am=%.2f$' % (am, ),
-    r'$pwv=%.2f$ mm' % (pwv, ),
-    r'$ozone=%.1f$ DU' % (oz, ),
-    r'$vaod=%.3f$' % (vaod,)))
+    r'$grey=%.2f$' % (m_A1, ),
+    r'$pwv=%.2f$ mm' % (m_PWV, ),
+    r'$ozone=%.1f$ DU' % (m_ozone, ),
+    r'$vaod=%.3f$' % (m_VAOD,)))
     emul1 =  ObsAtmo("AUXTEL",740.)
     emul2 =  ObsAtmo("AUXTEL",730.)
-    transm_sim1 = emul1.GetAllTransparencies(sel_wls,am,pwv,oz,tau=vaod)
-    transm_sim2 = emul2.GetAllTransparencies(sel_wls,am,pwv,oz,tau=vaod)
+    transm_sim1 = emul1.GetAllTransparencies(sel_wls,am,m_PWV,m_ozone,tau=m_VAOD)
+    transm_sim2 = emul2.GetAllTransparencies(sel_wls,am,m_PWV,m_ozone,tau=m_VAOD)
     
-    #plt.plot(sel_wls,transm_sim1,'-b',label=f"simulation P=740. hPa")
-    plt.plot(sel_wls,transm_sim2,'-',label=f"simulation P=730. hPa")
+    #plt.plot(sel_wls,transm_sim1,'-g',label=f"simulation P=740. hPa")
+    plt.plot(sel_wls,transm_sim2,'-b',label=f"simulation P=730. hPa")
 
     props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
     ax = plt.gca()
@@ -401,7 +421,7 @@ def plot_atmtransmission_zcorr_antatmsim(spectra, colorparams,all_calspecs_sm,te
     
 
 
-def plot_atmtransmission_zcorr_antatmsim_ratio(spectra,colorparams,all_calspecs_sm,tel,disp,collection,dateobs,am=1,pwv=2,oz=300,vaod=0.01,grey=0.1):
+def plot_atmtransmission_zcorr_antatmsim_ratio(spectra,colorparams,all_calspecs_sm,tel,disp,collection,dateobs,df_atm,am=1,pwv=2,oz=300,vaod=0.01,grey=0.99):
     """
     plot spectra
     """
@@ -410,7 +430,11 @@ def plot_atmtransmission_zcorr_antatmsim_ratio(spectra,colorparams,all_calspecs_
     import matplotlib.cm as cm
     colormap = cm.Reds
     #colormap = cm.jet 
-   
+
+    # find average atmospheric parameters
+    df_good = df_atm[df_atm.filtered].drop(["id","filtered"],axis=1)
+    m_A1 , m_ozone, m_PWV, m_VAOD = df_good.median().values
+    print(" mean parameters",m_A1 , m_ozone, m_PWV, m_VAOD)
 
     normalize = mcolors.Normalize(vmin=np.min(colorparams), vmax=np.max(colorparams))
 
@@ -425,15 +449,30 @@ def plot_atmtransmission_zcorr_antatmsim_ratio(spectra,colorparams,all_calspecs_
 
     textstr = '\n'.join((
     r'$am=%.2f$' % (am, ),
-    r'$pwv=%.2f$ mm' % (pwv, ),
-    r'$ozone=%.1f$ DU' % (oz, ),
-    r'$vaod=%.3f$' % (vaod,)))
+    r'$grey=%.2f$' % (m_A1, ),
+    r'$pwv=%.2f$ mm' % (m_PWV, ),
+    r'$ozone=%.1f$ DU' % (m_ozone, ),
+    r'$vaod=%.3f$' % (m_VAOD,)))
     emul1 =  ObsAtmo("AUXTEL",740.)
     emul2 =  ObsAtmo("AUXTEL",730.)
     
 
     count = 0
     for spec in spectra:     
+
+        row = df_atm[df_atm.id == spec.dataId]
+        (s_id, s_target, s_A1, s_ozone, s_PWV, s_VAOD, s_flag) = row.values[0]
+        if s_flag:
+            pwv=s_PWV
+            oz=s_ozone
+            vaod=s_VAOD
+            grey=m_A1
+        else:
+            pwv=m_PWV
+            oz=m_ozone
+            vaod=m_VAOD
+            grey=m_A1
+        
         target_name = spec.target.label
 
         wls = spec.lambdas
@@ -464,8 +503,8 @@ def plot_atmtransmission_zcorr_antatmsim_ratio(spectra,colorparams,all_calspecs_
         transm_sim1 = emul1.GetAllTransparencies(sel_wls,am,pwv,oz,tau=vaod)
         transm_sim2 = emul2.GetAllTransparencies(sel_wls,am,pwv,oz,tau=vaod)
     
-        #ax1.plot(sel_wls,transm_sim1,'-b')
-        ax1.plot(sel_wls,transm_sim2,'-g')
+        #ax1.plot(sel_wls,transm_sim1,'-g')
+        #ax1.plot(sel_wls,transm_sim2,'-b')
 
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
    
@@ -478,6 +517,12 @@ def plot_atmtransmission_zcorr_antatmsim_ratio(spectra,colorparams,all_calspecs_
         count += 1
             
     ax1.grid()
+
+    transm_sim1 = emul1.GetAllTransparencies(sel_wls,am,m_PWV,m_ozone,tau=m_VAOD)
+    transm_sim2 = emul2.GetAllTransparencies(sel_wls,am,m_PWV,m_ozone,tau=m_VAOD)
+
+    ax1.plot(sel_wls,transm_sim2,'-b')
+    
     #ax1.set_xlabel("$\lambda$ [nm]")
     #plt.ylabel(f"Flux [{spec.units}]")
     ax1.legend()
