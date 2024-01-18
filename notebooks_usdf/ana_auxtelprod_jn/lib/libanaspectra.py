@@ -1,3 +1,5 @@
+# Last update 2024-01-18
+
 import lsst.daf.butler as dafButler
 import numpy as np
 import matplotlib.pyplot as plt
@@ -364,11 +366,13 @@ def plot_atmtransmission_zcorr_antatmsim(spectra, colorparams,all_calspecs_sm,te
         sel_ratio_airmas_corr = np.power(sel_ratio,am/spec.airmass)/(np.power(grey,am))
         
         if target_name in all_shown_target_names:
-            plt.plot(sel_wls, sel_ratio_airmas_corr, color = colormap(normalize(spec.airmass)))
+            if s_flag:
+                plt.plot(sel_wls, sel_ratio_airmas_corr, color = colormap(normalize(spec.airmass)))
         else:
-            plt.plot(sel_wls,sel_ratio_airmas_corr, color = colormap(normalize(spec.airmass)),label=target_name)
-            all_shown_target_names.append(target_name)
-
+            if s_flag:
+                plt.plot(sel_wls,sel_ratio_airmas_corr, color = colormap(normalize(spec.airmass)),label=target_name)
+                all_shown_target_names.append(target_name)
+        #anyway add in transmission even if flag is s_flag false
         all_meas_atmtransmissions.append((sel_wls,sel_ratio_airmas_corr))
         count +=1
     
@@ -473,6 +477,7 @@ def plot_atmtransmission_zcorr_antatmsim_ratio(spectra,colorparams,all_calspecs_
             vaod=m_VAOD
             grey=m_A1
         
+        
         target_name = spec.target.label
 
         wls = spec.lambdas
@@ -495,10 +500,12 @@ def plot_atmtransmission_zcorr_antatmsim_ratio(spectra,colorparams,all_calspecs_
         sel_ratio_airmas_corr = np.power(sel_ratio,am/spec.airmass)/(np.power(grey,am))
         
         if target_name in all_shown_target_names:
-            ax1.plot(sel_wls, sel_ratio_airmas_corr, color = colormap(normalize(spec.airmass)))
+            if s_flag:
+                ax1.plot(sel_wls, sel_ratio_airmas_corr, color = colormap(normalize(spec.airmass)))
         else:
-            ax1.plot(sel_wls,sel_ratio_airmas_corr, color = colormap(normalize(spec.airmass)),label=target_name)
-            all_shown_target_names.append(target_name)
+            if s_flag:
+                ax1.plot(sel_wls,sel_ratio_airmas_corr, color = colormap(normalize(spec.airmass)),label=target_name)
+                all_shown_target_names.append(target_name)
 
         transm_sim1 = emul1.GetAllTransparencies(sel_wls,am,pwv,oz,tau=vaod)
         transm_sim2 = emul2.GetAllTransparencies(sel_wls,am,pwv,oz,tau=vaod)
@@ -509,18 +516,20 @@ def plot_atmtransmission_zcorr_antatmsim_ratio(spectra,colorparams,all_calspecs_
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
    
         # place a text box in upper left in axes coords
-
-        ax2.plot(sel_wls,sel_ratio_airmas_corr/transm_sim1,color = colormap(normalize(spec.airmass)),label=f"simulation P=740. hPa")
+        if s_flag:
+            ax2.plot(sel_wls,sel_ratio_airmas_corr/transm_sim2,color = colormap(normalize(spec.airmass)),label=f"simulation P=740. hPa")
         #ax2.plot(sel_wls,sel_ratio_airmas_corr/transm_sim2,'-g',label=f"simulation P=730. hPa")
-        ax1.text(0.70, 0.25, textstr, transform=ax1.transAxes, fontsize=14, verticalalignment='top', bbox=props)
+     
 
         count += 1
             
     ax1.grid()
+    # show text box in upper plot
+    ax1.text(0.70, 0.25, textstr, transform=ax1.transAxes, fontsize=14, verticalalignment='top', bbox=props)
 
+    # show simulation in upper plot
     transm_sim1 = emul1.GetAllTransparencies(sel_wls,am,m_PWV,m_ozone,tau=m_VAOD)
     transm_sim2 = emul2.GetAllTransparencies(sel_wls,am,m_PWV,m_ozone,tau=m_VAOD)
-
     ax1.plot(sel_wls,transm_sim2,'-b')
     
     #ax1.set_xlabel("$\lambda$ [nm]")
