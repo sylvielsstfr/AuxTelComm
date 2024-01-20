@@ -10,6 +10,8 @@ import matplotlib.gridspec as gridspec
 
 from getObsAtmo.getObsAtmo import ObsAtmo
 
+import h5py
+
 # Spectra
 
 def select_files(butler,collection, where):
@@ -229,9 +231,14 @@ def plot_atmtransmission(spectra, colorparams,all_calspecs_sm,tel,disp,collectio
 
 def plot_atmtransmission_zcorr(spectra, colorparams,all_calspecs_sm,tel,disp,collection,dateobs):
     """
-    plot atmospheric transmission
+    plot atmospheric transmission corrected for airmass = 1 (z_pred = 1)
 
+    $$
+    T(z_{pred}) = \frac{ \left( T(z_{meas}) \right)^\left( \frac{z_{pred}}{z_{meas}}\right)}{(T^{grey}_{z_{meas}})^{z_{pred}}}
+    $$
     parameters
+     - spectra,
+     - colorparmas
     
     """
 
@@ -306,9 +313,15 @@ def plot_atmtransmission_zcorr(spectra, colorparams,all_calspecs_sm,tel,disp,col
     plt.show()
     
 
-def plot_atmtransmission_zcorr_antatmsim(spectra, colorparams,all_calspecs_sm,tel,disp,collection,dateobs,df_atm,am=1,pwv=2,oz=300,vaod=0.01,grey=0.99):
+#def plot_atmtransmission_zcorr_antatmsim(spectra, colorparams,all_calspecs_sm,tel,disp,collection,dateobs,df_atm,am=1,pwv=2,oz=300,vaod=0.01,grey=0.99):
+def plot_atmtransmission_zcorr_antatmsim(spectra, colorparams,all_calspecs_sm,tel,disp,collection,dateobs,df_atm,am=1):
     """
-    plot spectra
+    plot spectra predicted at airmass = 1
+
+    $$
+    T(z_{pred}) = \frac{ \left( T(z_{meas}) \right)^\left( \frac{z_{pred}}{z_{meas}}\right)}{(T^{grey}_{z_{meas}})^{z_{pred}}}
+    $$
+    
     """
 
     import matplotlib.colors as mcolors
@@ -425,9 +438,15 @@ def plot_atmtransmission_zcorr_antatmsim(spectra, colorparams,all_calspecs_sm,te
     
 
 
-def plot_atmtransmission_zcorr_antatmsim_ratio(spectra,colorparams,all_calspecs_sm,tel,disp,collection,dateobs,df_atm,am=1,pwv=2,oz=300,vaod=0.01,grey=0.99):
+#def plot_atmtransmission_zcorr_antatmsim_ratio(spectra,colorparams,all_calspecs_sm,tel,disp,collection,dateobs,df_atm,am=1,pwv=2,oz=300,vaod=0.01,grey=0.99):
+def plot_atmtransmission_zcorr_antatmsim_ratio(spectra,colorparams,all_calspecs_sm,tel,disp,collection,dateobs,df_atm,am=1):
     """
     plot spectra
+
+    $$
+    T(z_{pred}) = \frac{ \left( T(z_{meas}) \right)^\left( \frac{z_{pred}}{z_{meas}}\right)}{(T^{grey}_{z_{meas}})^{z_{pred}}}
+    $$
+    
     """
 
     import matplotlib.colors as mcolors
@@ -564,8 +583,113 @@ def plot_atmtransmission_zcorr_antatmsim_ratio(spectra,colorparams,all_calspecs_
     plt.show()
     
 
+def savehdf5_atmtransmission_zcorr_antatmsim_ratio(spectra,colorparams,all_calspecs_sm,tel,disp,collection,dateobs,df_atm,am=1):
+    """
+    Save Spectra, atmospheric transmission in hdf5 files 
 
+    refer to 
+    $$
+    T(z_{pred}) = \frac{ \left( T(z_{meas}) \right)^\left( \frac{z_{pred}}{z_{meas}}\right)}{(T^{grey}_{z_{meas}})^{z_{pred}}}
+    $$
+    
+    """
 
+    emul1 =  ObsAtmo("AUXTEL",740.)
+    emul2 =  ObsAtmo("AUXTEL",730.)
+
+    file_hdf5 = f"spectra_transmission_ratio_{dateobs}.h5"
+
+    print(f">>>> create file {file_hdf5}")
+    hf = h5py.File(file_hdf5, 'w')
+
+    # first froup : the median parameters
+    group_name = 'median_param_atm'
+    print(f">>>> create group {group_name}")
+    g_atmparam = hf.create_group(group_name)
+
+    # find average atmospheric parameters
+    df_good = df_atm[df_atm.filtered].drop(["id","filtered"],axis=1)
+    m_A1 , m_ozone, m_PWV, m_VAOD = df_good.median().values
+   
+    g_atmparam.attrs['md_grey'] = m_A1
+    g_atmparam.attrs['md_ozone'] = m_ozone
+    g_atmparam.attrs["md_PWV"] = m_PWV
+    g_atmparam.attrs["md_VAOD"] = m_VAOD
+
+    # loop on Spec
+    count = 0
+    for spec in spectra:     
+
+        row = df_atm[df_atm.id == spec.dataId]
+        (s_id, s_target, s_A1, s_ozone, s_PWV, s_VAOD, s_flag) = row.values[0]
+        if s_flag:
+            pwv=s_PWV
+            oz=s_ozone
+            vaod=s_VAOD
+            grey=m_A1
+        else:
+            pwv=m_PWV
+            oz=m_ozone
+            vaod=m_VAOD
+            grey=m_A1
+
+        target_name = spec.target.label
+
+        group_name = f"spec_{spec.dataId}"
+        print(f">>>> create group {group_name}")
+        
+        spec_group =  hf.create_group(f"spec_{spec.dataId}")
+        spec_group.attrs['target'] = target_name
+        spec_group.attrs['airmass'] = spec.airmass
+        
+        spec_group.attrs['flag_atmparam'] = int(s_flag)
+        spec_group.attrs['grey'] = grey
+        spec_group.attrs['ozone'] = oz
+        spec_group.attrs['VAOD'] = vaod
+        spec_group.attrs['PWV'] = pwv
+        
+        
+        wls = spec.lambdas
+        flx = spec.data
+        flx_err = spec.err
+        
+        d = spec_group.create_dataset("wls",data=wls,compression="gzip", compression_opts=9)
+        d = spec_group.create_dataset("fls",data=flx,compression="gzip", compression_opts=9)
+        d = spec_group.create_dataset("fls_err",data=flx_err,compression="gzip", compression_opts=9)
+        
+        c_dict = all_calspecs_sm[target_name]
+
+        #smooth_data_np_convolve(sed,span)
+        sed=np.interp(wls, c_dict["WAVELENGTH"]/10.,c_dict["FLUX"]*10.,left=1e-15,right=1e-15)
+                      
+        ratio = flx/tel.transmission(wls)/disp.transmission(wls)/sed
+        ratio_err = flx/tel.transmission(wls)/disp.transmission(wls)/sed
+       
+        indexes = np.where(np.logical_and(wls>350.,wls<=1000.))[0]
+       
+        sel_wls = wls[indexes]
+        sel_ratio = ratio[indexes]
+        sel_ratio_airmas_corr = np.power(sel_ratio,am/spec.airmass)/(np.power(grey,am))
+        sel_ratio_err = ratio_err[indexes]
+
+        d = spec_group.create_dataset("wlr",data=sel_wls,compression="gzip", compression_opts=9)
+        d = spec_group.create_dataset("ratio",data=sel_ratio,compression="gzip", compression_opts=9)
+        d = spec_group.create_dataset("ratio_airmass1",data=sel_ratio_airmas_corr,compression="gzip", compression_opts=9)
+        d = spec_group.create_dataset("ratio_err",data=sel_ratio_err,compression="gzip", compression_opts=9)
+        count += 1
+    group_name = "sim_spec"
+    print(f">>>> create group {group_name}")
+    sim_group =  hf.create_group(group_name)
+   
+    transm_sim1 = emul1.GetAllTransparencies(sel_wls,am,m_PWV,m_ozone,tau=m_VAOD)
+    transm_sim2 = emul2.GetAllTransparencies(sel_wls,am,m_PWV,m_ozone,tau=m_VAOD)
+
+    sim_group.attrs['ozone'] = m_ozone
+    sim_group.attrs['VAOD'] = m_VAOD
+    sim_group.attrs['PWV'] = m_PWV
+    d = sim_group.create_dataset("wls",data=sel_wls,compression="gzip", compression_opts=9)
+    d = sim_group.create_dataset("transm",data=transm_sim2,compression="gzip", compression_opts=9)   
+    hf.close() 
 
 
 
