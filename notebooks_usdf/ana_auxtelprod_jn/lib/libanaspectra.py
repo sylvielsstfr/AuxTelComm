@@ -456,8 +456,18 @@ def plot_atmtransmission_zcorr_antatmsim_ratio(spectra,colorparams,all_calspecs_
 
     # find average atmospheric parameters
     df_good = df_atm[df_atm.filtered].drop(["id","filtered"],axis=1)
-    m_A1 , m_ozone, m_PWV, m_VAOD = df_good.median().values
-    print(" mean parameters",m_A1 , m_ozone, m_PWV, m_VAOD)
+
+    try:
+        m_A1 , m_ozone, m_PWV, m_VAOD = df_good.median().values
+        print(" mean parameters",m_A1 , m_ozone, m_PWV, m_VAOD)
+    except Exception as inst:
+        print(">>>>   !!!! Exception plot_atmtransmission_zcorr_antatmsim_ratio !!!!")
+        print(type(inst))    # the exception type
+        print(inst.args)     # arguments stored in .args
+        print(inst)          # __str__ allows args to be printed directly,
+                             # but may be overridden in exception subclasses
+        m_A1 , m_ozone, m_PWV, m_VAOD = 1.,0.,0.,0.
+    
 
     normalize = mcolors.Normalize(vmin=np.min(colorparams), vmax=np.max(colorparams))
 
@@ -609,7 +619,19 @@ def savehdf5_atmtransmission_zcorr_antatmsim_ratio(spectra,colorparams,all_calsp
 
     # find average atmospheric parameters
     df_good = df_atm[df_atm.filtered].drop(["id","filtered"],axis=1)
-    m_A1 , m_ozone, m_PWV, m_VAOD = df_good.median().values
+
+    try:
+        m_A1 , m_ozone, m_PWV, m_VAOD = df_good.median().values
+        print(" mean parameters",m_A1 , m_ozone, m_PWV, m_VAOD)
+    except Exception as inst:
+        print(">>>>   !!!! savehdf5_atmtransmission_zcorr_antatmsim_ratio !!!!")
+        print(type(inst))    # the exception type
+        print(inst.args)     # arguments stored in .args
+        print(inst)          # __str__ allows args to be printed directly,
+                             # but may be overridden in exception subclasses
+        m_A1 , m_ozone, m_PWV, m_VAOD = 1.,0.,0.,0.
+    
+   
    
     g_atmparam.attrs['md_grey'] = m_A1
     g_atmparam.attrs['md_ozone'] = m_ozone
