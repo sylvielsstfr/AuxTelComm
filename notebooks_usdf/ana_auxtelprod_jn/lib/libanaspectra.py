@@ -129,6 +129,8 @@ def plot_spectra(spectra, colorparams,collection,dateobs):
     plt.xlabel("$\lambda$ [nm]")
     plt.ylabel(f"Flux [{spec.units}]")
     plt.legend()
+
+    ax = plt.gca()
     
     # Colorbar setup
     s_map = cm.ScalarMappable(norm=normalize, cmap=colormap)
@@ -139,7 +141,7 @@ def plot_spectra(spectra, colorparams,collection,dateobs):
     boundaries = np.linspace(colorparams[0] - halfdist, colorparams[-1] + halfdist, len(colorparams) + 1)
 
     # Use this to emphasize the discrete color values
-    cbar = fig.colorbar(s_map) #, spacing='proportional', ticks=colorparams, boundaries=boundaries, format='%2.2g') # format='%2i' for integer
+    cbar = fig.colorbar(s_map,ax=ax) #, spacing='proportional', ticks=colorparams, boundaries=boundaries, format='%2.2g') # format='%2i' for integer
 
     # Use this to show a continuous colorbar
     #cbar = fig.colorbar(s_map, spacing='proportional', ticks=colorparams, format='%2i')
@@ -216,12 +218,17 @@ def plot_atmtransmission(spectra, colorparams,all_calspecs_sm,tel,disp,collectio
     halfdist = (colorparams[1] - colorparams[0])/2.0
     boundaries = np.linspace(colorparams[0] - halfdist, colorparams[-1] + halfdist, len(colorparams) + 1)
 
+    ax = plt.gca()
+    
     # Use this to emphasize the discrete color values
-    cbar = fig.colorbar(s_map) #, spacing='proportional', ticks=colorparams, boundaries=boundaries, format='%2.2g') # format='%2i' for integer
+    cbar = fig.colorbar(s_map,ax=ax) #, spacing='proportional', ticks=colorparams, boundaries=boundaries, format='%2.2g') # format='%2i' for integer
+    
+    #cbar = fig.colorbar(s_map,spacing='proportional', ticks=colorparams, boundaries=boundaries, format='%2.2g') # format='%2i' for integer
 
+    
     # Use this to show a continuous colorbar
     #cbar = fig.colorbar(s_map, spacing='proportional', ticks=colorparams, format='%2i')
-    cbar.set_label("Airmass $z$")
+    #cbar.set_label("Airmass $z$")
     title = f"Atmospheric transmission at target airmasses)"
     suptitle = f"obs : {dateobs} , nspec = {count} \n coll = {collection}"
     plt.title(title)
@@ -291,6 +298,8 @@ def plot_atmtransmission_zcorr(spectra, colorparams,all_calspecs_sm,tel,disp,col
     plt.legend()
     plt.xlim(360.,1000.)  
     plt.ylim(0.,1.2)  
+
+    ax = plt.gca()
     
     # Colorbar setup
     s_map = cm.ScalarMappable(norm=normalize, cmap=colormap)
@@ -301,7 +310,7 @@ def plot_atmtransmission_zcorr(spectra, colorparams,all_calspecs_sm,tel,disp,col
     boundaries = np.linspace(colorparams[0] - halfdist, colorparams[-1] + halfdist, len(colorparams) + 1)
 
     # Use this to emphasize the discrete color values
-    cbar = fig.colorbar(s_map) #, spacing='proportional', ticks=colorparams, boundaries=boundaries, format='%2.2g') # format='%2i' for integer
+    cbar = fig.colorbar(s_map,ax=ax) #, spacing='proportional', ticks=colorparams, boundaries=boundaries, format='%2.2g') # format='%2i' for integer
 
     # Use this to show a continuous colorbar
     #cbar = fig.colorbar(s_map, spacing='proportional', ticks=colorparams, format='%2i')
@@ -424,7 +433,7 @@ def plot_atmtransmission_zcorr_antatmsim(spectra, colorparams,all_calspecs_sm,te
     boundaries = np.linspace(colorparams[0] - halfdist, colorparams[-1] + halfdist, len(colorparams) + 1)
 
     # Use this to emphasize the discrete color values
-    cbar = fig.colorbar(s_map) #, spacing='proportional', ticks=colorparams, boundaries=boundaries, format='%2.2g') # format='%2i' for integer
+    cbar = fig.colorbar(s_map,ax=ax) #, spacing='proportional', ticks=colorparams, boundaries=boundaries, format='%2.2g') # format='%2i' for integer
 
     # Use this to show a continuous colorbar
     #cbar = fig.colorbar(s_map, spacing='proportional', ticks=colorparams, format='%2i')
