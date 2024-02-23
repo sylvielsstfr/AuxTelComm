@@ -7,3 +7,10 @@
 *.err
 *.log
 *outputs_process*
+*.h5
+*.hdf5
+*.csv
+*.txt
+*.list
+*.xlsx
+*.pickle

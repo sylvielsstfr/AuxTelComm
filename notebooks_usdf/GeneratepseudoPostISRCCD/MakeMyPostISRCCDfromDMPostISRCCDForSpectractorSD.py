@@ -12,7 +12,7 @@
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab
 # - creation date : 2023/09/20
-# - last update : 2023/09/20
+# - last update : 2024/02/22
 # 
 # 
 #write output file according hierarchy
@@ -96,13 +96,22 @@ warnings.filterwarnings("ignore")
 
 
 
-DATE = 20211006
-my_collection = "u/dagoret/spectro/w_2023_44_spec3.0.3/holo_SDSS_g_oct2021"
-FILTER="SDSS_g~holo4_003"
+#DATE = 20211006
+#my_collection = "u/dagoret/spectro/w_2023_44_spec3.0.3/holo_SDSS_g_oct2021"
+#FILTER="SDSS_g~holo4_003"
 
 #DATE = 20211103
 #my_collection = "u/dagoret/spectro/w_2023_44_spec3.0.3/holo_SDSS_g_nov2021"
 #FILTER="SDSS_g~holo4_003"
+
+
+DATE = 20230928
+my_collection = "u/dagoret/auxtel_atmo_202209_v3.0.3_doGainsPTC_rebin2_231221"
+FILTER="empty~holo4_003"
+
+
+#where_clause = f"instrument=\'LATISS\' AND exposure.day_obs={DATE} AND exposure.science_program=\'spec\'"
+where_clause = f"instrument=\'LATISS\' AND exposure.day_obs={DATE}"
 
 
 # output path
@@ -126,13 +135,13 @@ if not os.path.exists(path_out):
 # From the butler and the given user collection
 #--------------------------------------------------
 
-repo = "/sdf/group/rubin/repo/main" # repo/main
-#repo="/sdf/group/rubin/repo/oga/"  # /repo/embargo
+#repo = "/sdf/group/rubin/repo/main" # repo/main
+repo="/sdf/group/rubin/repo/oga/"  # /repo/embargo
 butler = dafButler.Butler(repo)
 registry = butler.registry
 
 
-datasetRefs = registry.queryDatasets(datasetType='postISRCCD', collections=my_collection, where= "instrument='LATISS'")
+datasetRefs = registry.queryDatasets(datasetType='postISRCCD', collections=my_collection, where= where_clause)
 
 all_dataId = []
 all_postisrccd  = []
