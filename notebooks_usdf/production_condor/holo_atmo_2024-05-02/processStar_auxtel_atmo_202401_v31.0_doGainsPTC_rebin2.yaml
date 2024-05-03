@@ -1,0 +1,48 @@
+description: atmospec ProcessStarTask definition.
+instrument: lsst.obs.lsst.Latiss
+tasks:
+  isr:
+    class: lsst.ip.isr.IsrTask
+    config:
+      # characterize performance when turning on darks as first attempt found it
+      # to degrade performance (possibly due to bad darks, but take care here)
+      doDark: False
+      doFlat: False
+      doFringe: False
+      doDefect: True
+      doLinearize: False
+      doCrosstalk: False
+      doSaturationInterpolation: True
+      overscan.fitType: 'MEDIAN_PER_ROW'
+      doBias: True
+      # new
+      doApplyGains: False
+      usePtcGains: True
+  characterizeImage:
+    class: lsst.pipe.tasks.characterizeImage.CharacterizeImageTask
+    config:
+      repair.doCosmicRay: True
+      doApCorr: False
+      doMeasurePsf: False
+      doMaskStreaks: False
+      detection.includeThresholdMultiplier: 3
+      # assess carefully whether turning on cosmic ray repair hurts performance
+  singleStarCentroid: lsst.atmospec.centroiding.SingleStarCentroidTask
+  processStar: 
+    class: lsst.atmospec.processStar.ProcessStarTask
+    config:
+      rebin: 2
+      spectralOrder: 1
+      lambdaMin: 350 
+      deconvolutionSigmaClip: 100
+      doDeconvolveSpectrum: True
+      doFullForwardModelDeconvolution: True
+      doFitAtmosphere: True
+      doFitAtmosphereOnSpectrogram: True
+      verbose: True
+      xWindow: 150
+      yWindow: 150
+      spectractorDebugLogging: False
+      spectractorDebugMode: False
+      psfTransverseStepSize: 10
+      instrumentTransmissionOverride: multispectra_holo4_003_HD142331_20230802_AuxTel_doGainsPTC_v3.0.3_throughput.txt

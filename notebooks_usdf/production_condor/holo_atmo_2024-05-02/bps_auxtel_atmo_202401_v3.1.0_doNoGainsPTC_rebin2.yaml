@@ -1,0 +1,62 @@
+pipelineYaml: '/sdf/home/d/dagoret/rubin-user/holo_atmo_2024-05-02/processStar_auxtel_atmo_202405_v3.1.0_doNoGainsPTC_rebin2.yaml'
+
+# Just names, but UPDATE THIS AND KEEP THEM SHORT
+project: AuxAtmo5Flat
+campaign: SPECTRO-2024
+
+# UPDATE THESE arguments to mirror the ones you use with command-line pipetask run
+payload:
+  payloadName: 'auxtel_atmo_202401_v3.1.3_doNoGainsPTC_rebin2_240503'
+  butlerConfig: /repo/embargo
+  inCollection: LATISS/raw/all,refcats,LATISS/calib,u/cslage/sdf/latiss/ptc_20220927J
+  dataQuery: "instrument='LATISS' AND (exposure.day_obs>=20230101) AND (physical_filter.name='OG550_65mm_1~holo4_003' OR physical_filter.name='empty~holo4_003') AND exposure.observation_type='science'"
+  # dataQuery: "instrument='LATISS' AND (exposure.day_obs=20230802 OR exposure.day_obs=20230803 OR exposure.day_obs=20230928 OR exposure.day_obs=20230927 OR exposure.day_obs=20230929) AND (physical_filter.name='OG550_65mm_1~holo4_003' OR physical_filter.name='empty~holo4_003') AND exposure.observation_type='science'"
+  # dataQuery: "instrument='LATISS' AND exposure.day_obs=20230928 AND exposure.id=2023092800291"
+  runPreCmdOpts: --long-log --log-level timer.lsst.resources=INFO 
+
+#wmsServiceClass: lsst.ctrl.bps.parsl.ParslService
+wmsServiceClass: lsst.ctrl.bps.htcondor.HTCondorService
+computeSite: s3df
+
+parsl:
+  log_level: INFO
+
+requestMemory: 8192      # now each job will ask for 8 GiB of memory
+pipetask:
+  makeWarp:
+    requestMemory: 8192  # but jobs running 'makeWrap' will ask for even more (8 GiB) 
+
+site:
+  s3df:
+    profile:
+      condor:
+        +Walltime: 7200
+  slurm:
+    class: lsst.ctrl.bps.parsl.sites.Slurm
+    nodes: 20
+    walltime: '24:00:00'     # This is 24 hours
+    cores_per_node: 32
+    qos: normal
+    scheduler_options: |
+      #SBATCH --partition=roma,milano
+      #SBATCH --exclusive
+      #SBATCH --account=rubin
+  triple_slurm:
+    class: lsst.ctrl.bps.parsl.sites.TripleSlurm
+    nodes: 1
+    cores_per_node: 100
+    qos: normal
+    small_memory: 2.0     # Units are GB
+    medium_memory: 4.0
+    large_memory: 8.0
+    small_walltime: '10.0'   # Units are hours
+    medium_walltime: '10.0'
+    large_walltime: '40.0'        
+  work_queue:
+    class: lsst.ctrl.bps.parsl.sites.work_queue.LocalSrunWorkQueue
+    worker_options: "--memory=480000"   # work_queue expects memory in MB
+    nodes_per_block: 10
+
+    monitorEnable: true
+    monitorFilename: monitoring.db
+
