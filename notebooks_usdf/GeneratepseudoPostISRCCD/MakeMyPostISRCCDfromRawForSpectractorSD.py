@@ -4,7 +4,7 @@
 # # Make postISRCCD from raw for Spectractor StandAlone
 # 
 # 
-# - work with Weakly_2023_44
+# - work with Weakly_2024_16
 # - use jupyter kernel LSST : **lsst_distrib_2023_01**
 # 
 # 
@@ -12,7 +12,7 @@
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab
 # - creation date : 2023/09/15
-# - last update : 2023/12/20
+# - last update : 2024/07/31
 # 
 # 
 #write output file according hierarchy
@@ -171,8 +171,8 @@ warnings.filterwarnings("ignore")
 #-rw-r--r-- 1 dagoret rubin_users 338 Dec 20 01:35 visitdispersers_20211006_filt_SDSSg-holo4_003.list
 
 
-DATE = 20211006
-FILTER="SDSSg-holo4_003"
+#DATE = 20211006
+#FILTER="SDSSg-holo4_003"
 #FILTER="BG40-holo4_003"
 #FILTER="collimator-holo4_003"
 #FILTER="empty-holo4_003"
@@ -190,6 +190,22 @@ FILTER="SDSSg-holo4_003"
 #FILTER="empty-holo4_003"
 
 
+
+#- 20240709
+#- 20240710
+#- 20240711
+#- 20240715
+#- 20240716
+#- 20240717
+#- 20240724
+#- 20240729
+
+
+DATE = 20240729
+#FILTER="collimator-holo4_003"
+#FILTER="cyl_lens-holo4_003"
+FILTER="empty-holo4_003"
+#FILTER="empty-holo4_001"
 
 # input filename
 #----------------
