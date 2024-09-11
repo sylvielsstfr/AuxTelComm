@@ -12,7 +12,7 @@
 # - author : Sylvie Dagoret-Campagne
 # - affiliation : IJCLab
 # - creation date : 2023/09/15
-# - last update : 2024/07/31
+# - last update : 2024/09/09
 # 
 # 
 #write output file according hierarchy
@@ -200,11 +200,15 @@ warnings.filterwarnings("ignore")
 #- 20240729
 
 
-DATE = 20240729
+#DATE = 20240729
 #FILTER="collimator-holo4_003"
 #FILTER="cyl_lens-holo4_003"
-FILTER="empty-holo4_003"
+#FILTER="empty-holo4_003"
 #FILTER="empty-holo4_001"
+
+# visitdispersers_20240909_filt_empty-holo_003.list
+DATE = 20240909
+FILTER="empty-holo4_003"
 
 
 # input filename
